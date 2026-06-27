@@ -1,0 +1,49 @@
+/* ============================================================
+   style.css — Styles personnalisés Javeline
+   Tout le style de l'application est ici. Aucun style inline dans le HTML.
+   ============================================================ */
+
+/* --- Variables globales --- */
+:root {
+    --couleur-primaire: #2c3e50;
+    --couleur-secondaire: #e74c3c;
+    --couleur-texte: #333333;
+    --couleur-fond: #f9f9f9;
+    --police-principale: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* --- Base --- */
+html,
+body {
+    height: 100%;
+    font-family: var(--police-principale);
+    color: var(--couleur-texte);
+    background-color: var(--couleur-fond);
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+
+/* --- Navbar --- */
+.navbar-brand {
+    font-weight: bold;
+    letter-spacing: 0.05em;
+}
+
+/* --- Hero --- */
+.hero {
+    padding: 4rem 1rem;
+    background-color: #ffffff;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+/* --- Footer --- */
+.footer {
+    font-size: 0.875rem;
+}
