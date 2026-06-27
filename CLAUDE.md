@@ -78,6 +78,68 @@ Javeline/
 
 ---
 
+## Cahier des charges — Objectif du site
+
+### Contexte
+Site de gestion des scores pour l'association de tir sportif **Javeline**, discipline **silhouette métallique**.
+- 40 cibles par épreuve : 10 poulets, 10 cochons, 10 dindons, 10 mouflons (distance croissante).
+- Les épreuves s'appellent des **Challenges**.
+- Deux types de tireurs : **membres du club** et **non-membres**.
+- Génération de PDF prévue.
+
+### Fonctionnement
+
+1. **Création du challenge** : à l'avance, on crée un challenge à une date précise.
+2. **Inscriptions** : on ajoute chaque tireur au challenge avec les disciplines qu'il veut tirer.
+   - Case à cocher si le tireur n'est pas français → libellé de la discipline en anglais sur la feuille de score.
+3. **Plan de tir** (~1 semaine avant) : on revient sur chaque match pour indiquer le jour et l'heure, puis on génère les feuilles de score automatiquement.
+4. **Saisie des scores** : pendant le challenge, on saisit le score de chaque bête (poulet, cochon, dindon, mouflon) par discipline.
+5. **Calculs** : le logiciel calcule les totaux et effectue les classements.
+6. **Archivage** : possibilité d'archiver les résultats et de les rouvrir pour récupérer les scores.
+
+### Disciplines
+
+| Code | Français                         | Anglais                        |
+|------|----------------------------------|--------------------------------|
+| 400  | Gros Calibre Revolver            | Big Bore Revolver              |
+| 401  | Gros Calibre Production          | Big Bore Production            |
+| 402  | Gros Calibre Unlimited           | Big Bore Unlimited             |
+| 403  | Gros Calibre Debout              | Big Bore Standing              |
+| 404  | Petit Calibre Revolver           | Small Bore Revolver            |
+| 405  | Petit Calibre Production         | Small Bore Production          |
+| 406  | Petit Calibre Unlimited          | Small Bore Unlimited           |
+| 407  | Petit Calibre Debout             | Small Bore Standing            |
+| 408  | Field Visée Ouverte              | Field Pistol Any Sight         |
+| 409  | Field Optique                    | Field Pistol Production        |
+| 410  | Carabine Petit Calibre Légère    | Small Bore Light Rifle         |
+| 411  | Carabine Petit Calibre Silhouette| Small Bore Silhouette Rifle    |
+| 412  | Carabine Gros Calibre Hunting    | Big Bore Hunting Rifle         |
+| 413  | Carabine Gros Calibre Silhouette | Big Bore Silhouette Rifle      |
+
+### Combinés (Aggregates)
+
+| Nom FR                          | Nom EN                    | Disciplines        |
+|---------------------------------|---------------------------|--------------------|
+| Combiné Gros Calibre            | Aggregate Big Bore        | 400+401+402+403    |
+| Combiné Petit Calibre           | Aggregate Small Bore      | 404+405+406+407    |
+| Combiné Field                   | Aggregate Field           | 408+409            |
+| Combiné Carabine Petit Calibre  | Aggregate Small Bore Rifle| 410+411            |
+| Combiné Carabine Gros Calibre   | Aggregate Big Bore Rifle  | 412+413            |
+| Combiné Debout                  | Aggregate Standing        | 403+407+408+409    |
+
+### Règle de classement
+1. Score total le plus élevé.
+2. En cas d'égalité : nombre de mouflons (le plus élevé).
+3. Puis nombre de dindons, puis cochons, puis poulets.
+Applicable aussi bien aux classements individuels qu'aux combinés.
+
+### Éditions PDF
+- Feuilles de score (par match, avec libellés FR ou EN selon nationalité du tireur).
+- Classements individuels par discipline (libellés FR et EN).
+- Classements combinés.
+
+---
+
 ## Conventions
 
 - Nommage fichiers controllers : `NomController.php` (PascalCase)
