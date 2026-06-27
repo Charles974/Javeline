@@ -133,6 +133,24 @@ Site de gestion des scores pour l'association de tir sportif **Javeline**, disci
 3. Puis nombre de dindons, puis cochons, puis poulets.
 Applicable aussi bien aux classements individuels qu'aux combinés.
 
+### Accès et authentification
+- **Aucune gestion de login/mot de passe.** L'accès à toutes les fonctionnalités est libre.
+
+### Gestion des tireurs
+- Deux types distincts en base : **membres du club** et **non-membres**.
+- Un tireur (membre ou non) possède un profil réutilisable d'un challenge à l'autre.
+- Lors de l'inscription à un challenge, on recherche et sélectionne un tireur existant (pas de création à la volée).
+- Case à cocher "tireur non français" sur le profil → libellés en anglais sur les feuilles de score.
+
+### Plan de tir et créneaux horaires
+- Un tireur peut s'inscrire à toutes les disciplines d'un challenge.
+- Chaque discipline occupe environ **1 heure** de créneau.
+- Lors de l'attribution des créneaux (plan de tir), le système **vérifie les chevauchements** pour un même tireur et bloque l'enregistrement en cas de conflit.
+
+### Combinés (Aggregates)
+- Calculés **automatiquement** dès qu'un tireur a des scores dans les disciplines concernées.
+- ⚠️ Cette partie est susceptible d'évoluer.
+
 ### Éditions PDF
 - Feuilles de score (par match, avec libellés FR ou EN selon nationalité du tireur).
 - Classements individuels par discipline (libellés FR et EN).
