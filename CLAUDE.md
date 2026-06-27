@@ -140,7 +140,34 @@ Applicable aussi bien aux classements individuels qu'aux combinés.
 - Deux types distincts en base : **membres du club** et **non-membres**.
 - Un tireur (membre ou non) possède un profil réutilisable d'un challenge à l'autre.
 - Lors de l'inscription à un challenge, on recherche et sélectionne un tireur existant (pas de création à la volée).
-- Case à cocher "tireur non français" sur le profil → libellés en anglais sur les feuilles de score.
+- Case à cocher "tireur étranger" sur le profil → libellés en anglais sur les feuilles de score.
+
+#### Tireur membre — champs du formulaire
+| Champ               | Obligatoire |
+|---------------------|-------------|
+| Nom                 | Oui         |
+| Prénom              | Oui         |
+| Date de naissance   | Oui         |
+| Lieu de naissance   | Oui         |
+| Catégorie d'âge     | Oui         |
+| Numéro de licence   | Oui         |
+| Adresse 1           | Oui         |
+| Adresse 2           | Non         |
+| Code postal         | Oui         |
+| Ville               | Oui         |
+| Téléphone           | Oui         |
+| Email               | Oui         |
+| Certificat médical  | Non         |
+
+#### Tireur externe (non-membre) — champs du formulaire
+| Champ      | Obligatoire |
+|------------|-------------|
+| Nom        | Oui         |
+| Prénom     | Oui         |
+| Club       | Oui         |
+| Téléphone  | Non         |
+| Email      | Non         |
+| Étranger   | Non         |
 
 ### Plan de tir et créneaux horaires
 - Un tireur peut s'inscrire à toutes les disciplines d'un challenge.
