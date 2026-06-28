@@ -1,17 +1,17 @@
-# Javeline
+# JavelinePHP
 
 Application web de gestion des challenges de la Javeline.
 
 ## Description
 
-Javeline est une application permettant de gérer et suivre les challenges organisés par la Javeline.
+JavelinePHP est une application permettant de gérer et suivre les challenges organisés par la Javeline.
 
 ## Installation
 
 ```bash
 # Cloner le dépôt
-git clone https://github.com/charles974/javeline.git
-cd javeline
+git clone https://github.com/charles974/JavelinePHP.git
+cd JavelinePHP
 ```
 
 ## Contribution

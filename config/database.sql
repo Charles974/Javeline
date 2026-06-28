@@ -1,5 +1,5 @@
 -- ============================================================
--- Schéma de base de données — Javeline
+-- Schéma de base de données — JavelinePHP
 -- Encodage : UTF-8 (utf8mb4)
 -- ============================================================
 

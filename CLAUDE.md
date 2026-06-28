@@ -1,4 +1,4 @@
-# CLAUDE.md — Règles du projet Javeline
+# CLAUDE.md — Règles du projet JavelinePHP
 
 ## Identité du projet
 Site web de l'association **Javeline**.
@@ -59,7 +59,7 @@ AVANT de créer tout nouveau code, tu DOIS :
 ## Structure du projet
 
 ```
-Javeline/
+JavelinePHP/
 ├── app/
 │   ├── controllers/     # Contrôleurs MVC
 │   ├── models/          # Modèles (accès BDD)
