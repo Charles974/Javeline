@@ -1,4 +1,4 @@
-/* main.js — Script principal JavelinePHP */
+/* main.js — Script principal Javeline */
 
 $(document).ready(function () {
     // Initialisation des composants Bootstrap via jQuery si besoin

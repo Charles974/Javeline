@@ -1,8 +1,8 @@
 <?php
 // Configuration générale de l'application
 
-define('APP_NAME', 'JavelinePHP');
-define('APP_URL', 'http://localhost/JavelinePHP/public');
+define('APP_NAME', 'Javeline');
+define('APP_URL', 'http://localhost/Javeline/public');
 define('APP_LANG', 'fr');
 define('APP_CHARSET', 'UTF-8');
 
