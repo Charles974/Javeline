@@ -23,6 +23,16 @@
                 <p class="card-text dates-challenge">
                     <?= $debut === $fin ? $debut : 'Du ' . $debut . ' au ' . $fin ?>
                 </p>
+                <ul class="liste-inscrits" aria-label="Tireurs inscrits">
+                    <li>
+                        <span class="inscrits-label">Membres</span>
+                        <span class="inscrits-compte"><?= (int)$challengeActif['nb_membres'] ?></span>
+                    </li>
+                    <li>
+                        <span class="inscrits-label">Non membres</span>
+                        <span class="inscrits-compte"><?= (int)$challengeActif['nb_externes'] ?></span>
+                    </li>
+                </ul>
                 <a href="<?= APP_URL ?>/challenges/<?= (int)$challengeActif['id'] ?>"
                    class="btn btn-primary"
                    aria-label="Voir le détail du challenge <?= htmlspecialchars($challengeActif['libelle']) ?>">

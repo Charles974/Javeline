@@ -88,6 +88,35 @@ main {
     font-size: 0.95rem;
 }
 
+.liste-inscrits {
+    list-style: none;
+    padding: 0;
+    margin: 0.75rem 0 1.25rem;
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+}
+
+.liste-inscrits li {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.inscrits-label {
+    font-size: 0.8rem;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.inscrits-compte {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--couleur-primaire);
+    line-height: 1.2;
+}
+
 /* --- Navigation principale (boutons d'accueil) --- */
 .navigation-principale {
     padding: 1rem 0 3rem;
