@@ -47,3 +47,115 @@ main {
 .footer {
     font-size: 0.875rem;
 }
+
+/* --- Challenge actif / à venir --- */
+.challenge-card,
+.challenge-vide {
+    max-width: 540px;
+    border: none;
+    border-radius: 0.75rem;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.badge-statut {
+    display: inline-block;
+    padding: 0.25em 0.75em;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+}
+
+.badge-en-cours {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.badge-a-venir {
+    background-color: #d1ecf1;
+    color: #0c5460;
+}
+
+.card-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--couleur-primaire);
+}
+
+.dates-challenge {
+    color: #666;
+    font-size: 0.95rem;
+}
+
+.liste-inscrits {
+    list-style: none;
+    padding: 0;
+    margin: 0.75rem 0 1.25rem;
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+}
+
+.liste-inscrits li {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.inscrits-label {
+    font-size: 0.8rem;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.inscrits-compte {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--couleur-primaire);
+    line-height: 1.2;
+}
+
+/* --- Navigation principale (boutons d'accueil) --- */
+.navigation-principale {
+    padding: 1rem 0 3rem;
+}
+
+.nav-boutons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.btn-nav {
+    min-width: 220px;
+    padding: 0.85rem 1.5rem;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    font-weight: 500;
+    background-color: #ffffff;
+    color: var(--couleur-primaire);
+    border: 2px solid var(--couleur-primaire);
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.btn-nav:hover,
+.btn-nav:focus {
+    background-color: var(--couleur-primaire);
+    color: #ffffff;
+}
+
+.btn-nav-accent {
+    background-color: var(--couleur-secondaire);
+    color: #ffffff;
+    border-color: var(--couleur-secondaire);
+}
+
+.btn-nav-accent:hover,
+.btn-nav-accent:focus {
+    background-color: #c0392b;
+    border-color: #c0392b;
+    color: #ffffff;
+}
