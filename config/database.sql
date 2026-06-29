@@ -61,6 +61,23 @@ CREATE TABLE challenges (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ------------------------------------------------------------
+-- Catégories de tir (table de référence — données fixes, pas d'interface CRUD)
+-- ------------------------------------------------------------
+CREATE TABLE categories (
+    id      INT UNSIGNED    NOT NULL AUTO_INCREMENT,
+    libelle VARCHAR(100)    NOT NULL,
+    PRIMARY KEY (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Données initiales — à compléter selon les catégories officielles de l'association
+INSERT INTO categories (libelle) VALUES
+    ('Junior'),
+    ('Senior'),
+    ('Senior 1'),
+    ('Senior 2'),
+    ('Senior 3');
+
+-- ------------------------------------------------------------
 -- Disciplines (table de référence — données fixes)
 -- ------------------------------------------------------------
 CREATE TABLE disciplines (
@@ -97,11 +114,13 @@ CREATE TABLE inscriptions (
     tireur_type     ENUM('membre', 'externe')       NOT NULL,
     tireur_id       INT UNSIGNED                    NOT NULL,
     discipline_id   INT UNSIGNED                    NOT NULL,
+    categorie_id    INT UNSIGNED                    NOT NULL,
     created_at      DATETIME                        NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
     UNIQUE KEY uk_inscription (challenge_id, tireur_type, tireur_id, discipline_id),
     CONSTRAINT fk_inscription_challenge  FOREIGN KEY (challenge_id)  REFERENCES challenges  (id) ON DELETE CASCADE,
-    CONSTRAINT fk_inscription_discipline FOREIGN KEY (discipline_id) REFERENCES disciplines (id)
+    CONSTRAINT fk_inscription_discipline FOREIGN KEY (discipline_id) REFERENCES disciplines (id),
+    CONSTRAINT fk_inscription_categorie  FOREIGN KEY (categorie_id)  REFERENCES categories  (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ------------------------------------------------------------

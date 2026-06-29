@@ -127,10 +127,18 @@ Site de gestion des scores pour l'association de tir sportif **Javeline**, disci
 | Combiné Carabine Gros Calibre   | Aggregate Big Bore Rifle  | 412+413            |
 | Combiné Debout                  | Aggregate Standing        | 403+407+408+409    |
 
+### Catégories de tir
+- Table de référence **fixe** (pas d'interface Ajouter/Modifier/Supprimer).
+- Le classement individuel se fait **par catégorie en premier**, puis par score décroissant à l'intérieur de chaque catégorie.
+- La catégorie est choisie lors de l'inscription d'un tireur à un challenge (liste déroulante).
+
 ### Règle de classement
-1. Score total le plus élevé.
-2. En cas d'égalité : nombre de mouflons (le plus élevé).
-3. Puis nombre de dindons, puis cochons, puis poulets.
+1. Classement **par catégorie de tir** d'abord.
+2. À l'intérieur de chaque catégorie : score total le plus élevé.
+3. En cas d'égalité : nombre de mouflons (le plus élevé).
+4. Puis nombre de dindons, puis cochons, puis poulets.
+5. Si égalité parfaite sur tout : déclarer **ex-æquo**.
+6. Afficher la médaille **Or, Argent, Bronze** à côté des 3 premiers de chaque catégorie.
 Applicable aussi bien aux classements individuels qu'aux combinés.
 
 ### Accès et authentification
