@@ -1,7 +1,7 @@
 Options -Indexes
+DirectoryIndex disabled
 RewriteEngine On
+RewriteBase /Javeline/
 
-# Force le passage par public/ si on arrive à la racine
-RewriteCond %{REQUEST_URI} !^/public/
 RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule ^(.*)$ index.php [QSA,L]
+RewriteRule ^ index.php [QSA,END]

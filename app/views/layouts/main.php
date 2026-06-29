@@ -14,7 +14,7 @@
     >
 
     <!-- Styles personnalisés -->
-    <link rel="stylesheet" href="<?= APP_URL ?>/css/style.css">
+    <link rel="stylesheet" href="<?= APP_URL ?>/public/css/style.css">
 </head>
 <body>
 
@@ -41,6 +41,6 @@
     ></script>
 
     <!-- Script principal -->
-    <script src="<?= APP_URL ?>/js/main.js"></script>
+    <script src="<?= APP_URL ?>/public/js/main.js"></script>
 </body>
 </html>
