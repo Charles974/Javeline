@@ -31,6 +31,10 @@
     </div>
 </div>
 
+<?php if (!$archive): ?>
+<p class="text-muted small mb-3">Cliquez sur un participant pour saisir ou modifier son score.</p>
+<?php endif; ?>
+
 <!-- Compteurs -->
 <div class="resume-compteurs mb-3 d-flex gap-3 flex-wrap">
     <div class="resume-compteur-bloc">
@@ -38,11 +42,11 @@
         <span class="resume-compteur-label">affichés</span>
     </div>
     <div class="resume-compteur-bloc resume-compteur-score">
-        <span class="resume-compteur-valeur"><?= $nbScores ?></span>
+        <span class="resume-compteur-valeur" id="cpt-scores"><?= $nbScores ?></span>
         <span class="resume-compteur-label">avec score</span>
     </div>
     <div class="resume-compteur-bloc resume-compteur-attente">
-        <span class="resume-compteur-valeur"><?= $nbTotal - $nbScores ?></span>
+        <span class="resume-compteur-valeur" id="cpt-attente"><?= $nbTotal - $nbScores ?></span>
         <span class="resume-compteur-label">sans score</span>
     </div>
 </div>
@@ -51,7 +55,6 @@
 <div class="card resume-filtres-card mb-3">
     <div class="card-body py-2 d-flex flex-wrap align-items-center gap-3">
 
-        <!-- Filtre tiré / non tiré -->
         <div class="d-flex align-items-center gap-2">
             <span class="resume-filtre-label">Afficher :</span>
             <div class="btn-group btn-group-sm" role="group" aria-label="Filtrer par statut de tir">
@@ -66,7 +69,6 @@
             </div>
         </div>
 
-        <!-- Filtre discipline -->
         <div class="d-flex align-items-center gap-2">
             <label for="filtre-discipline" class="resume-filtre-label">Discipline :</label>
             <select class="form-select form-select-sm resume-select-discipline"
@@ -81,7 +83,6 @@
             </select>
         </div>
 
-        <!-- Légende couleurs -->
         <div class="d-flex align-items-center gap-2 ms-auto">
             <span class="resume-legende-puce resume-puce-score"></span>
             <span class="resume-legende-texte">Score enregistré</span>
@@ -126,20 +127,33 @@
                 </thead>
                 <tbody>
                     <?php foreach ($participants as $p):
-                        $aScore   = $p['score_id'] !== null;
-                        $horaire  = '';
+                        $aScore  = $p['score_id'] !== null;
+                        $horaire = '';
                         if ($p['date_match'] && $p['heure_debut']) {
                             $horaire = date('d/m', strtotime($p['date_match']))
                                      . ' ' . substr($p['heure_debut'], 0, 5);
                         }
-                        $total    = $aScore ? (int)$p['total'] : '';
+                        $total   = $aScore ? (int)$p['total'] : '';
                         $detScore = $aScore
                             ? $p['poulets'] . '/' . $p['cochons'] . '/' . $p['dindons'] . '/' . $p['mouflons']
                             : '';
                     ?>
-                    <tr class="ligne-participant <?= $aScore ? 'ligne-score' : 'ligne-attente' ?>"
+                    <tr class="ligne-participant <?= $aScore ? 'ligne-score' : 'ligne-attente' ?> <?= $archive ? '' : 'ligne-cliquable' ?>"
+                        data-inscription-id="<?= (int)$p['inscription_id'] ?>"
+                        data-match-id="<?= $p['date_match'] ? (int)($p['score_id'] ?? 0) : '' ?>"
                         data-score="<?= $aScore ? '1' : '0' ?>"
-                        data-discipline-code="<?= (int)$p['discipline_code'] ?>">
+                        data-discipline-code="<?= (int)$p['discipline_code'] ?>"
+                        data-discipline-fr="<?= htmlspecialchars($p['discipline_fr']) ?>"
+                        data-nom="<?= htmlspecialchars($p['nom']) ?>"
+                        data-prenom="<?= htmlspecialchars($p['prenom']) ?>"
+                        data-club="<?= htmlspecialchars($p['club'] ?? '') ?>"
+                        data-tireur-type="<?= htmlspecialchars($p['tireur_type']) ?>"
+                        data-poulets="<?= $aScore ? (int)$p['poulets'] : '' ?>"
+                        data-cochons="<?= $aScore ? (int)$p['cochons'] : '' ?>"
+                        data-dindons="<?= $aScore ? (int)$p['dindons'] : '' ?>"
+                        data-mouflons="<?= $aScore ? (int)$p['mouflons'] : '' ?>"
+                        <?= $archive ? '' : 'role="button" tabindex="0"' ?>
+                        aria-label="<?= htmlspecialchars($p['nom'] . ' ' . $p['prenom']) ?> — <?= htmlspecialchars($p['discipline_fr']) ?>">
                         <td><?= htmlspecialchars($p['nom']) ?></td>
                         <td><?= htmlspecialchars($p['prenom']) ?></td>
                         <td><?= $p['club'] ? htmlspecialchars($p['club']) : '<span class="text-muted">—</span>' ?></td>
@@ -167,7 +181,98 @@
     </div>
 </div>
 
+<!-- ===================================================
+     Modale saisie des scores
+     =================================================== -->
+<div class="modal fade"
+     id="modal-score"
+     tabindex="-1"
+     aria-labelledby="modal-score-titre"
+     aria-modal="true"
+     role="dialog"
+     data-bs-backdrop="static"
+     data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h3 class="modal-title fs-5" id="modal-score-titre">Saisie des scores</h3>
+                <button type="button"
+                        class="btn-close"
+                        id="btn-modal-fermer"
+                        aria-label="Fermer la fenêtre"></button>
+            </div>
+
+            <div class="modal-body">
+
+                <!-- Infos tireur -->
+                <div class="score-tireur-bloc mb-4">
+                    <div class="score-tireur-nom" id="score-nom"></div>
+                    <div class="score-tireur-detail" id="score-detail"></div>
+                    <div class="score-tireur-discipline mt-1" id="score-discipline"></div>
+                </div>
+
+                <!-- Avertissement dépassement de 10 -->
+                <div id="score-alerte-max" class="alert alert-warning py-2 mb-3" role="alert" hidden>
+                    Un score par silhouette ne peut pas dépasser 10. Vérifiez vos saisies.
+                </div>
+
+                <!-- Grille des 4 silhouettes -->
+                <div class="score-saisie-grille mb-4">
+                    <?php
+                    $animaux = [
+                        'poulets'  => 'Poulets',
+                        'cochons'  => 'Cochons',
+                        'dindons'  => 'Dindons',
+                        'mouflons' => 'Mouflons',
+                    ];
+                    foreach ($animaux as $champ => $libelle):
+                    ?>
+                    <div class="score-saisie-animal">
+                        <div class="score-animal-nom"><?= $libelle ?></div>
+                        <div class="score-animal-picto" aria-hidden="true"></div>
+                        <input type="number"
+                               class="form-control score-input"
+                               id="score-<?= $champ ?>"
+                               name="<?= $champ ?>"
+                               min="0"
+                               step="1"
+                               placeholder="0"
+                               aria-label="Score <?= $libelle ?>">
+                        <div class="score-input-hint">sur 10</div>
+                    </div>
+                    <?php endforeach; ?>
+                </div>
+
+                <!-- Total -->
+                <div class="score-total-bloc">
+                    <span class="score-total-label">Total :</span>
+                    <span class="score-total-valeur" id="score-total">0</span>
+                    <span class="score-total-max">/ 40</span>
+                </div>
+
+            </div>
+
+            <div class="modal-footer d-flex justify-content-between">
+                <button type="button" class="btn btn-outline-danger" id="btn-score-annuler">
+                    Annuler la saisie
+                </button>
+                <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-secondary" id="btn-score-fermer">
+                        Fermer
+                    </button>
+                    <button type="button" class="btn btn-primary" id="btn-score-enregistrer">
+                        Enregistrer
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
 <script>
-    const CHALLENGE_ID = <?= (int)$challenge['id'] ?>;
+    const CHALLENGE_ID      = <?= (int)$challenge['id'] ?>;
+    const CHALLENGE_ARCHIVE = <?= $archive ? 'true' : 'false' ?>;
 </script>
 <script src="<?= APP_URL ?>/js/challenge-resume.js"></script>

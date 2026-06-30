@@ -72,6 +72,57 @@ class InscriptionModel extends Model
     }
 
     /**
+     * Enregistre (insert ou update) les scores d'une inscription.
+     * Crée le match automatiquement si aucun plan de tir n'a encore été assigné.
+     * Retourne un tableau avec match_id et score_id.
+     */
+    public function saisirScore(int $inscriptionId, string $dateChallenge, int $poulets, int $cochons, int $dindons, int $mouflons): array
+    {
+        // Trouver ou créer le match pour cette inscription
+        $stmt = $this->db->prepare('SELECT id FROM matchs WHERE inscription_id = :iid');
+        $stmt->execute([':iid' => $inscriptionId]);
+        $match = $stmt->fetch();
+
+        if (!$match) {
+            $stmt = $this->db->prepare(
+                "INSERT INTO matchs (inscription_id, date_match, heure_debut, heure_fin)
+                 VALUES (:iid, :date, '00:00:00', '01:00:00')"
+            );
+            $stmt->execute([':iid' => $inscriptionId, ':date' => $dateChallenge]);
+            $matchId = (int)$this->db->lastInsertId();
+        } else {
+            $matchId = (int)$match['id'];
+        }
+
+        // Insérer ou mettre à jour le score (UPSERT)
+        $stmt = $this->db->prepare(
+            "INSERT INTO scores (match_id, poulets, cochons, dindons, mouflons)
+             VALUES (:mid, :p, :c, :d, :m)
+             ON DUPLICATE KEY UPDATE
+                 poulets  = VALUES(poulets),
+                 cochons  = VALUES(cochons),
+                 dindons  = VALUES(dindons),
+                 mouflons = VALUES(mouflons)"
+        );
+        $stmt->execute([
+            ':mid' => $matchId,
+            ':p'   => $poulets,
+            ':c'   => $cochons,
+            ':d'   => $dindons,
+            ':m'   => $mouflons,
+        ]);
+
+        $stmt = $this->db->prepare('SELECT id FROM scores WHERE match_id = :mid');
+        $stmt->execute([':mid' => $matchId]);
+        $score = $stmt->fetch();
+
+        return [
+            'match_id' => $matchId,
+            'score_id' => $score ? (int)$score['id'] : null,
+        ];
+    }
+
+    /**
      * Retourne les discipline_id déjà assignés à un tireur dans un challenge.
      */
     public function findDisciplinesByTireur(int $challengeId, string $type, int $tireurId): array

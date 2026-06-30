@@ -595,3 +595,138 @@ main {
     font-size: 0.8rem;
     color: #666;
 }
+
+/* --- Ligne cliquable dans le résumé --- */
+.resume-table .ligne-cliquable {
+    cursor: pointer;
+}
+
+/* --- Modale saisie des scores --- */
+.score-tireur-bloc {
+    background-color: #f8f9fa;
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+}
+
+.score-tireur-nom {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--couleur-primaire);
+}
+
+.score-tireur-detail {
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.score-tireur-discipline {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--couleur-primaire);
+}
+
+/* Grille 4 silhouettes */
+.score-saisie-grille {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+}
+
+.score-saisie-animal {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.score-animal-nom {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--couleur-primaire);
+    text-align: center;
+}
+
+/* Pictogramme silhouette (placeholder CSS) */
+.score-animal-picto {
+    width: 48px;
+    height: 56px;
+    background-color: #dee2e6;
+    border-radius: 4px 4px 8px 8px;
+    position: relative;
+}
+
+.score-animal-picto::before {
+    content: '';
+    position: absolute;
+    top: -14px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 22px;
+    height: 22px;
+    background-color: #dee2e6;
+    border-radius: 50%;
+}
+
+.score-saisie-animal:nth-child(1) .score-animal-picto,
+.score-saisie-animal:nth-child(1) .score-animal-picto::before {
+    background-color: #b8ddf7;
+}
+
+.score-saisie-animal:nth-child(2) .score-animal-picto,
+.score-saisie-animal:nth-child(2) .score-animal-picto::before {
+    background-color: #f7c9b8;
+}
+
+.score-saisie-animal:nth-child(3) .score-animal-picto,
+.score-saisie-animal:nth-child(3) .score-animal-picto::before {
+    background-color: #c8e6c9;
+}
+
+.score-saisie-animal:nth-child(4) .score-animal-picto,
+.score-saisie-animal:nth-child(4) .score-animal-picto::before {
+    background-color: #e8d5c4;
+}
+
+.score-saisie-animal .form-control {
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: 700;
+    width: 80px;
+    padding: 0.3rem 0.5rem;
+}
+
+.score-input-invalide {
+    border-color: #fd7e14 !important;
+    background-color: #fff8f0 !important;
+    box-shadow: 0 0 0 0.2rem rgba(253, 126, 20, 0.25) !important;
+}
+
+.score-input-hint {
+    font-size: 0.75rem;
+    color: #aaa;
+}
+
+/* Total */
+.score-total-bloc {
+    text-align: center;
+    padding: 0.75rem;
+    background-color: #f8f9fa;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+}
+
+.score-total-label {
+    font-weight: 600;
+    color: #555;
+}
+
+.score-total-valeur {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--couleur-primaire);
+    margin: 0 0.25rem;
+}
+
+.score-total-max {
+    color: #888;
+}

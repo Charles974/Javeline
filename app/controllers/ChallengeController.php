@@ -184,6 +184,54 @@ class ChallengeController extends Controller
     }
 
     // ----------------------------------------------------------------
+    // POST /challenges/:id/saisir-score
+    // ----------------------------------------------------------------
+    public function saisirScore(string $id): void
+    {
+        $id = (int) $id;
+        $challenge = $this->model->findById($id);
+        if (!$challenge) {
+            $this->json(['success' => false, 'message' => 'Challenge introuvable.'], 404);
+        }
+        if ($challenge['statut'] === 'archive') {
+            $this->json(['success' => false, 'message' => 'Ce challenge est archivé.'], 403);
+        }
+
+        $inscriptionId = (int)($_POST['inscription_id'] ?? 0);
+        $poulets       = max(0, (int)($_POST['poulets']  ?? 0));
+        $cochons       = max(0, (int)($_POST['cochons']  ?? 0));
+        $dindons       = max(0, (int)($_POST['dindons']  ?? 0));
+        $mouflons      = max(0, (int)($_POST['mouflons'] ?? 0));
+
+        if ($inscriptionId <= 0) {
+            $this->json(['success' => false, 'message' => 'Inscription invalide.'], 400);
+        }
+
+        try {
+            $res = $this->inscriptions->saisirScore(
+                $inscriptionId,
+                $challenge['date_debut'],
+                $poulets, $cochons, $dindons, $mouflons
+            );
+        } catch (PDOException $e) {
+            $this->json(['success' => false, 'message' => 'Erreur lors de l\'enregistrement.'], 500);
+        }
+
+        $this->json([
+            'success'       => true,
+            'message'       => 'Score enregistré.',
+            'inscription_id'=> $inscriptionId,
+            'match_id'      => $res['match_id'],
+            'score_id'      => $res['score_id'],
+            'poulets'       => $poulets,
+            'cochons'       => $cochons,
+            'dindons'       => $dindons,
+            'mouflons'      => $mouflons,
+            'total'         => $poulets + $cochons + $dindons + $mouflons,
+        ]);
+    }
+
+    // ----------------------------------------------------------------
     // GET /challenges/:id/resume — tableau de bord des participants
     // ----------------------------------------------------------------
     public function resume(string $id): void
