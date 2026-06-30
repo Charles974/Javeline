@@ -115,6 +115,54 @@ class InscriptionModel extends Model
     }
 
     /**
+     * Retourne la liste complète des participants d'un challenge avec infos de match et de score.
+     * Tri par défaut : heure_debut ASC (matchs planifiés d'abord), puis code discipline ASC.
+     */
+    public function findResume(int $challengeId): array
+    {
+        $sql = "SELECT
+                    i.id                AS inscription_id,
+                    i.tireur_type,
+                    i.tireur_id,
+                    d.code              AS discipline_code,
+                    d.libelle_fr        AS discipline_fr,
+                    CASE WHEN i.tireur_type = 'membre'
+                         THEN m.nom   ELSE e.nom   END AS nom,
+                    CASE WHEN i.tireur_type = 'membre'
+                         THEN m.prenom ELSE e.prenom END AS prenom,
+                    CASE WHEN i.tireur_type = 'externe'
+                         THEN e.club ELSE NULL END AS club,
+                    ma.date_match,
+                    ma.heure_debut,
+                    ma.heure_fin,
+                    s.id                AS score_id,
+                    s.poulets,
+                    s.cochons,
+                    s.dindons,
+                    s.mouflons,
+                    (COALESCE(s.poulets,0) + COALESCE(s.cochons,0)
+                     + COALESCE(s.dindons,0) + COALESCE(s.mouflons,0)) AS total
+                FROM inscriptions i
+                JOIN disciplines d     ON d.id = i.discipline_id
+                LEFT JOIN membres m    ON i.tireur_type = 'membre'   AND m.id = i.tireur_id
+                LEFT JOIN externes e   ON i.tireur_type = 'externe'  AND e.id = i.tireur_id
+                LEFT JOIN matchs ma    ON ma.inscription_id = i.id
+                LEFT JOIN scores s     ON s.match_id = ma.id
+                WHERE i.challenge_id = :cid
+                ORDER BY
+                    CASE WHEN ma.heure_debut IS NOT NULL THEN 0 ELSE 1 END ASC,
+                    ma.date_match ASC,
+                    ma.heure_debut ASC,
+                    d.code ASC,
+                    nom ASC,
+                    prenom ASC";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([':cid' => $challengeId]);
+        return $stmt->fetchAll();
+    }
+
+    /**
      * Supprime une inscription par son id.
      */
     public function supprimerInscription(int $id): bool

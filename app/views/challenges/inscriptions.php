@@ -14,9 +14,16 @@
             <?php endif; ?>
         </p>
     </div>
-    <a href="<?= APP_URL ?>/" class="btn btn-outline-secondary btn-sm" aria-label="Retour à l'accueil">
-        ← Accueil
-    </a>
+    <div class="d-flex gap-2">
+        <a href="<?= APP_URL ?>/challenges/<?= (int)$challenge['id'] ?>/resume"
+           class="btn btn-outline-primary btn-sm"
+           aria-label="Voir le résumé du challenge">
+            Résumé
+        </a>
+        <a href="<?= APP_URL ?>/" class="btn btn-outline-secondary btn-sm" aria-label="Retour à l'accueil">
+            ← Accueil
+        </a>
+    </div>
 </div>
 
 <div id="insc-alerte" class="membres-alerte mb-3" role="alert" aria-live="polite" hidden></div>

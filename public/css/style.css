@@ -484,3 +484,114 @@ main {
     border-color: #c0392b;
     color: #ffffff;
 }
+
+/* --- Page résumé challenge --- */
+.resume-compteurs {
+    gap: 1.5rem;
+}
+
+.resume-compteur-bloc {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 70px;
+}
+
+.resume-compteur-valeur {
+    font-size: 1.8rem;
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--couleur-primaire);
+}
+
+.resume-compteur-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #888;
+}
+
+.resume-compteur-score .resume-compteur-valeur {
+    color: #1a7a3c;
+}
+
+.resume-compteur-attente .resume-compteur-valeur {
+    color: #856404;
+}
+
+.resume-filtres-card {
+    border: none;
+    border-radius: 0.75rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.resume-filtre-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    white-space: nowrap;
+    color: #555;
+}
+
+.resume-select-discipline {
+    min-width: 220px;
+}
+
+/* Lignes avec score enregistré */
+.resume-table .ligne-score {
+    background-color: #f0faf4;
+}
+
+.resume-table .ligne-score:hover {
+    background-color: #d4edda;
+}
+
+/* Lignes sans score */
+.resume-table .ligne-attente {
+    background-color: #fff;
+}
+
+.resume-table .ligne-attente:hover {
+    background-color: #fff8e1;
+}
+
+.resume-col-horaire {
+    white-space: nowrap;
+    font-size: 0.85rem;
+}
+
+.resume-col-score {
+    white-space: nowrap;
+}
+
+.resume-total {
+    font-size: 0.95rem;
+    color: #1a7a3c;
+}
+
+.resume-detail {
+    font-size: 0.78rem;
+}
+
+/* Légende */
+.resume-legende-puce {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+    flex-shrink: 0;
+}
+
+.resume-puce-score {
+    background-color: #d4edda;
+    border: 1px solid #b8dac6;
+}
+
+.resume-puce-attente {
+    background-color: #fff3cd;
+    border: 1px solid #e8d8a0;
+}
+
+.resume-legende-texte {
+    font-size: 0.8rem;
+    color: #666;
+}

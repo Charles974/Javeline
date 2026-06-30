@@ -184,6 +184,38 @@ class ChallengeController extends Controller
     }
 
     // ----------------------------------------------------------------
+    // GET /challenges/:id/resume — tableau de bord des participants
+    // ----------------------------------------------------------------
+    public function resume(string $id): void
+    {
+        $id = (int) $id;
+        $challenge = $this->model->findById($id);
+        if (!$challenge) {
+            $this->erreur404();
+            return;
+        }
+
+        $participants = $this->inscriptions->findResume($id);
+
+        // Construit la liste des disciplines présentes dans ce challenge (pour le filtre)
+        $disciplinesFiltres = [];
+        foreach ($participants as $p) {
+            $code = (int)$p['discipline_code'];
+            if (!isset($disciplinesFiltres[$code])) {
+                $disciplinesFiltres[$code] = $p['discipline_fr'];
+            }
+        }
+        ksort($disciplinesFiltres);
+
+        $this->render('challenges/resume', [
+            'titrePage'          => 'Résumé — ' . htmlspecialchars($challenge['libelle']) . ' — ' . APP_NAME,
+            'challenge'          => $challenge,
+            'participants'       => $participants,
+            'disciplinesFiltres' => $disciplinesFiltres,
+        ]);
+    }
+
+    // ----------------------------------------------------------------
     // GET /challenges/:id/imprimer — fiche imprimable des inscrits
     // ----------------------------------------------------------------
     public function imprimer(string $id): void

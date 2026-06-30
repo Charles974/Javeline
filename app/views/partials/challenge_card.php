@@ -30,11 +30,18 @@
                     <span class="inscrits-compte"><?= (int)$challengeActif['nb_externes'] ?></span>
                 </li>
             </ul>
-            <a href="<?= APP_URL ?>/challenges/<?= (int)$challengeActif['id'] ?>"
-               class="btn btn-primary"
-               aria-label="Voir le détail du challenge <?= htmlspecialchars($challengeActif['libelle']) ?>">
-                Voir le challenge
-            </a>
+            <div class="d-flex gap-2 justify-content-center flex-wrap">
+                <a href="<?= APP_URL ?>/challenges/<?= (int)$challengeActif['id'] ?>"
+                   class="btn btn-primary"
+                   aria-label="Gérer les inscriptions du challenge <?= htmlspecialchars($challengeActif['libelle']) ?>">
+                    Inscriptions
+                </a>
+                <a href="<?= APP_URL ?>/challenges/<?= (int)$challengeActif['id'] ?>/resume"
+                   class="btn btn-outline-primary"
+                   aria-label="Voir le résumé du challenge <?= htmlspecialchars($challengeActif['libelle']) ?>">
+                    Résumé
+                </a>
+            </div>
         </div>
     </div>
 <?php else: ?>
