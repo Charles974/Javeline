@@ -227,6 +227,79 @@ main {
     color: #888;
 }
 
+/* --- Champ de recherche dans les listes de gauche --- */
+.dispo-recherche {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+    padding-bottom: 0.5rem;
+}
+
+/* --- Indice sous le bouton d'inscription --- */
+.dispo-hint {
+    font-size: 0.75rem;
+    color: #aaa;
+}
+
+/* --- Compteur de disciplines sélectionnées --- */
+.disc-compteur-badge {
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.2em 0.6em;
+    border-radius: 999px;
+    background-color: #dbe4ff;
+    color: var(--couleur-primaire);
+    transition: background-color 0.2s;
+}
+
+.disc-compteur-vide {
+    background-color: #f1f3f5;
+    color: #888;
+}
+
+/* --- Filtre catégories (dropdown) --- */
+.filtre-menu {
+    min-width: 220px;
+}
+
+.filtre-groupe-titre {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #888;
+    padding: 0.25rem 0.5rem;
+}
+
+.filtre-option {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.2rem 0.5rem;
+    cursor: pointer;
+    font-size: 0.875rem;
+    border-radius: 0.25rem;
+}
+
+.filtre-option:hover {
+    background-color: #f0f4ff;
+}
+
+/* --- Tri des colonnes --- */
+.col-sortable {
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+}
+
+.col-sortable:hover {
+    background-color: #e9ecef;
+}
+
+.sort-icone {
+    font-size: 0.7rem;
+    color: #999;
+}
+
 /* --- Zones tireurs disponibles (scrollables) --- */
 .dispo-zone {
     max-height: 220px;

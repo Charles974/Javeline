@@ -2,56 +2,81 @@
 
 $(document).ready(function () {
 
-    if (CHALLENGE_ARCHIVE) return; // lecture seule si archivé
+    if (CHALLENGE_ARCHIVE) return;
 
-    const $panneau      = $('#panneau-inscription');
-    const $titreP       = $('#panneau-titre');
-    const $btnVers      = $('#btn-vers-inscription');
-    const $btnAjouter   = $('#btn-ajouter-insc');
-    const $btnModifier  = $('#btn-modifier-insc');
-    const $btnAnnuler   = $('#btn-annuler-inscription');
-    const $erreurs      = $('#insc-erreurs');
-    const $alerte       = $('#insc-alerte');
-    const $form         = $('#form-inscription');
+    const $panneau     = $('#panneau-inscription');
+    const $titreP      = $('#panneau-titre');
+    const $btnVers     = $('#btn-vers-inscription');
+    const $btnAjouter  = $('#btn-ajouter-insc');
+    const $btnModifier = $('#btn-modifier-insc');
+    const $btnAnnuler  = $('#btn-annuler-inscription');
+    const $erreurs     = $('#insc-erreurs');
+    const $alerte      = $('#insc-alerte');
+    const $form        = $('#form-inscription');
 
-    let tireurSelectionneGauche = null; // tireur sélectionné dans la liste gauche
+    let tireurSelectionneGauche = null;
     let modeModification = false;
 
     // ----------------------------------------------------------------
-    // Sélection d'un tireur dans les tables de gauche
+    // Recherche en temps réel dans les tables de gauche
     // ----------------------------------------------------------------
-    $(document).on('click keypress', '.ligne-dispo', function (e) {
-        if (e.type === 'keypress' && e.which !== 13) return;
+    $('#recherche-membres').on('input', function () {
+        filtrerTableDispo('#zone-membres-dispo', $(this).val());
+    });
 
+    $('#recherche-externes').on('input', function () {
+        filtrerTableDispo('#zone-externes-dispo', $(this).val());
+    });
+
+    function filtrerTableDispo(zone, terme) {
+        const termeLower = terme.toLowerCase().trim();
+        $(zone + ' .ligne-dispo').each(function () {
+            const texte = $(this).text().toLowerCase();
+            $(this).toggle(termeLower === '' || texte.includes(termeLower));
+        });
+    }
+
+    // ----------------------------------------------------------------
+    // Sélection d'un tireur (clic simple)
+    // ----------------------------------------------------------------
+    $(document).on('click', '.ligne-dispo', function () {
         $('.ligne-dispo').removeClass('ligne-selectionnee');
         $(this).addClass('ligne-selectionnee');
-
-        tireurSelectionneGauche = {
-            type   : $(this).data('type'),
-            id     : $(this).data('id'),
-            nom    : $(this).data('nom'),
-            prenom : $(this).data('prenom'),
-            info   : $(this).data('info'),
-        };
-
+        tireurSelectionneGauche = extraireTireurDispo($(this));
         $btnVers.prop('disabled', false);
     });
 
     // ----------------------------------------------------------------
-    // Bouton "Inscrire ce tireur →" : ouvre le panneau en mode ajout
+    // Double-clic : ouvre directement le panneau (point 2)
     // ----------------------------------------------------------------
-    $btnVers.on('click', function () {
-        if (!tireurSelectionneGauche) return;
-
+    $(document).on('dblclick', '.ligne-dispo', function () {
+        tireurSelectionneGauche = extraireTireurDispo($(this));
         chargerPanneau(tireurSelectionneGauche, false, []);
     });
 
-    // ----------------------------------------------------------------
-    // Clic sur une ligne de la liste des inscrits : ouvre en mode modification
-    // ----------------------------------------------------------------
-    $(document).on('click keypress', '.ligne-inscrit', function (e) {
-        if (e.type === 'keypress' && e.which !== 13) return;
+    function extraireTireurDispo($ligne) {
+        return {
+            type   : $ligne.data('type'),
+            id     : $ligne.data('id'),
+            nom    : $ligne.data('nom'),
+            prenom : $ligne.data('prenom'),
+            info   : $ligne.data('info'),
+        };
+    }
 
+    // ----------------------------------------------------------------
+    // Bouton "Inscrire ce tireur →"
+    // ----------------------------------------------------------------
+    $btnVers.on('click', function () {
+        if (tireurSelectionneGauche) {
+            chargerPanneau(tireurSelectionneGauche, false, []);
+        }
+    });
+
+    // ----------------------------------------------------------------
+    // Clic sur un inscrit → ouvre en mode modification
+    // ----------------------------------------------------------------
+    $(document).on('click', '.ligne-inscrit', function () {
         const tireur = {
             type   : $(this).data('tireur-type'),
             id     : $(this).data('tireur-id'),
@@ -60,7 +85,6 @@ $(document).ready(function () {
             info   : $(this).data('info'),
         };
 
-        // Récupère les disciplines déjà assignées
         $.getJSON(
             APP_URL + '/challenges/' + CHALLENGE_ID + '/disciplines-tireur',
             { type: tireur.type, tid: tireur.id },
@@ -71,7 +95,88 @@ $(document).ready(function () {
     });
 
     // ----------------------------------------------------------------
-    // Bouton Annuler : ferme le panneau
+    // Compteur de disciplines cochées (point 5)
+    // ----------------------------------------------------------------
+    $(document).on('change', '.disc-checkbox', function () {
+        mettreAJourCompteurDisc();
+    });
+
+    function mettreAJourCompteurDisc() {
+        const nb = $('.disc-checkbox:checked').length;
+        $('#disc-compteur').text(nb + ' sélectionnée' + (nb > 1 ? 's' : ''));
+        $('#disc-compteur').toggleClass('disc-compteur-vide', nb === 0);
+    }
+
+    // ----------------------------------------------------------------
+    // Filtre multi-catégories sur la liste des inscrits (point 1)
+    // ----------------------------------------------------------------
+    $(document).on('change', '.filtre-check', function () {
+        appliquerFiltresInscrits();
+    });
+
+    $('#btn-reset-filtres').on('click', function () {
+        $('.filtre-check').prop('checked', false);
+        appliquerFiltresInscrits();
+    });
+
+    function appliquerFiltresInscrits() {
+        const typesActifs    = $('.filtre-check[data-filtre-type="type"]:checked').map(function () { return $(this).val(); }).get();
+        const famillesActives = $('.filtre-check[data-filtre-type="famille"]:checked').map(function () { return $(this).val(); }).get();
+
+        let nbVisibles = 0;
+
+        $('#zone-inscrits .ligne-inscrit').each(function () {
+            const type    = $(this).data('tireur-type');
+            const famille = $(this).data('famille');
+
+            const typeOk    = typesActifs.length === 0    || typesActifs.includes(type);
+            const familleOk = famillesActives.length === 0 || famillesActives.includes(famille);
+
+            const visible = typeOk && familleOk;
+            $(this).toggle(visible);
+            if (visible) nbVisibles++;
+        });
+
+        const total = $('#zone-inscrits .ligne-inscrit').length;
+        const badge = nbVisibles === total
+            ? total
+            : nbVisibles + ' / ' + total;
+        $('#cpt-inscrits').text(badge);
+
+        // Indique visuellement si un filtre est actif
+        const filtresActifs = typesActifs.length > 0 || famillesActives.length > 0;
+        $('#filtre-categories-wrapper .dropdown-toggle').toggleClass('btn-warning btn-outline-light', filtresActifs);
+    }
+
+    // ----------------------------------------------------------------
+    // Tri des colonnes de la liste des inscrits (point 6)
+    // ----------------------------------------------------------------
+    $(document).on('click', '.col-sortable', function () {
+        const $th    = $(this);
+        const col    = parseInt($th.data('col'), 10);
+        const actuel = $th.attr('aria-sort');
+        const asc    = actuel !== 'ascending';
+
+        // Réinitialise les autres colonnes
+        $('.col-sortable').attr('aria-sort', 'none').find('.sort-icone').text('');
+
+        $th.attr('aria-sort', asc ? 'ascending' : 'descending');
+        $th.find('.sort-icone').text(asc ? ' ▲' : ' ▼');
+
+        const $tbody = $('#table-inscrits tbody');
+        const lignes = $tbody.find('tr.ligne-inscrit').toArray();
+
+        lignes.sort(function (a, b) {
+            const valA = $(a).find('td').eq(col).text().trim().toLowerCase();
+            const valB = $(b).find('td').eq(col).text().trim().toLowerCase();
+            return asc ? valA.localeCompare(valB, 'fr') : valB.localeCompare(valA, 'fr');
+        });
+
+        $.each(lignes, function (_, ligne) { $tbody.append(ligne); });
+    });
+
+    // ----------------------------------------------------------------
+    // Bouton Annuler
     // ----------------------------------------------------------------
     $btnAnnuler.on('click', function () {
         fermerPanneau();
@@ -82,14 +187,14 @@ $(document).ready(function () {
     // ----------------------------------------------------------------
     $form.on('submit', function (e) {
         e.preventDefault();
-        soumettre('inscrire', 'Inscrire ce tireur');
+        soumettre('inscrire', 'Ajouter au challenge', $btnAjouter);
     });
 
     // ----------------------------------------------------------------
-    // Bouton : Mettre à jour (modifier)
+    // Bouton Mettre à jour
     // ----------------------------------------------------------------
     $btnModifier.on('click', function () {
-        soumettre('modifier-inscriptions', 'Mettre à jour');
+        soumettre('modifier-inscriptions', 'Mettre à jour', $btnModifier);
     });
 
     // ----------------------------------------------------------------
@@ -97,7 +202,6 @@ $(document).ready(function () {
     // ----------------------------------------------------------------
     $(document).on('click', '.btn-supprimer-inscription', function () {
         const inscriptionId = $(this).data('id');
-
         if (!confirm('Supprimer cette inscription ?')) return;
 
         $.ajax({
@@ -121,7 +225,7 @@ $(document).ready(function () {
     });
 
     // ----------------------------------------------------------------
-    // Bouton Imprimer
+    // Impression
     // ----------------------------------------------------------------
     $('#btn-imprimer-inscrits').on('click', function () {
         window.open(APP_URL + '/challenges/' + CHALLENGE_ID + '/imprimer', '_blank');
@@ -142,11 +246,12 @@ $(document).ready(function () {
         const detail    = tireur.info ? typeLabel + ' — ' + tireur.info : typeLabel;
         $('#insc-detail-affiche').text(detail);
 
-        // Coche les disciplines déjà assignées
-        $('input[name="discipline_ids[]"]').prop('checked', false);
+        $('.disc-checkbox').prop('checked', false);
         $.each(disciplineIds, function (_, did) {
-            $('input[name="discipline_ids[]"][value="' + did + '"]').prop('checked', true);
+            $('.disc-checkbox[value="' + did + '"]').prop('checked', true);
         });
+
+        mettreAJourCompteurDisc();
 
         if (modif) {
             $titreP.text('Modifier les disciplines');
@@ -170,13 +275,12 @@ $(document).ready(function () {
         tireurSelectionneGauche = null;
         $('.ligne-dispo').removeClass('ligne-selectionnee');
         $btnVers.prop('disabled', true);
+        mettreAJourCompteurDisc();
         cacherErreur();
     }
 
-    function soumettre(endpoint, btnLabel) {
+    function soumettre(endpoint, btnLabel, $btn) {
         cacherErreur();
-
-        const $btn = modeModification ? $btnModifier : $btnAjouter;
         $btn.prop('disabled', true).text('Enregistrement…');
 
         $.ajax({
@@ -211,10 +315,15 @@ $(document).ready(function () {
         $('#zone-externes-dispo').html(panneaux.externes);
         $('#zone-inscrits').html(panneaux.inscrits);
 
-        // Met à jour les compteurs
         $('#cpt-membres').text($('#zone-membres-dispo .ligne-dispo').length);
         $('#cpt-externes').text($('#zone-externes-dispo .ligne-dispo').length);
-        $('#cpt-inscrits').text($('#zone-inscrits .ligne-inscrit').length);
+
+        // Réapplique les filtres actifs après rafraîchissement
+        appliquerFiltresInscrits();
+
+        // Réapplique les recherches actives
+        filtrerTableDispo('#zone-membres-dispo', $('#recherche-membres').val());
+        filtrerTableDispo('#zone-externes-dispo', $('#recherche-externes').val());
     }
 
     function afficherErreur(erreurs) {

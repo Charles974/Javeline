@@ -1,7 +1,6 @@
 <?php
-    $debut = date('d/m/Y', strtotime($challenge['date_debut']));
-    $fin   = date('d/m/Y', strtotime($challenge['date_fin']));
-    $today = date('Y-m-d');
+    $debut   = date('d/m/Y', strtotime($challenge['date_debut']));
+    $fin     = date('d/m/Y', strtotime($challenge['date_fin']));
     $archive = ($challenge['statut'] === 'archive');
 ?>
 
@@ -20,7 +19,6 @@
     </a>
 </div>
 
-<!-- Alerte retour AJAX -->
 <div id="insc-alerte" class="membres-alerte mb-3" role="alert" aria-live="polite" hidden></div>
 
 <?php if ($archive): ?>
@@ -40,29 +38,42 @@
                 <h2 class="card-titre mb-0">Membres disponibles</h2>
                 <span class="badge bg-secondary" id="cpt-membres"><?= count($membres) ?></span>
             </div>
+            <div class="dispo-recherche px-2 pt-2">
+                <input type="search"
+                       id="recherche-membres"
+                       class="form-control form-control-sm"
+                       placeholder="Rechercher un membre…"
+                       aria-label="Rechercher dans la liste des membres disponibles">
+            </div>
             <div class="dispo-zone" id="zone-membres-dispo">
                 <?php require APP_ROOT . '/app/views/partials/challenge_membres_dispo.php'; ?>
             </div>
 
-            <!-- Séparateur -->
             <div class="card-header d-flex justify-content-between align-items-center mt-1">
                 <h2 class="card-titre mb-0">Non membres disponibles</h2>
                 <span class="badge bg-secondary" id="cpt-externes"><?= count($externes) ?></span>
+            </div>
+            <div class="dispo-recherche px-2 pt-2">
+                <input type="search"
+                       id="recherche-externes"
+                       class="form-control form-control-sm"
+                       placeholder="Rechercher un non membre…"
+                       aria-label="Rechercher dans la liste des non membres disponibles">
             </div>
             <div class="dispo-zone" id="zone-externes-dispo">
                 <?php require APP_ROOT . '/app/views/partials/challenge_externes_dispo.php'; ?>
             </div>
 
-            <!-- Bouton de déplacement -->
             <?php if (!$archive): ?>
             <div class="card-footer text-center">
                 <button type="button"
                         id="btn-vers-inscription"
                         class="btn btn-primary"
                         disabled
-                        aria-label="Déplacer le tireur sélectionné vers le formulaire d'inscription">
+                        aria-label="Ouvrir le panneau d'inscription pour ce tireur">
                     Inscrire ce tireur →
                 </button>
+                <p class="dispo-hint mt-1 mb-0">Double-clic sur un tireur pour accéder directement au formulaire</p>
             </div>
             <?php endif; ?>
         </div>
@@ -73,7 +84,7 @@
          =================================================== -->
     <div class="col-lg-7 d-flex flex-column gap-3">
 
-        <!-- Panneau d'inscription (affiché uniquement quand un tireur est sélectionné) -->
+        <!-- Panneau d'inscription -->
         <div class="card form-card" id="panneau-inscription" hidden>
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h2 class="card-titre mb-0" id="panneau-titre">Inscription</h2>
@@ -82,7 +93,6 @@
             </div>
             <div class="card-body">
 
-                <!-- Erreurs -->
                 <div id="insc-erreurs" class="form-erreurs" role="alert" aria-live="assertive" hidden></div>
 
                 <form id="form-inscription" novalidate>
@@ -90,22 +100,24 @@
                     <input type="hidden" id="insc-tireur-type" name="tireur_type" value="">
                     <input type="hidden" id="insc-tireur-id"   name="tireur_id"   value="">
 
-                    <!-- Infos tireur -->
                     <div class="tireur-info-bloc mb-3">
                         <div class="tireur-info-nom" id="insc-nom-affiche"></div>
                         <div class="tireur-info-detail" id="insc-detail-affiche"></div>
                     </div>
 
-                    <!-- Disciplines (checkboxes en 2 colonnes) -->
+                    <!-- Disciplines -->
                     <fieldset>
-                        <legend class="form-label fw-semibold">
-                            Disciplines <span aria-hidden="true">*</span>
-                        </legend>
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <legend class="form-label fw-semibold mb-0">
+                                Disciplines <span aria-hidden="true">*</span>
+                            </legend>
+                            <span id="disc-compteur" class="disc-compteur-badge">0 sélectionnée</span>
+                        </div>
                         <div class="disciplines-grille">
                             <?php foreach ($disciplines as $d): ?>
                             <div class="form-check discipline-item">
                                 <input type="checkbox"
-                                       class="form-check-input"
+                                       class="form-check-input disc-checkbox"
                                        id="disc-<?= (int)$d['code'] ?>"
                                        name="discipline_ids[]"
                                        value="<?= (int)$d['id'] ?>"
@@ -133,9 +145,68 @@
 
         <!-- Liste des inscrits -->
         <div class="card liste-card">
-            <div class="card-header d-flex justify-content-between align-items-center">
+            <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
                 <h2 class="card-titre mb-0">Inscrits au challenge</h2>
-                <div class="d-flex align-items-center gap-2">
+                <div class="d-flex align-items-center gap-2 flex-wrap">
+
+                    <!-- Filtre multi-catégories -->
+                    <div class="dropdown" id="filtre-categories-wrapper">
+                        <button class="btn btn-sm btn-outline-light dropdown-toggle"
+                                type="button"
+                                data-bs-toggle="dropdown"
+                                data-bs-auto-close="outside"
+                                aria-expanded="false"
+                                aria-label="Filtrer par catégorie">
+                            Filtrer
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end filtre-menu p-2" aria-label="Filtres disponibles">
+                            <li class="filtre-groupe-titre">Type</li>
+                            <li>
+                                <label class="filtre-option">
+                                    <input type="checkbox" class="filtre-check" data-filtre-type="type" value="membre"> Membres
+                                </label>
+                            </li>
+                            <li>
+                                <label class="filtre-option">
+                                    <input type="checkbox" class="filtre-check" data-filtre-type="type" value="externe"> Non membres
+                                </label>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li class="filtre-groupe-titre">Famille de disciplines</li>
+                            <li>
+                                <label class="filtre-option">
+                                    <input type="checkbox" class="filtre-check" data-filtre-type="famille" value="gros-calibre"> Gros Calibre (400-403)
+                                </label>
+                            </li>
+                            <li>
+                                <label class="filtre-option">
+                                    <input type="checkbox" class="filtre-check" data-filtre-type="famille" value="petit-calibre"> Petit Calibre (404-407)
+                                </label>
+                            </li>
+                            <li>
+                                <label class="filtre-option">
+                                    <input type="checkbox" class="filtre-check" data-filtre-type="famille" value="field"> Field (408-409)
+                                </label>
+                            </li>
+                            <li>
+                                <label class="filtre-option">
+                                    <input type="checkbox" class="filtre-check" data-filtre-type="famille" value="carabine-pc"> Carabine PC (410-411)
+                                </label>
+                            </li>
+                            <li>
+                                <label class="filtre-option">
+                                    <input type="checkbox" class="filtre-check" data-filtre-type="famille" value="carabine-gc"> Carabine GC (412-413)
+                                </label>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <button type="button" class="btn btn-sm btn-link p-0 text-danger" id="btn-reset-filtres">
+                                    Réinitialiser les filtres
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+
                     <span class="badge bg-secondary" id="cpt-inscrits"><?= count($inscrits) ?></span>
                     <button type="button"
                             id="btn-imprimer-inscrits"
@@ -154,7 +225,7 @@
 </div>
 
 <script>
-    const CHALLENGE_ID = <?= (int)$challenge['id'] ?>;
+    const CHALLENGE_ID      = <?= (int)$challenge['id'] ?>;
     const CHALLENGE_ARCHIVE = <?= $archive ? 'true' : 'false' ?>;
 </script>
 <script src="<?= APP_URL ?>/js/challenge-inscriptions.js"></script>
