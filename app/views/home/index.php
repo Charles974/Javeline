@@ -34,6 +34,11 @@
                 aria-label="Créer un nouveau challenge">
             Créer un challenge
         </button>
+        <a href="<?= APP_URL ?>/categories"
+           class="btn btn-nav"
+           aria-label="Consulter les catégories de tir">
+            Catégories de tir
+        </a>
         <a href="<?= APP_URL ?>/challenges/historique"
            class="btn btn-nav"
            aria-label="Voir l'historique des challenges">

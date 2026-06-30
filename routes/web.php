@@ -16,6 +16,10 @@ $router->post('/challenges/:id/inscrire',                       'ChallengeContro
 $router->post('/challenges/:id/modifier-inscriptions',          'ChallengeController', 'modifierInscriptions');
 $router->post('/challenges/:id/supprimer-inscription',          'ChallengeController', 'supprimerInscription');
 
+// Catégories de tir
+$router->get('/categories',           'CategorieController', 'index');
+$router->get('/categories/imprimer',  'CategorieController', 'imprimer');
+
 // Membres
 $router->get('/membres',              'MembreController', 'index');
 $router->get('/membres/get/:id',      'MembreController', 'get');
