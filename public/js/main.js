@@ -14,7 +14,7 @@ $(document).ready(function () {
     const modal       = bootstrap.Modal.getOrCreateInstance(document.getElementById('modal-challenge'));
 
     // Réinitialise le formulaire et les messages à l'ouverture de la modal
-    document.getElementById('modal-challenge').addEventListener('show.bs.modal', function () {
+    $('#modal-challenge').on('show.bs.modal', function () {
         $form[0].reset();
         cacherErreur();
     });
