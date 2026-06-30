@@ -58,6 +58,23 @@ abstract class Controller
     }
 
     /**
+     * Capture et retourne le HTML d'un partial (sans layout).
+     *
+     * @param string $partial Chemin relatif depuis app/views/ (ex: 'partials/challenge_card')
+     * @param array  $donnees Variables à extraire dans le partial
+     */
+    protected function renderPartiel(string $partial, array $donnees = []): string
+    {
+        extract($donnees);
+        ob_start();
+        $fichier = APP_ROOT . '/app/views/' . $partial . '.php';
+        if (file_exists($fichier)) {
+            require $fichier;
+        }
+        return ob_get_clean();
+    }
+
+    /**
      * Retourne une réponse JSON (pour les appels AJAX).
      */
     protected function json(array $data, int $code = 200): void

@@ -3,51 +3,16 @@
     <p class="lead">Gestion des scores — Silhouette métallique</p>
 </section>
 
-<!-- Résumé du challenge en cours ou à venir -->
-<section class="challenge-actif mb-5" aria-labelledby="titre-challenge">
-    <?php if ($challengeActif): ?>
-        <?php
-            $debut = date('d/m/Y', strtotime($challengeActif['date_debut']));
-            $fin   = date('d/m/Y', strtotime($challengeActif['date_fin']));
-            $today = date('Y-m-d');
-            $enCours = ($today >= $challengeActif['date_debut'] && $today <= $challengeActif['date_fin']);
-        ?>
-        <div class="card challenge-card mx-auto">
-            <div class="card-body">
-                <span class="badge-statut <?= $enCours ? 'badge-en-cours' : 'badge-a-venir' ?>">
-                    <?= $enCours ? 'En cours' : 'À venir' ?>
-                </span>
-                <h2 id="titre-challenge" class="card-title mt-2">
-                    <?= htmlspecialchars($challengeActif['libelle']) ?>
-                </h2>
-                <p class="card-text dates-challenge">
-                    <?= $debut === $fin ? $debut : 'Du ' . $debut . ' au ' . $fin ?>
-                </p>
-                <ul class="liste-inscrits" aria-label="Tireurs inscrits">
-                    <li>
-                        <span class="inscrits-label">Membres</span>
-                        <span class="inscrits-compte"><?= (int)$challengeActif['nb_membres'] ?></span>
-                    </li>
-                    <li>
-                        <span class="inscrits-label">Non membres</span>
-                        <span class="inscrits-compte"><?= (int)$challengeActif['nb_externes'] ?></span>
-                    </li>
-                </ul>
-                <a href="<?= APP_URL ?>/challenges/<?= (int)$challengeActif['id'] ?>"
-                   class="btn btn-primary"
-                   aria-label="Voir le détail du challenge <?= htmlspecialchars($challengeActif['libelle']) ?>">
-                    Voir le challenge
-                </a>
-            </div>
-        </div>
-    <?php else: ?>
-        <div class="card challenge-vide mx-auto">
-            <div class="card-body text-center">
-                <p class="mb-0">Aucun challenge en cours ou à venir.</p>
-            </div>
-        </div>
-    <?php endif; ?>
+<!-- Zone challenge : mise à jour via AJAX après création -->
+<section class="challenge-actif mb-4" id="zone-challenge" aria-labelledby="titre-challenge">
+    <h2 id="titre-challenge" class="visually-hidden">Challenge en cours ou à venir</h2>
+    <?php require APP_ROOT . '/app/views/partials/challenge_card.php'; ?>
 </section>
+
+<!-- Message de succès (masqué par défaut) -->
+<div id="alerte-succes" class="alerte-succes mx-auto mb-4" role="alert" aria-live="polite" hidden>
+    <span id="alerte-succes-texte"></span>
+</div>
 
 <!-- Boutons de navigation principale -->
 <section class="navigation-principale text-center" aria-label="Navigation principale">
@@ -62,11 +27,13 @@
            aria-label="Gérer les tireurs non membres">
             Tireurs non membres
         </a>
-        <a href="<?= APP_URL ?>/challenges/creer"
-           class="btn btn-nav btn-nav-accent"
-           aria-label="Créer un nouveau challenge">
+        <button type="button"
+                class="btn btn-nav btn-nav-accent"
+                data-bs-toggle="modal"
+                data-bs-target="#modal-challenge"
+                aria-label="Créer un nouveau challenge">
             Créer un challenge
-        </a>
+        </button>
         <a href="<?= APP_URL ?>/challenges/historique"
            class="btn btn-nav"
            aria-label="Voir l'historique des challenges">
@@ -74,3 +41,77 @@
         </a>
     </div>
 </section>
+
+<!-- Modal : création d'un challenge -->
+<div class="modal fade"
+     id="modal-challenge"
+     tabindex="-1"
+     aria-labelledby="modal-challenge-titre"
+     aria-modal="true"
+     role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modal-challenge-titre">Créer un challenge</h3>
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Fermer la fenêtre"></button>
+            </div>
+
+            <form id="form-challenge" novalidate aria-label="Formulaire de création d'un challenge">
+                <div class="modal-body">
+
+                    <!-- Message d'erreur inline -->
+                    <div id="modal-erreur" class="modal-erreur" role="alert" aria-live="assertive" hidden></div>
+
+                    <div class="mb-3">
+                        <label for="challenge-libelle" class="form-label">Nom du challenge <span aria-hidden="true">*</span></label>
+                        <input type="text"
+                               class="form-control"
+                               id="challenge-libelle"
+                               name="libelle"
+                               required
+                               maxlength="200"
+                               autocomplete="off"
+                               aria-required="true">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="challenge-date-debut" class="form-label">Date de début <span aria-hidden="true">*</span></label>
+                        <input type="date"
+                               class="form-control"
+                               id="challenge-date-debut"
+                               name="date_debut"
+                               required
+                               aria-required="true">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="challenge-date-fin" class="form-label">Date de fin <span aria-hidden="true">*</span></label>
+                        <input type="date"
+                               class="form-control"
+                               id="challenge-date-fin"
+                               name="date_fin"
+                               required
+                               aria-required="true">
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+                        Annuler
+                    </button>
+                    <button type="submit"
+                            class="btn btn-primary"
+                            id="btn-valider-challenge">
+                        Créer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

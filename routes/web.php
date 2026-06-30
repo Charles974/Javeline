@@ -6,3 +6,6 @@
 
 // Page d'accueil
 $router->get('/', 'HomeController', 'index');
+
+// Challenges
+$router->post('/challenges/creer', 'ChallengeController', 'creer');
