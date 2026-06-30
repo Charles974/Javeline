@@ -117,6 +117,116 @@ main {
     line-height: 1.2;
 }
 
+/* --- En-tête de page --- */
+.page-header h1 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--couleur-primaire);
+    border-bottom: 2px solid var(--couleur-primaire);
+    padding-bottom: 0.5rem;
+}
+
+/* --- Cartes formulaire / liste --- */
+.form-card,
+.liste-card {
+    border: none;
+    border-radius: 0.75rem;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+}
+
+.card-header {
+    background-color: var(--couleur-primaire);
+    color: #fff;
+    border-radius: 0.75rem 0.75rem 0 0 !important;
+    padding: 0.75rem 1.25rem;
+}
+
+.card-titre {
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+/* --- Boutons d'action du formulaire --- */
+.form-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid #e9ecef;
+    margin-top: 0.5rem;
+}
+
+/* --- Erreurs inline formulaire --- */
+.form-erreurs {
+    padding: 0.75rem 1rem;
+    border-radius: 0.4rem;
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+.form-erreurs ul {
+    margin: 0;
+    padding-left: 1.2rem;
+}
+
+/* --- Alerte retour membres (succès / erreur) --- */
+.membres-alerte {
+    padding: 0.75rem 1.25rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+}
+
+.membres-alerte.alerte-succes {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.membres-alerte.alerte-erreur {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* --- Tableau des membres --- */
+.membres-table thead th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+}
+
+.membres-table tbody .ligne-membre {
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.membres-table tbody .ligne-membre:hover {
+    background-color: #eef2ff;
+}
+
+.membres-table tbody .ligne-selectionnee {
+    background-color: #dbe4ff !important;
+}
+
+.col-actions {
+    width: 1%;
+    white-space: nowrap;
+}
+
+.liste-vide {
+    padding: 2rem;
+    text-align: center;
+    color: #888;
+}
+
 /* --- Alerte succès (page d'accueil) --- */
 .alerte-succes {
     max-width: 540px;

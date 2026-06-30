@@ -1,0 +1,72 @@
+/* Fiche d'impression membre — styles dédiés à la vue imprimable */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    font-size: 12pt;
+    color: #000;
+    background: #fff;
+    padding: 2cm;
+}
+
+.fiche {
+    max-width: 18cm;
+    margin: 0 auto;
+}
+
+.fiche-entete {
+    text-align: center;
+    border-bottom: 2px solid #000;
+    padding-bottom: 0.6cm;
+    margin-bottom: 0.8cm;
+}
+
+.fiche-entete h1 {
+    font-size: 18pt;
+    letter-spacing: 0.05em;
+}
+
+.fiche-entete h2 {
+    font-size: 13pt;
+    font-weight: normal;
+    color: #333;
+}
+
+.fiche-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 0.8cm;
+}
+
+.fiche-table th,
+.fiche-table td {
+    border: 1px solid #bbb;
+    padding: 0.3cm 0.4cm;
+    vertical-align: top;
+}
+
+.fiche-table th {
+    background-color: #f0f0f0;
+    font-weight: 600;
+    white-space: nowrap;
+    width: 22%;
+}
+
+.fiche-pied {
+    text-align: right;
+    font-size: 9pt;
+    color: #666;
+    border-top: 1px solid #ccc;
+    padding-top: 0.3cm;
+}
+
+@media print {
+    body {
+        padding: 0;
+    }
+}
