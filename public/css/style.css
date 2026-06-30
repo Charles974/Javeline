@@ -227,6 +227,120 @@ main {
     color: #888;
 }
 
+/* --- Zones tireurs disponibles (scrollables) --- */
+.dispo-zone {
+    max-height: 220px;
+    overflow-y: auto;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.dispo-table thead th {
+    position: sticky;
+    top: 0;
+    background-color: #f8f9fa;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    z-index: 1;
+}
+
+.dispo-table tbody .ligne-dispo {
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.12s ease;
+}
+
+.dispo-table tbody .ligne-dispo:hover {
+    background-color: #eef2ff;
+}
+
+.dispo-table tbody .ligne-selectionnee {
+    background-color: #dbe4ff !important;
+    font-weight: 600;
+}
+
+.liste-vide-sm {
+    padding: 1rem;
+    text-align: center;
+    color: #888;
+    font-size: 0.875rem;
+    margin: 0;
+}
+
+/* --- Panneau d'inscription --- */
+.tireur-info-bloc {
+    background-color: #f8f9fa;
+    border-radius: 0.4rem;
+    padding: 0.6rem 0.9rem;
+}
+
+.tireur-info-nom {
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: var(--couleur-primaire);
+}
+
+.tireur-info-detail {
+    font-size: 0.85rem;
+    color: #666;
+}
+
+/* --- Grille disciplines (2 colonnes) --- */
+.disciplines-grille {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.25rem 1rem;
+}
+
+.discipline-item .form-check-label {
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+
+.discipline-code {
+    display: inline-block;
+    min-width: 2.2rem;
+    font-weight: 600;
+    color: var(--couleur-primaire);
+    font-size: 0.8rem;
+}
+
+/* --- Table des inscrits --- */
+.inscrits-table {
+    font-size: 0.875rem;
+}
+
+.inscrits-table .premiere-ligne-tireur td {
+    border-top: 2px solid #dee2e6;
+}
+
+.badge-type {
+    display: inline-block;
+    padding: 0.15em 0.4em;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.badge-type-membre {
+    background-color: #d1ecf1;
+    color: #0c5460;
+}
+
+.badge-type-externe {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.inscrits-table .ligne-inscrit {
+    cursor: pointer;
+    transition: background-color 0.12s ease;
+}
+
+.inscrits-table .ligne-inscrit:hover {
+    background-color: #fff8e1;
+}
+
 /* --- Alerte succès (page d'accueil) --- */
 .alerte-succes {
     max-width: 540px;

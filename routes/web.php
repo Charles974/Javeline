@@ -8,7 +8,13 @@
 $router->get('/', 'HomeController', 'index');
 
 // Challenges
-$router->post('/challenges/creer', 'ChallengeController', 'creer');
+$router->post('/challenges/creer',                              'ChallengeController', 'creer');
+$router->get('/challenges/:id',                                 'ChallengeController', 'detail');
+$router->get('/challenges/:id/disciplines-tireur',              'ChallengeController', 'disciplinesTireur');
+$router->get('/challenges/:id/imprimer',                        'ChallengeController', 'imprimer');
+$router->post('/challenges/:id/inscrire',                       'ChallengeController', 'inscrire');
+$router->post('/challenges/:id/modifier-inscriptions',          'ChallengeController', 'modifierInscriptions');
+$router->post('/challenges/:id/supprimer-inscription',          'ChallengeController', 'supprimerInscription');
 
 // Membres
 $router->get('/membres',              'MembreController', 'index');

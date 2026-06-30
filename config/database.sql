@@ -114,13 +114,13 @@ CREATE TABLE inscriptions (
     tireur_type     ENUM('membre', 'externe')       NOT NULL,
     tireur_id       INT UNSIGNED                    NOT NULL,
     discipline_id   INT UNSIGNED                    NOT NULL,
-    categorie_id    INT UNSIGNED                    NOT NULL,
+    categorie_id    INT UNSIGNED                    NULL DEFAULT NULL,  -- à implémenter ultérieurement
     created_at      DATETIME                        NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
     UNIQUE KEY uk_inscription (challenge_id, tireur_type, tireur_id, discipline_id),
     CONSTRAINT fk_inscription_challenge  FOREIGN KEY (challenge_id)  REFERENCES challenges  (id) ON DELETE CASCADE,
     CONSTRAINT fk_inscription_discipline FOREIGN KEY (discipline_id) REFERENCES disciplines (id),
-    CONSTRAINT fk_inscription_categorie  FOREIGN KEY (categorie_id)  REFERENCES categories  (id)
+    -- FK categorie_id à ajouter quand les catégories seront implémentées
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ------------------------------------------------------------
