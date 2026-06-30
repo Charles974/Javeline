@@ -72,6 +72,51 @@ class InscriptionModel extends Model
     }
 
     /**
+     * Retourne les participants ayant un score, groupables par discipline, pour le classement.
+     * Si $disciplineCode est fourni, filtre sur cette discipline uniquement.
+     * Tri : code discipline ASC, puis règles de classement (total, mouflons, dindons, cochons, poulets) DESC.
+     */
+    public function findClassements(int $challengeId, ?int $disciplineCode = null): array
+    {
+        $sql = "SELECT
+                    d.code              AS discipline_code,
+                    d.libelle_fr        AS discipline_fr,
+                    CASE WHEN i.tireur_type = 'membre'
+                         THEN m.nom   ELSE e.nom   END AS nom,
+                    CASE WHEN i.tireur_type = 'membre'
+                         THEN m.prenom ELSE e.prenom END AS prenom,
+                    CASE WHEN i.tireur_type = 'externe'
+                         THEN e.club ELSE NULL END AS club,
+                    s.poulets,
+                    s.cochons,
+                    s.dindons,
+                    s.mouflons,
+                    (s.poulets + s.cochons + s.dindons + s.mouflons) AS total
+                FROM inscriptions i
+                JOIN disciplines d    ON d.id = i.discipline_id
+                LEFT JOIN membres m   ON i.tireur_type = 'membre'   AND m.id = i.tireur_id
+                LEFT JOIN externes e  ON i.tireur_type = 'externe'  AND e.id = i.tireur_id
+                JOIN matchs ma        ON ma.inscription_id = i.id
+                JOIN scores s         ON s.match_id = ma.id
+                WHERE i.challenge_id = :cid";
+
+        $params = [':cid' => $challengeId];
+
+        if ($disciplineCode !== null) {
+            $sql .= ' AND d.code = :dcode';
+            $params[':dcode'] = $disciplineCode;
+        }
+
+        $sql .= ' ORDER BY d.code ASC, total DESC, s.mouflons DESC,
+                            s.dindons DESC, s.cochons DESC, s.poulets DESC,
+                            nom ASC, prenom ASC';
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll();
+    }
+
+    /**
      * Enregistre (insert ou update) les scores d'une inscription.
      * Crée le match automatiquement si aucun plan de tir n'a encore été assigné.
      * Retourne un tableau avec match_id et score_id.

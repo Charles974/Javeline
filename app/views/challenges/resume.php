@@ -83,11 +83,30 @@
             </select>
         </div>
 
-        <div class="d-flex align-items-center gap-2 ms-auto">
+        <!-- Légende -->
+        <div class="d-flex align-items-center gap-2">
             <span class="resume-legende-puce resume-puce-score"></span>
             <span class="resume-legende-texte">Score enregistré</span>
             <span class="resume-legende-puce resume-puce-attente ms-2"></span>
             <span class="resume-legende-texte">En attente</span>
+        </div>
+
+        <!-- Boutons classements -->
+        <div class="d-flex align-items-center gap-2 ms-auto">
+            <a href="<?= APP_URL ?>/challenges/<?= (int)$challenge['id'] ?>/classements"
+               target="_blank"
+               class="btn btn-sm btn-outline-primary"
+               aria-label="Générer le PDF de tous les classements">
+                Tous les classements
+            </a>
+            <button type="button"
+                    class="btn btn-sm btn-outline-secondary"
+                    id="btn-classement-filtre"
+                    disabled
+                    title="Sélectionnez d'abord une discipline dans le filtre"
+                    aria-label="Générer le PDF des classements selon le filtre discipline actif">
+                Classement avec filtre
+            </button>
         </div>
 
     </div>

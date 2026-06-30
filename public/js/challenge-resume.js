@@ -38,7 +38,26 @@ $(document).ready(function () {
     }
 
     $('input[name="filtre-tir"]').on('change', appliquerFiltres);
-    $('#filtre-discipline').on('change', appliquerFiltres);
+
+    $('#filtre-discipline').on('change', function () {
+        appliquerFiltres();
+        // Active / désactive le bouton classement-filtre selon qu'une discipline est sélectionnée
+        const actif = $(this).val() !== '';
+        $('#btn-classement-filtre')
+            .prop('disabled', !actif)
+            .toggleClass('btn-outline-secondary', !actif)
+            .toggleClass('btn-outline-primary',    actif);
+    });
+
+    // ----------------------------------------------------------------
+    // Bouton "Classement avec filtre" — ouvre la vue print filtrée
+    // ----------------------------------------------------------------
+    $('#btn-classement-filtre').on('click', function () {
+        const discipline = $('#filtre-discipline').val();
+        if (!discipline) return;
+        const url = APP_URL + '/challenges/' + CHALLENGE_ID + '/classements?discipline=' + encodeURIComponent(discipline);
+        window.open(url, '_blank');
+    });
 
     // ----------------------------------------------------------------
     // Tri des colonnes

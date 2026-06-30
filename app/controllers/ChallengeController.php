@@ -264,6 +264,75 @@ class ChallengeController extends Controller
     }
 
     // ----------------------------------------------------------------
+    // GET /challenges/:id/classements — classements imprimables (PDF)
+    // ----------------------------------------------------------------
+    public function classements(string $id): void
+    {
+        $id = (int) $id;
+        $challenge = $this->model->findById($id);
+        if (!$challenge) {
+            $this->erreur404();
+            return;
+        }
+
+        $disciplineCode = (isset($_GET['discipline']) && $_GET['discipline'] !== '')
+            ? (int)$_GET['discipline']
+            : null;
+
+        $rows = $this->inscriptions->findClassements($id, $disciplineCode);
+
+        // Grouper par discipline
+        $groupes = [];
+        foreach ($rows as $row) {
+            $code = (int)$row['discipline_code'];
+            if (!isset($groupes[$code])) {
+                $groupes[$code] = ['libelle' => $row['discipline_fr'], 'tireurs' => []];
+            }
+            $groupes[$code]['tireurs'][] = $row;
+        }
+
+        // Calcul des rangs et médailles par discipline
+        foreach ($groupes as $code => &$groupe) {
+            // Passe 1 : assigner les rangs (ex-æquo = même rang, rang suivant = position réelle)
+            foreach ($groupe['tireurs'] as $i => &$t) {
+                if ($i === 0) {
+                    $t['rang'] = 1;
+                } else {
+                    $prev      = $groupe['tireurs'][$i - 1];
+                    $memeScore = (int)$t['total']    === (int)$prev['total']
+                              && (int)$t['mouflons'] === (int)$prev['mouflons']
+                              && (int)$t['dindons']  === (int)$prev['dindons']
+                              && (int)$t['cochons']  === (int)$prev['cochons']
+                              && (int)$t['poulets']  === (int)$prev['poulets'];
+                    $t['rang'] = $memeScore ? $prev['rang'] : $i + 1;
+                }
+                $t['medaille'] = match ($t['rang']) {
+                    1       => 'or',
+                    2       => 'argent',
+                    3       => 'bronze',
+                    default => null,
+                };
+            }
+            unset($t);
+
+            // Passe 2 : marquer les ex-æquos (plusieurs tireurs au même rang)
+            $compteRangs = array_count_values(array_column($groupe['tireurs'], 'rang'));
+            foreach ($groupe['tireurs'] as &$t) {
+                $t['exaequo'] = $compteRangs[$t['rang']] > 1;
+            }
+            unset($t);
+        }
+        unset($groupe);
+
+        $this->render('challenges/classements', [
+            'titrePage'      => 'Classements — ' . htmlspecialchars($challenge['libelle']),
+            'challenge'      => $challenge,
+            'groupes'        => $groupes,
+            'disciplineCode' => $disciplineCode,
+        ], 'print');
+    }
+
+    // ----------------------------------------------------------------
     // GET /challenges/:id/imprimer — fiche imprimable des inscrits
     // ----------------------------------------------------------------
     public function imprimer(string $id): void
