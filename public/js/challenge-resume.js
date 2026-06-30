@@ -260,8 +260,13 @@ $(document).ready(function () {
                 alert(rep.message || 'Erreur lors de l\'enregistrement.');
             }
         })
-        .fail(function () {
-            alert('Une erreur est survenue. Veuillez réessayer.');
+        .fail(function (xhr) {
+            let msg = 'Une erreur est survenue. Veuillez réessayer.';
+            try {
+                const data = JSON.parse(xhr.responseText);
+                if (data.message) msg = data.message;
+            } catch (e) { /* réponse non JSON */ }
+            alert(msg);
         })
         .always(function () {
             $btn.prop('disabled', false).text('Enregistrer');

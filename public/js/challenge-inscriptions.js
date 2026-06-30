@@ -76,7 +76,8 @@ $(document).ready(function () {
     // ----------------------------------------------------------------
     // Clic sur un inscrit → ouvre en mode modification
     // ----------------------------------------------------------------
-    $(document).on('click', '.ligne-inscrit', function () {
+    $(document).on('click', '.ligne-inscrit', function (e) {
+        if ($(e.target).closest('.btn-supprimer-inscription').length) return;
         const tireur = {
             type   : $(this).data('tireur-type'),
             id     : $(this).data('tireur-id'),
@@ -255,12 +256,12 @@ $(document).ready(function () {
 
         if (modif) {
             $titreP.text('Modifier les disciplines');
-            $btnAjouter.hide();
-            $btnModifier.show();
+            $btnAjouter.attr('hidden', true);
+            $btnModifier.removeAttr('hidden');
         } else {
             $titreP.text('Inscription au challenge');
-            $btnAjouter.show();
-            $btnModifier.hide();
+            $btnAjouter.removeAttr('hidden');
+            $btnModifier.attr('hidden', true);
         }
 
         cacherErreur();

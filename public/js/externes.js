@@ -5,10 +5,11 @@ $(document).ready(function () {
     const $form        = $('#form-externe');
     const $titreForm   = $('#form-titre');
     const $idChamp     = $('#externe-id');
-    const $btnAjouter  = $('#btn-ajouter');
-    const $btnModifier = $('#btn-modifier');
-    const $btnImprimer = $('#btn-imprimer');
-    const $btnReset    = $('#btn-reset');
+    const $btnAjouter   = $('#btn-ajouter');
+    const $btnModifier  = $('#btn-modifier');
+    const $btnImprimer  = $('#btn-imprimer');
+    const $btnSupprimer = $('#btn-supprimer');
+    const $btnReset     = $('#btn-reset');
     const $erreurs     = $('#form-erreurs');
     const $alerte      = $('#externes-alerte');
 
@@ -21,31 +22,35 @@ $(document).ready(function () {
         const $ligne = $(this);
         const id = $ligne.data('id');
 
-        $.getJSON(APP_URL + '/externes/get/' + id, function (data) {
-            if (!data.success) return;
+        // Active les boutons et surligne immédiatement
+        $idChamp.val(id);
+        $titreForm.text('Modifier le tireur');
+        $btnAjouter.prop('disabled', true);
+        $btnModifier.prop('disabled', false);
+        $btnImprimer.prop('disabled', false);
+        $btnSupprimer.prop('disabled', false);
+        $('.ligne-externe').removeClass('ligne-selectionnee');
+        $ligne.addClass('ligne-selectionnee');
+        cacherErreur();
+        cacherAlerte();
 
-            const ex = data.externe;
-            $idChamp.val(ex.id);
-            $('#externe-nom').val(ex.nom);
-            $('#externe-prenom').val(ex.prenom);
-            $('#externe-club').val(ex.club);
-            $('#externe-tel').val(ex.telephone || '');
-            $('#externe-email').val(ex.email || '');
-            $('#externe-etranger').prop('checked', ex.etranger == 1);
-
-            $titreForm.text('Modifier le tireur');
-            $btnAjouter.prop('disabled', true);
-            $btnModifier.prop('disabled', false);
-            $btnImprimer.prop('disabled', false);
-
-            $('.ligne-externe').removeClass('ligne-selectionnee');
-            $ligne.addClass('ligne-selectionnee');
-
-            cacherErreur();
-            cacherAlerte();
-
-            $('html, body').animate({ scrollTop: $form.offset().top - 20 }, 300);
-        });
+        // Charge les données complètes via AJAX pour remplir le formulaire
+        $.getJSON(APP_URL + '/externes/get/' + id)
+            .done(function (data) {
+                if (!data.success) return;
+                const ex = data.externe;
+                $('#externe-nom').val(ex.nom);
+                $('#externe-prenom').val(ex.prenom);
+                $('#externe-club').val(ex.club);
+                $('#externe-tel').val(ex.telephone || '');
+                $('#externe-email').val(ex.email || '');
+                $('#externe-etranger').prop('checked', ex.etranger == 1);
+                $('html, body').animate({ scrollTop: $form.offset().top - 20 }, 300);
+            })
+            .fail(function () {
+                afficherErreur(['Impossible de charger les données du tireur.']);
+                reinitialiserFormulaire();
+            });
     });
 
     // ----------------------------------------------------------------
@@ -114,6 +119,39 @@ $(document).ready(function () {
     });
 
     // ----------------------------------------------------------------
+    // Bouton Supprimer
+    // ----------------------------------------------------------------
+    $btnSupprimer.on('click', function () {
+        const id  = $idChamp.val();
+        const nom = $('#externe-nom').val() + ' ' + $('#externe-prenom').val();
+        if (!id) return;
+
+        if (!confirm('Supprimer le tireur « ' + nom + ' » ?\nCette action est irréversible.')) return;
+
+        $btnSupprimer.prop('disabled', true).text('Suppression…');
+
+        $.ajax({
+            url     : APP_URL + '/externes/supprimer',
+            method  : 'POST',
+            data    : { id: id },
+            dataType: 'json',
+        })
+        .done(function (rep) {
+            if (rep.success) {
+                mettreAJourListe(rep.html);
+                afficherAlerte(rep.message, 'succes');
+                reinitialiserFormulaire();
+            } else {
+                afficherErreur([rep.message]);
+            }
+        })
+        .fail(gererEchec)
+        .always(function () {
+            $btnSupprimer.prop('disabled', true).text('Supprimer');
+        });
+    });
+
+    // ----------------------------------------------------------------
     // Bouton Imprimer
     // ----------------------------------------------------------------
     $btnImprimer.on('click', function () {
@@ -140,6 +178,7 @@ $(document).ready(function () {
         $btnAjouter.prop('disabled', false);
         $btnModifier.prop('disabled', true);
         $btnImprimer.prop('disabled', true);
+        $btnSupprimer.prop('disabled', true);
         $('.ligne-externe').removeClass('ligne-selectionnee');
         cacherErreur();
     }

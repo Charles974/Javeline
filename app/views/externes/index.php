@@ -72,6 +72,9 @@
                         <button type="button" id="btn-imprimer" class="btn btn-secondary" disabled aria-label="Imprimer la fiche du tireur sélectionné">
                             Imprimer
                         </button>
+                        <button type="button" id="btn-supprimer" class="btn btn-danger" disabled aria-label="Supprimer le tireur sélectionné">
+                            Supprimer
+                        </button>
                         <button type="button" id="btn-reset" class="btn btn-outline-secondary" aria-label="Réinitialiser le formulaire">
                             Effacer
                         </button>
@@ -98,4 +101,4 @@
 
 </div>
 
-<script src="<?= APP_URL ?>/js/externes.js"></script>
+<script src="<?= APP_URL ?>/public/js/externes.js"></script>

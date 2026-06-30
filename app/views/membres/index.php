@@ -47,17 +47,10 @@
                         </div>
                     </div>
 
-                    <div class="row g-2">
-                        <div class="col-sm-6 mb-2">
-                            <label for="membre-categorie" class="form-label">Catégorie d'âge <span aria-hidden="true">*</span></label>
-                            <input type="text" class="form-control" id="membre-categorie" name="categorie_age"
-                                   required maxlength="50" autocomplete="off" aria-required="true">
-                        </div>
-                        <div class="col-sm-6 mb-2">
-                            <label for="membre-licence" class="form-label">N° de licence <span aria-hidden="true">*</span></label>
-                            <input type="text" class="form-control" id="membre-licence" name="numero_licence"
-                                   required maxlength="50" autocomplete="off" aria-required="true">
-                        </div>
+                    <div class="mb-2">
+                        <label for="membre-licence" class="form-label">N° de licence <span aria-hidden="true">*</span></label>
+                        <input type="text" class="form-control" id="membre-licence" name="numero_licence"
+                               required maxlength="50" autocomplete="off" aria-required="true">
                     </div>
 
                     <div class="mb-2">
@@ -76,7 +69,8 @@
                         <div class="col-sm-4 mb-2">
                             <label for="membre-cp" class="form-label">Code postal <span aria-hidden="true">*</span></label>
                             <input type="text" class="form-control" id="membre-cp" name="code_postal"
-                                   required maxlength="10" autocomplete="off" aria-required="true">
+                                   required maxlength="5" inputmode="numeric" pattern="[0-9]{5}"
+                                   autocomplete="off" aria-required="true">
                         </div>
                         <div class="col-sm-8 mb-2">
                             <label for="membre-ville" class="form-label">Ville <span aria-hidden="true">*</span></label>
@@ -89,7 +83,8 @@
                         <div class="col-sm-6 mb-2">
                             <label for="membre-tel" class="form-label">Téléphone <span aria-hidden="true">*</span></label>
                             <input type="tel" class="form-control" id="membre-tel" name="telephone"
-                                   required maxlength="20" autocomplete="off" aria-required="true">
+                                   required maxlength="15" inputmode="numeric" pattern="[0-9]+"
+                                   autocomplete="off" aria-required="true">
                         </div>
                         <div class="col-sm-6 mb-2">
                             <label for="membre-email" class="form-label">Email <span aria-hidden="true">*</span></label>
@@ -119,6 +114,9 @@
                         <button type="button" id="btn-imprimer" class="btn btn-secondary" disabled aria-label="Imprimer la fiche du membre sélectionné">
                             Imprimer
                         </button>
+                        <button type="button" id="btn-supprimer" class="btn btn-danger" disabled aria-label="Supprimer le membre sélectionné">
+                            Supprimer
+                        </button>
                         <button type="button" id="btn-reset" class="btn btn-outline-secondary" aria-label="Réinitialiser le formulaire">
                             Effacer
                         </button>
@@ -145,4 +143,4 @@
 
 </div>
 
-<script src="<?= APP_URL ?>/js/membres.js"></script>
+<script src="<?= APP_URL ?>/public/js/membres.js"></script>

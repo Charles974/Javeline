@@ -114,6 +114,30 @@ class ExterneController extends Controller
         ]);
     }
 
+    /**
+     * POST /externes/supprimer
+     * Retourne JSON.
+     */
+    public function supprimer(): void
+    {
+        $id = (int) ($_POST['id'] ?? 0);
+
+        if ($id <= 0 || !$this->model->findById($id)) {
+            $this->json(['success' => false, 'message' => 'Tireur introuvable.'], 404);
+        }
+
+        try {
+            $this->model->delete($id);
+        } catch (PDOException $e) {
+            $this->json(['success' => false, 'message' => 'Impossible de supprimer ce tireur (il est peut-être inscrit à un challenge).'], 500);
+        }
+
+        $externes = $this->model->findAll();
+        $html     = $this->renderPartiel('partials/externes_liste', ['externes' => $externes]);
+
+        $this->json(['success' => true, 'message' => 'Tireur supprimé.', 'html' => $html]);
+    }
+
     // ----------------------------------------------------------------
     // Méthodes privées
     // ----------------------------------------------------------------

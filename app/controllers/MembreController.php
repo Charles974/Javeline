@@ -122,6 +122,30 @@ class MembreController extends Controller
         ]);
     }
 
+    /**
+     * POST /membres/supprimer
+     * Retourne JSON.
+     */
+    public function supprimer(): void
+    {
+        $id = (int) ($_POST['id'] ?? 0);
+
+        if ($id <= 0 || !$this->model->findById($id)) {
+            $this->json(['success' => false, 'message' => 'Membre introuvable.'], 404);
+        }
+
+        try {
+            $this->model->delete($id);
+        } catch (PDOException $e) {
+            $this->json(['success' => false, 'message' => 'Impossible de supprimer ce membre (il est peut-être inscrit à un challenge).'], 500);
+        }
+
+        $membres = $this->model->findAll();
+        $html    = $this->renderPartiel('partials/membres_liste', ['membres' => $membres]);
+
+        $this->json(['success' => true, 'message' => 'Membre supprimé.', 'html' => $html]);
+    }
+
     // ----------------------------------------------------------------
     // Méthodes privées
     // ----------------------------------------------------------------
@@ -133,7 +157,6 @@ class MembreController extends Controller
             'prenom'            => trim($_POST['prenom']           ?? ''),
             'date_naissance'    => trim($_POST['date_naissance']   ?? ''),
             'lieu_naissance'    => trim($_POST['lieu_naissance']   ?? ''),
-            'categorie_age'     => trim($_POST['categorie_age']    ?? ''),
             'numero_licence'    => trim($_POST['numero_licence']   ?? ''),
             'adresse1'          => trim($_POST['adresse1']         ?? ''),
             'adresse2'          => trim($_POST['adresse2']         ?? '') ?: null,
@@ -154,7 +177,6 @@ class MembreController extends Controller
             'prenom'         => 'Le prénom',
             'date_naissance' => 'La date de naissance',
             'lieu_naissance' => 'Le lieu de naissance',
-            'categorie_age'  => 'La catégorie d\'âge',
             'numero_licence' => 'Le numéro de licence',
             'adresse1'       => 'L\'adresse',
             'code_postal'    => 'Le code postal',
@@ -169,6 +191,12 @@ class MembreController extends Controller
             }
         }
 
+        if ($data['code_postal'] !== '' && !ctype_digit($data['code_postal'])) {
+            $erreurs[] = 'Le code postal doit contenir uniquement des chiffres.';
+        }
+        if ($data['telephone'] !== '' && !ctype_digit($data['telephone'])) {
+            $erreurs[] = 'Le téléphone doit contenir uniquement des chiffres.';
+        }
         if ($data['email'] !== '' && !filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
             $erreurs[] = 'L\'adresse email n\'est pas valide.';
         }

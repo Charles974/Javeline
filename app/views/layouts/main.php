@@ -20,28 +20,23 @@
 
     <?php require APP_ROOT . '/app/views/partials/navbar.php'; ?>
 
-    <main class="container my-4" id="contenu-principal" role="main">
-        <?= $contenu ?? '' ?>
-    </main>
-
-    <?php require APP_ROOT . '/app/views/partials/footer.php'; ?>
-
-    <!-- jQuery -->
+    <!-- jQuery, Bootstrap JS et APP_URL chargés avant le contenu
+         pour que les scripts inline des vues y aient accès -->
     <script
         src="https://code.jquery.com/jquery-3.7.1.min.js"
         integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
         crossorigin="anonymous"
     ></script>
-
-    <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- Variables globales exposées au JS -->
     <script>
         const APP_URL = <?= json_encode(APP_URL, JSON_UNESCAPED_SLASHES) ?>;
     </script>
-
-    <!-- Script principal -->
     <script src="<?= APP_URL ?>/public/js/main.js"></script>
+
+    <main class="container my-4" id="contenu-principal" role="main">
+        <?= $contenu ?? '' ?>
+    </main>
+
+    <?php require APP_ROOT . '/app/views/partials/footer.php'; ?>
 </body>
 </html>

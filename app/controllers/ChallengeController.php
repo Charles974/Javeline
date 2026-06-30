@@ -198,10 +198,10 @@ class ChallengeController extends Controller
         }
 
         $inscriptionId = (int)($_POST['inscription_id'] ?? 0);
-        $poulets       = max(0, (int)($_POST['poulets']  ?? 0));
-        $cochons       = max(0, (int)($_POST['cochons']  ?? 0));
-        $dindons       = max(0, (int)($_POST['dindons']  ?? 0));
-        $mouflons      = max(0, (int)($_POST['mouflons'] ?? 0));
+        $poulets       = min(10, max(0, (int)($_POST['poulets']  ?? 0)));
+        $cochons       = min(10, max(0, (int)($_POST['cochons']  ?? 0)));
+        $dindons       = min(10, max(0, (int)($_POST['dindons']  ?? 0)));
+        $mouflons      = min(10, max(0, (int)($_POST['mouflons'] ?? 0)));
 
         if ($inscriptionId <= 0) {
             $this->json(['success' => false, 'message' => 'Inscription invalide.'], 400);
@@ -213,8 +213,8 @@ class ChallengeController extends Controller
                 $challenge['date_debut'],
                 $poulets, $cochons, $dindons, $mouflons
             );
-        } catch (PDOException $e) {
-            $this->json(['success' => false, 'message' => 'Erreur lors de l\'enregistrement.'], 500);
+        } catch (Throwable $e) {
+            $this->json(['success' => false, 'message' => 'Erreur : ' . $e->getMessage()], 500);
         }
 
         $this->json([
@@ -414,6 +414,19 @@ class ChallengeController extends Controller
         }
 
         return $erreurs;
+    }
+
+    // ----------------------------------------------------------------
+    // GET /challenges/historique
+    // ----------------------------------------------------------------
+    public function historique(): void
+    {
+        $challenges = $this->model->findTous();
+
+        $this->render('challenges/historique', [
+            'titrePage'  => 'Historique des challenges — ' . APP_NAME,
+            'challenges' => $challenges,
+        ]);
     }
 
     private function estDateValide(string $date): bool

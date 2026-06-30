@@ -294,4 +294,4 @@
     const CHALLENGE_ID      = <?= (int)$challenge['id'] ?>;
     const CHALLENGE_ARCHIVE = <?= $archive ? 'true' : 'false' ?>;
 </script>
-<script src="<?= APP_URL ?>/js/challenge-resume.js"></script>
+<script src="<?= APP_URL ?>/public/js/challenge-resume.js"></script>

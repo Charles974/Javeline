@@ -29,4 +29,19 @@ class ChallengeModel extends Model
 
         return $result ?: null;
     }
+
+    public function findTous(): array
+    {
+        $sql = "SELECT c.*,
+                    COUNT(DISTINCT CASE WHEN i.tireur_type = 'membre'  THEN i.tireur_id END) AS nb_membres,
+                    COUNT(DISTINCT CASE WHEN i.tireur_type = 'externe' THEN i.tireur_id END) AS nb_externes
+                FROM challenges c
+                LEFT JOIN inscriptions i ON i.challenge_id = c.id
+                GROUP BY c.id
+                ORDER BY c.date_debut DESC";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
 }

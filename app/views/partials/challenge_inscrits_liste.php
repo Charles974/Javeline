@@ -71,8 +71,7 @@ function familleDiscipline(int $code): string
                         <button type="button"
                                 class="btn btn-sm btn-outline-danger btn-supprimer-inscription"
                                 data-id="<?= (int)$inscrit['id'] ?>"
-                                aria-label="Supprimer l'inscription de <?= htmlspecialchars($inscrit['nom']) ?> pour <?= htmlspecialchars($inscrit['discipline_fr']) ?>"
-                                onclick="event.stopPropagation()">
+                                aria-label="Supprimer l'inscription de <?= htmlspecialchars($inscrit['nom']) ?> pour <?= htmlspecialchars($inscrit['discipline_fr']) ?>">
                             &times;
                         </button>
                     </td>

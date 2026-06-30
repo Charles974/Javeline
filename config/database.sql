@@ -18,13 +18,12 @@ CREATE TABLE membres (
     prenom              VARCHAR(100)    NOT NULL,
     date_naissance      DATE            NOT NULL,
     lieu_naissance      VARCHAR(150)    NOT NULL,
-    categorie_age       VARCHAR(50)     NOT NULL,
     numero_licence      VARCHAR(50)     NOT NULL UNIQUE,
     adresse1            VARCHAR(200)    NOT NULL,
     adresse2            VARCHAR(200)        NULL DEFAULT NULL,
-    code_postal         VARCHAR(10)     NOT NULL,
+    code_postal         CHAR(5)         NOT NULL,
     ville               VARCHAR(100)    NOT NULL,
-    telephone           VARCHAR(20)     NOT NULL,
+    telephone           VARCHAR(15)     NOT NULL,
     email               VARCHAR(150)    NOT NULL,
     certificat_medical  TINYINT(1)      NOT NULL DEFAULT 0,
     created_at          DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -59,23 +58,6 @@ CREATE TABLE challenges (
     PRIMARY KEY (id),
     CONSTRAINT chk_dates CHECK (date_fin >= date_debut)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- ------------------------------------------------------------
--- Catégories de tir (table de référence — données fixes, pas d'interface CRUD)
--- ------------------------------------------------------------
-CREATE TABLE categories (
-    id      INT UNSIGNED    NOT NULL AUTO_INCREMENT,
-    libelle VARCHAR(100)    NOT NULL,
-    PRIMARY KEY (id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- Données initiales — à compléter selon les catégories officielles de l'association
-INSERT INTO categories (libelle) VALUES
-    ('Junior'),
-    ('Senior'),
-    ('Senior 1'),
-    ('Senior 2'),
-    ('Senior 3');
 
 -- ------------------------------------------------------------
 -- Disciplines (table de référence — données fixes)
@@ -114,13 +96,11 @@ CREATE TABLE inscriptions (
     tireur_type     ENUM('membre', 'externe')       NOT NULL,
     tireur_id       INT UNSIGNED                    NOT NULL,
     discipline_id   INT UNSIGNED                    NOT NULL,
-    categorie_id    INT UNSIGNED                    NULL DEFAULT NULL,  -- à implémenter ultérieurement
     created_at      DATETIME                        NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
     UNIQUE KEY uk_inscription (challenge_id, tireur_type, tireur_id, discipline_id),
     CONSTRAINT fk_inscription_challenge  FOREIGN KEY (challenge_id)  REFERENCES challenges  (id) ON DELETE CASCADE,
-    CONSTRAINT fk_inscription_discipline FOREIGN KEY (discipline_id) REFERENCES disciplines (id),
-    -- FK categorie_id à ajouter quand les catégories seront implémentées
+    CONSTRAINT fk_inscription_discipline FOREIGN KEY (discipline_id) REFERENCES disciplines (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ------------------------------------------------------------
@@ -153,3 +133,19 @@ CREATE TABLE scores (
     UNIQUE KEY uk_score_match (match_id),
     CONSTRAINT fk_score_match FOREIGN KEY (match_id) REFERENCES matchs (id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ============================================================
+-- Migrations — à exécuter sur une base existante
+-- ============================================================
+
+-- Suppression de la colonne categorie_age (retirée de l'application)
+ALTER TABLE membres DROP COLUMN categorie_age;
+
+-- Typage numérique du code postal et du téléphone
+ALTER TABLE membres
+    MODIFY COLUMN code_postal CHAR(5)     NOT NULL,
+    MODIFY COLUMN telephone   VARCHAR(15) NOT NULL;
+
+-- Suppression de la colonne categorie_id dans inscriptions (concept de catégories supprimé)
+ALTER TABLE inscriptions DROP FOREIGN KEY fk_inscription_categorie;
+ALTER TABLE inscriptions DROP COLUMN categorie_id;

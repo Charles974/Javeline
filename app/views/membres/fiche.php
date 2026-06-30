@@ -27,10 +27,8 @@
             <td><?= htmlspecialchars($membre['lieu_naissance']) ?></td>
         </tr>
         <tr>
-            <th>Catégorie d'âge</th>
-            <td><?= htmlspecialchars($membre['categorie_age']) ?></td>
             <th>N° de licence</th>
-            <td><?= htmlspecialchars($membre['numero_licence']) ?></td>
+            <td colspan="3"><?= htmlspecialchars($membre['numero_licence']) ?></td>
         </tr>
         <tr>
             <th>Adresse</th>
