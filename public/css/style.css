@@ -117,6 +117,331 @@ main {
     line-height: 1.2;
 }
 
+/* --- En-tête de page --- */
+.page-header h1 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--couleur-primaire);
+    border-bottom: 2px solid var(--couleur-primaire);
+    padding-bottom: 0.5rem;
+}
+
+/* --- Cartes formulaire / liste --- */
+.form-card,
+.liste-card {
+    border: none;
+    border-radius: 0.75rem;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+}
+
+.card-header {
+    background-color: var(--couleur-primaire);
+    color: #fff;
+    border-radius: 0.75rem 0.75rem 0 0 !important;
+    padding: 0.75rem 1.25rem;
+}
+
+.card-titre {
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+/* --- Boutons d'action du formulaire --- */
+.form-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid #e9ecef;
+    margin-top: 0.5rem;
+}
+
+/* --- Erreurs inline formulaire --- */
+.form-erreurs {
+    padding: 0.75rem 1rem;
+    border-radius: 0.4rem;
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+.form-erreurs ul {
+    margin: 0;
+    padding-left: 1.2rem;
+}
+
+/* --- Alerte retour membres (succès / erreur) --- */
+.membres-alerte {
+    padding: 0.75rem 1.25rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+}
+
+.membres-alerte.alerte-succes {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.membres-alerte.alerte-erreur {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* --- Tableau des membres --- */
+.membres-table thead th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+}
+
+.membres-table tbody .ligne-membre {
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.membres-table tbody .ligne-membre:hover {
+    background-color: #eef2ff;
+}
+
+.membres-table tbody .ligne-selectionnee {
+    background-color: #dbe4ff !important;
+}
+
+.col-actions {
+    width: 1%;
+    white-space: nowrap;
+}
+
+.liste-vide {
+    padding: 2rem;
+    text-align: center;
+    color: #888;
+}
+
+/* --- Champ de recherche dans les listes de gauche --- */
+.dispo-recherche {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+    padding-bottom: 0.5rem;
+}
+
+/* --- Indice sous le bouton d'inscription --- */
+.dispo-hint {
+    font-size: 0.75rem;
+    color: #aaa;
+}
+
+/* --- Compteur de disciplines sélectionnées --- */
+.disc-compteur-badge {
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.2em 0.6em;
+    border-radius: 999px;
+    background-color: #dbe4ff;
+    color: var(--couleur-primaire);
+    transition: background-color 0.2s;
+}
+
+.disc-compteur-vide {
+    background-color: #f1f3f5;
+    color: #888;
+}
+
+/* --- Filtre catégories (dropdown) --- */
+.filtre-menu {
+    min-width: 220px;
+}
+
+.filtre-groupe-titre {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #888;
+    padding: 0.25rem 0.5rem;
+}
+
+.filtre-option {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.2rem 0.5rem;
+    cursor: pointer;
+    font-size: 0.875rem;
+    border-radius: 0.25rem;
+}
+
+.filtre-option:hover {
+    background-color: #f0f4ff;
+}
+
+/* --- Tri des colonnes --- */
+.col-sortable {
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+}
+
+.col-sortable:hover {
+    background-color: #e9ecef;
+}
+
+.sort-icone {
+    font-size: 0.7rem;
+    color: #999;
+}
+
+/* --- Zones tireurs disponibles (scrollables) --- */
+.dispo-zone {
+    max-height: 220px;
+    overflow-y: auto;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.dispo-table thead th {
+    position: sticky;
+    top: 0;
+    background-color: #f8f9fa;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    z-index: 1;
+}
+
+.dispo-table tbody .ligne-dispo {
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.12s ease;
+}
+
+.dispo-table tbody .ligne-dispo:hover {
+    background-color: #eef2ff;
+}
+
+.dispo-table tbody .ligne-selectionnee {
+    background-color: #dbe4ff !important;
+    font-weight: 600;
+}
+
+.liste-vide-sm {
+    padding: 1rem;
+    text-align: center;
+    color: #888;
+    font-size: 0.875rem;
+    margin: 0;
+}
+
+/* --- Panneau d'inscription --- */
+.tireur-info-bloc {
+    background-color: #f8f9fa;
+    border-radius: 0.4rem;
+    padding: 0.6rem 0.9rem;
+}
+
+.tireur-info-nom {
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: var(--couleur-primaire);
+}
+
+.tireur-info-detail {
+    font-size: 0.85rem;
+    color: #666;
+}
+
+/* --- Grille disciplines (2 colonnes) --- */
+.disciplines-grille {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.25rem 1rem;
+}
+
+.discipline-item .form-check-label {
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+
+.discipline-code {
+    display: inline-block;
+    min-width: 2.2rem;
+    font-weight: 600;
+    color: var(--couleur-primaire);
+    font-size: 0.8rem;
+}
+
+/* --- Table des inscrits --- */
+.inscrits-table {
+    font-size: 0.875rem;
+}
+
+.inscrits-table .premiere-ligne-tireur td {
+    border-top: 2px solid #dee2e6;
+}
+
+.badge-type {
+    display: inline-block;
+    padding: 0.15em 0.4em;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.badge-type-membre {
+    background-color: #d1ecf1;
+    color: #0c5460;
+}
+
+.badge-type-externe {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.inscrits-table .ligne-inscrit {
+    cursor: pointer;
+    transition: background-color 0.12s ease;
+}
+
+.inscrits-table .ligne-inscrit:hover {
+    background-color: #fff8e1;
+}
+
+/* --- Alerte succès (page d'accueil) --- */
+.alerte-succes {
+    max-width: 540px;
+    padding: 0.85rem 1.25rem;
+    border-radius: 0.5rem;
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+    font-weight: 500;
+    text-align: center;
+}
+
+/* --- Modal : message d'erreur inline --- */
+.modal-erreur {
+    padding: 0.75rem 1rem;
+    border-radius: 0.4rem;
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+.modal-erreur ul {
+    margin: 0;
+    padding-left: 1.2rem;
+}
+
 /* --- Navigation principale (boutons d'accueil) --- */
 .navigation-principale {
     padding: 1rem 0 3rem;

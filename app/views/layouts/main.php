@@ -40,6 +40,11 @@
         crossorigin="anonymous"
     ></script>
 
+    <!-- Variables globales exposées au JS -->
+    <script>
+        const APP_URL = <?= json_encode(APP_URL, JSON_UNESCAPED_SLASHES) ?>;
+    </script>
+
     <!-- Script principal -->
     <script src="<?= APP_URL ?>/public/js/main.js"></script>
 </body>
