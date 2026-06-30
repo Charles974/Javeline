@@ -11,7 +11,8 @@ $(document).ready(function () {
     const $form       = $('#form-challenge');
     const $btnValider = $('#btn-valider-challenge');
     const $erreur     = $('#modal-erreur');
-    const modal       = bootstrap.Modal.getOrCreateInstance(document.getElementById('modal-challenge'));
+    const modalEl     = document.getElementById('modal-challenge');
+    const modal       = modalEl ? bootstrap.Modal.getOrCreateInstance(modalEl) : null;
 
     // Réinitialise le formulaire et les messages à l'ouverture de la modal
     $('#modal-challenge').on('show.bs.modal', function () {

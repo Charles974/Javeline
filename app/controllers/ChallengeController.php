@@ -54,8 +54,9 @@ class ChallengeController extends Controller
     // ----------------------------------------------------------------
     // GET /challenges/:id — page de gestion des inscriptions
     // ----------------------------------------------------------------
-    public function detail(int $id): void
+    public function detail(string $id): void
     {
+        $id = (int) $id;
         $challenge = $this->model->findById($id);
 
         if (!$challenge) {
@@ -81,8 +82,9 @@ class ChallengeController extends Controller
     // ----------------------------------------------------------------
     // POST /challenges/:id/inscrire
     // ----------------------------------------------------------------
-    public function inscrire(int $id): void
+    public function inscrire(string $id): void
     {
+        $id = (int) $id;
         $challenge = $this->model->findById($id);
         if (!$challenge) {
             $this->json(['success' => false, 'message' => 'Challenge introuvable.'], 404);
@@ -113,8 +115,9 @@ class ChallengeController extends Controller
     // ----------------------------------------------------------------
     // POST /challenges/:id/modifier-inscriptions
     // ----------------------------------------------------------------
-    public function modifierInscriptions(int $id): void
+    public function modifierInscriptions(string $id): void
     {
+        $id = (int) $id;
         $challenge = $this->model->findById($id);
         if (!$challenge) {
             $this->json(['success' => false, 'message' => 'Challenge introuvable.'], 404);
@@ -145,8 +148,9 @@ class ChallengeController extends Controller
     // ----------------------------------------------------------------
     // POST /challenges/:id/supprimer-inscription
     // ----------------------------------------------------------------
-    public function supprimerInscription(int $id): void
+    public function supprimerInscription(string $id): void
     {
+        $id = (int) $id;
         $inscriptionId = (int)($_POST['inscription_id'] ?? 0);
 
         if ($inscriptionId <= 0) {
@@ -169,8 +173,9 @@ class ChallengeController extends Controller
     // ----------------------------------------------------------------
     // GET /challenges/:id/disciplines-tireur — JSON pour le formulaire
     // ----------------------------------------------------------------
-    public function disciplinesTireur(int $id): void
+    public function disciplinesTireur(string $id): void
     {
+        $id = (int) $id;
         $type     = $_GET['type']      ?? '';
         $tireurId = (int)($_GET['tid'] ?? 0);
 
@@ -181,8 +186,9 @@ class ChallengeController extends Controller
     // ----------------------------------------------------------------
     // GET /challenges/:id/imprimer — fiche imprimable des inscrits
     // ----------------------------------------------------------------
-    public function imprimer(int $id): void
+    public function imprimer(string $id): void
     {
+        $id = (int) $id;
         $challenge = $this->model->findById($id);
         if (!$challenge) {
             $this->erreur404();
