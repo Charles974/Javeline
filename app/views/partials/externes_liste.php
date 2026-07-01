@@ -6,14 +6,14 @@
     <p class="liste-vide">Aucun tireur non membre enregistré.</p>
 <?php else: ?>
     <div class="table-responsive">
-        <table class="table table-hover membres-table" aria-label="Liste des tireurs non membres">
+        <table class="table table-hover membres-table table-triable" aria-label="Liste des tireurs non membres">
             <thead>
                 <tr>
-                    <th scope="col">Nom</th>
-                    <th scope="col">Prénom</th>
-                    <th scope="col">Club</th>
-                    <th scope="col">Téléphone</th>
-                    <th scope="col">Email</th>
+                    <th scope="col" data-tri="texte" tabindex="0" role="button" aria-label="Trier par nom">Nom</th>
+                    <th scope="col" data-tri="texte" tabindex="0" role="button" aria-label="Trier par prénom">Prénom</th>
+                    <th scope="col" data-tri="texte" tabindex="0" role="button" aria-label="Trier par club">Club</th>
+                    <th scope="col" data-tri="texte" tabindex="0" role="button" aria-label="Trier par téléphone">Téléphone</th>
+                    <th scope="col" data-tri="texte" tabindex="0" role="button" aria-label="Trier par email">Email</th>
                     <th scope="col" class="col-actions">Actions</th>
                 </tr>
             </thead>

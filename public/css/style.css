@@ -231,6 +231,31 @@ main {
     background-color: #dbe4ff !important;
 }
 
+/* --- En-têtes triables --- */
+.table-triable thead th[data-tri] {
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+    padding-right: 1.4rem;
+}
+
+.table-triable thead th[data-tri]::after {
+    content: '\2195';
+    position: absolute;
+    right: 0.5rem;
+    opacity: 0.35;
+}
+
+.table-triable thead th[data-tri].tri-asc::after {
+    content: '\2191';
+    opacity: 1;
+}
+
+.table-triable thead th[data-tri].tri-desc::after {
+    content: '\2193';
+    opacity: 1;
+}
+
 .col-actions {
     width: 1%;
     white-space: nowrap;

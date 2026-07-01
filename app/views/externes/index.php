@@ -5,11 +5,11 @@
 <!-- Message retour AJAX -->
 <div id="externes-alerte" class="membres-alerte" role="alert" aria-live="polite" hidden></div>
 
-<div class="row g-4">
+<div class="row g-4 align-items-start">
 
     <!-- ====== Colonne gauche : formulaire ====== -->
     <div class="col-lg-5">
-        <div class="card form-card h-100">
+        <div class="card form-card">
             <div class="card-header">
                 <h2 class="card-titre" id="form-titre">Nouveau tireur</h2>
             </div>
@@ -57,7 +57,7 @@
                             <input type="checkbox" class="form-check-input" id="externe-etranger"
                                    name="etranger" value="1">
                             <label class="form-check-label" for="externe-etranger">
-                                Tireur étranger (libellés en anglais sur les feuilles de score)
+                                Tireur étranger
                             </label>
                         </div>
                     </div>

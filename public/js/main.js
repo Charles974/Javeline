@@ -80,4 +80,48 @@ $(document).ready(function () {
         }, 4000);
     }
 
+    // ----------------------------------------------------------------
+    // Tri générique des tableaux ".table-triable" (colonnes data-tri)
+    // Délégué sur le document car les tableaux sont rechargés en AJAX.
+    // ----------------------------------------------------------------
+    $(document).on('click keypress', '.table-triable thead th[data-tri]', function (e) {
+        if (e.type === 'keypress' && e.which !== 13) return;
+
+        const $th      = $(this);
+        const $table   = $th.closest('.table-triable');
+        const $tbody   = $table.find('tbody');
+        const index    = $th.index();
+        const type     = $th.data('tri');
+        const sensActuel = $th.data('sens-tri') === 'asc' ? 'asc' : null;
+        const sens     = sensActuel === 'asc' ? 'desc' : 'asc';
+
+        $table.find('thead th[data-tri]').removeData('sens-tri').removeClass('tri-asc tri-desc');
+        $th.data('sens-tri', sens).addClass(sens === 'asc' ? 'tri-asc' : 'tri-desc');
+
+        const lignes = $tbody.find('tr').get();
+
+        lignes.sort(function (ligneA, ligneB) {
+            const valeurA = valeurCellule(ligneA, index, type);
+            const valeurB = valeurCellule(ligneB, index, type);
+            let comparaison;
+            if (type === 'date') {
+                comparaison = new Date(valeurA) - new Date(valeurB);
+            } else {
+                comparaison = valeurA.localeCompare(valeurB, 'fr', { sensitivity: 'base' });
+            }
+            return sens === 'asc' ? comparaison : -comparaison;
+        });
+
+        $.each(lignes, function (i, ligne) {
+            $tbody.append(ligne);
+        });
+    });
+
+    function valeurCellule(ligne, index, type) {
+        const $cellule = $(ligne).find('td').eq(index);
+        const valeurAttribut = $cellule.data('valeur');
+        if (valeurAttribut !== undefined) return String(valeurAttribut);
+        return $cellule.text().trim();
+    }
+
 });
