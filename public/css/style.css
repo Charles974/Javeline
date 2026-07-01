@@ -13,6 +13,12 @@
 }
 
 /* --- Base --- */
+/* Garantit que l'attribut natif "hidden" masque toujours l'élément,
+   même quand une classe Bootstrap (btn, badge...) fixe un display explicite. */
+[hidden] {
+    display: none !important;
+}
+
 html,
 body {
     height: 100%;
@@ -375,42 +381,109 @@ main {
     margin: 0;
 }
 
-/* --- Panneau d'inscription --- */
-.tireur-info-bloc {
-    background-color: #f8f9fa;
-    border-radius: 0.4rem;
-    padding: 0.6rem 0.9rem;
-}
-
-.tireur-info-nom {
-    font-weight: 700;
-    font-size: 1.05rem;
-    color: var(--couleur-primaire);
-}
-
-.tireur-info-detail {
-    font-size: 0.85rem;
-    color: #666;
-}
-
-/* --- Grille disciplines (2 colonnes) --- */
-.disciplines-grille {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.25rem 1rem;
-}
-
-.discipline-item .form-check-label {
-    font-size: 0.85rem;
-    cursor: pointer;
-}
-
 .discipline-code {
     display: inline-block;
     min-width: 2.2rem;
     font-weight: 600;
     color: var(--couleur-primaire);
     font-size: 0.8rem;
+}
+
+/* --- Bouton de transfert entre les deux colonnes --- */
+.transfer-col {
+    flex: 0 0 auto;
+    padding: 0 0.25rem;
+}
+
+.btn-transfer {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    line-height: 1;
+    padding: 0;
+}
+
+/* --- Colonne droite : fiche tireur + inscrits, meme hauteur totale --- */
+.inscript-col {
+    min-height: 0;
+}
+
+.fiche-card,
+.inscrits-card {
+    flex: 1 1 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.fiche-body {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.inscrits-card .card-body {
+    flex: 1;
+    overflow-y: auto;
+}
+
+/* --- Fiche tireur : etat vide --- */
+.fiche-vide {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    margin: 0;
+    padding: 2rem;
+    text-align: center;
+    color: #888;
+    font-size: 0.9rem;
+}
+
+/* --- Fiche tireur : formulaire profil (2 colonnes) --- */
+.fiche-grille {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.6rem 1rem;
+}
+
+.fiche-grille .col-span-2 {
+    grid-column: span 2;
+}
+
+.fiche-form .form-label {
+    font-size: 0.8rem;
+    margin-bottom: 0.2rem;
+}
+
+.fiche-section-titre {
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--couleur-primaire);
+    margin: 0 0 0.5rem;
+}
+
+.fiche-separateur {
+    border: none;
+    border-top: 1px solid #e9ecef;
+    margin: 1rem 0;
+}
+
+/* --- Menu deroulant multi-choix des disciplines --- */
+.disc-dropdown-menu {
+    max-height: 300px;
+    overflow-y: auto;
+    min-width: 280px;
+}
+
+.disc-dropdown-toggle {
+    min-width: 220px;
+    text-align: left;
 }
 
 /* --- Table des inscrits --- */

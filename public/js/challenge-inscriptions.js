@@ -4,17 +4,24 @@ $(document).ready(function () {
 
     if (CHALLENGE_ARCHIVE) return;
 
-    const $panneau     = $('#panneau-inscription');
-    const $titreP      = $('#panneau-titre');
-    const $btnVers     = $('#btn-vers-inscription');
-    const $btnAjouter  = $('#btn-ajouter-insc');
-    const $btnModifier = $('#btn-modifier-insc');
-    const $btnAnnuler  = $('#btn-annuler-inscription');
-    const $erreurs     = $('#insc-erreurs');
-    const $alerte      = $('#insc-alerte');
-    const $form        = $('#form-inscription');
+    const $ficheVide    = $('#fiche-vide');
+    const $ficheContenu = $('#fiche-contenu');
+    const $ficheBadge   = $('#fiche-type-badge');
+    const $btnVers      = $('#btn-vers-inscription');
+    const $btnAjouter   = $('#btn-ajouter-insc');
+    const $btnModifier  = $('#btn-modifier-insc');
+    const $btnEnregistrerProfil = $('#btn-enregistrer-profil');
+    const $btnAnnulerProfil     = $('#btn-annuler-profil');
+    const $erreurs      = $('#insc-erreurs');
+    const $alerte       = $('#insc-alerte');
+    const $formProfil   = $('#form-profil');
+    const $form         = $('#form-inscription');
+    const $champsMembre  = $('#champs-membre');
+    const $champsExterne = $('#champs-externe');
 
     let tireurSelectionneGauche = null;
+    let tireurActuel   = null;   // { type, id } du tireur affiché dans la fiche
+    let profilOriginal = null;   // valeurs d'origine, pour le bouton Annuler
     let modeModification = false;
 
     // ----------------------------------------------------------------
@@ -47,11 +54,11 @@ $(document).ready(function () {
     });
 
     // ----------------------------------------------------------------
-    // Double-clic : ouvre directement le panneau (point 2)
+    // Double-clic : ouvre directement la fiche (point 2)
     // ----------------------------------------------------------------
     $(document).on('dblclick', '.ligne-dispo', function () {
         tireurSelectionneGauche = extraireTireurDispo($(this));
-        chargerPanneau(tireurSelectionneGauche, false, []);
+        chargerFiche(tireurSelectionneGauche, false, []);
     });
 
     function extraireTireurDispo($ligne) {
@@ -65,16 +72,16 @@ $(document).ready(function () {
     }
 
     // ----------------------------------------------------------------
-    // Bouton "Inscrire ce tireur →"
+    // Bouton central "→" : ouvre la fiche du tireur sélectionné à gauche
     // ----------------------------------------------------------------
     $btnVers.on('click', function () {
         if (tireurSelectionneGauche) {
-            chargerPanneau(tireurSelectionneGauche, false, []);
+            chargerFiche(tireurSelectionneGauche, false, []);
         }
     });
 
     // ----------------------------------------------------------------
-    // Clic sur un inscrit → ouvre en mode modification
+    // Clic sur un inscrit → ouvre la fiche en mode modification
     // ----------------------------------------------------------------
     $(document).on('click', '.ligne-inscrit', function (e) {
         if ($(e.target).closest('.btn-supprimer-inscription').length) return;
@@ -90,13 +97,13 @@ $(document).ready(function () {
             APP_URL + '/challenges/' + CHALLENGE_ID + '/disciplines-tireur',
             { type: tireur.type, tid: tireur.id },
             function (rep) {
-                chargerPanneau(tireur, true, rep.discipline_ids || []);
+                chargerFiche(tireur, true, rep.discipline_ids || []);
             }
         );
     });
 
     // ----------------------------------------------------------------
-    // Compteur de disciplines cochées (point 5)
+    // Compteur de disciplines cochées
     // ----------------------------------------------------------------
     $(document).on('change', '.disc-checkbox', function () {
         mettreAJourCompteurDisc();
@@ -177,25 +184,15 @@ $(document).ready(function () {
     });
 
     // ----------------------------------------------------------------
-    // Bouton Annuler
-    // ----------------------------------------------------------------
-    $btnAnnuler.on('click', function () {
-        fermerPanneau();
-    });
-
-    // ----------------------------------------------------------------
-    // Soumission : Ajouter
+    // Soumission : Ajouter / Mettre à jour l'inscription aux disciplines
     // ----------------------------------------------------------------
     $form.on('submit', function (e) {
         e.preventDefault();
-        soumettre('inscrire', 'Ajouter au challenge', $btnAjouter);
+        soumettreInscription('inscrire', 'Ajouter au challenge', $btnAjouter);
     });
 
-    // ----------------------------------------------------------------
-    // Bouton Mettre à jour
-    // ----------------------------------------------------------------
     $btnModifier.on('click', function () {
-        soumettre('modifier-inscriptions', 'Mettre à jour', $btnModifier);
+        soumettreInscription('modifier-inscriptions', 'Mettre à jour', $btnModifier);
     });
 
     // ----------------------------------------------------------------
@@ -215,7 +212,7 @@ $(document).ready(function () {
             if (rep.success) {
                 rafraichirPanneaux(rep.panneaux);
                 afficherAlerte(rep.message, 'succes');
-                fermerPanneau();
+                reinitialiserFiche();
             } else {
                 afficherAlerte(rep.message || 'Erreur lors de la suppression.', 'erreur');
             }
@@ -233,46 +230,167 @@ $(document).ready(function () {
     });
 
     // ----------------------------------------------------------------
+    // Enregistrement silencieux du profil (membre ou non membre)
+    // ----------------------------------------------------------------
+    $formProfil.on('submit', function (e) {
+        e.preventDefault();
+        if (!tireurActuel) return;
+
+        cacherErreur();
+        $btnEnregistrerProfil.prop('disabled', true).text('Enregistrement…');
+
+        const endpoint = tireurActuel.type === 'membre' ? '/membres/modifier' : '/externes/modifier';
+
+        $.ajax({
+            url     : APP_URL + endpoint,
+            method  : 'POST',
+            data    : $formProfil.serialize(),
+            dataType: 'json',
+        })
+        .done(function (rep) {
+            if (rep.success) {
+                profilOriginal = collecterValeursProfil(tireurActuel.type);
+                afficherAlerte('Fiche mise à jour.', 'succes');
+                rafraichirListesChallenge();
+            } else {
+                afficherErreur(rep.erreurs || [rep.message]);
+            }
+        })
+        .fail(function (xhr) {
+            try {
+                const data = JSON.parse(xhr.responseText);
+                if (data.erreurs) { afficherErreur(data.erreurs); return; }
+            } catch (e) { /* non JSON */ }
+            afficherErreur(['Une erreur est survenue. Veuillez réessayer.']);
+        })
+        .always(function () {
+            $btnEnregistrerProfil.prop('disabled', false).text('Enregistrer les modifications');
+        });
+    });
+
+    $btnAnnulerProfil.on('click', function () {
+        if (!tireurActuel || !profilOriginal) return;
+        appliquerValeursProfil(tireurActuel.type, profilOriginal);
+        cacherErreur();
+    });
+
+    // ----------------------------------------------------------------
     // Fonctions internes
     // ----------------------------------------------------------------
 
-    function chargerPanneau(tireur, modif, disciplineIds) {
+    function chargerFiche(tireur, modif, disciplineIds) {
         modeModification = modif;
+        tireurActuel = { type: tireur.type, id: tireur.id };
+
+        $ficheVide.attr('hidden', true);
+        $ficheContenu.removeAttr('hidden');
+
+        $ficheBadge.text(tireur.type === 'membre' ? 'Membre' : 'Non membre').removeAttr('hidden');
 
         $('#insc-tireur-type').val(tireur.type);
         $('#insc-tireur-id').val(tireur.id);
-        $('#insc-nom-affiche').text(tireur.nom + ' ' + tireur.prenom);
-
-        const typeLabel = tireur.type === 'membre' ? 'Membre' : 'Non membre';
-        const detail    = tireur.info ? typeLabel + ' — ' + tireur.info : typeLabel;
-        $('#insc-detail-affiche').text(detail);
 
         $('.disc-checkbox').prop('checked', false);
         $.each(disciplineIds, function (_, did) {
             $('.disc-checkbox[value="' + did + '"]').prop('checked', true);
         });
-
         mettreAJourCompteurDisc();
 
         if (modif) {
-            $titreP.text('Modifier les disciplines');
             $btnAjouter.attr('hidden', true);
             $btnModifier.removeAttr('hidden');
         } else {
-            $titreP.text('Inscription au challenge');
             $btnAjouter.removeAttr('hidden');
             $btnModifier.attr('hidden', true);
         }
 
         cacherErreur();
-        $panneau.removeAttr('hidden');
-        $('html, body').animate({ scrollTop: $panneau.offset().top - 20 }, 250);
+
+        // Charge le profil complet du tireur (pour l'édition à la volée)
+        const endpoint = tireur.type === 'membre' ? '/membres/get/' : '/externes/get/';
+        $.getJSON(APP_URL + endpoint + tireur.id)
+            .done(function (rep) {
+                if (!rep.success) return;
+                const data = tireur.type === 'membre' ? rep.membre : rep.externe;
+                appliquerValeursProfil(tireur.type, data);
+                profilOriginal = collecterValeursProfil(tireur.type);
+            })
+            .fail(function () {
+                afficherErreur(['Impossible de charger la fiche du tireur.']);
+            });
     }
 
-    function fermerPanneau() {
-        $panneau.attr('hidden', true);
+    function activerChampsFiche(type) {
+        const membre = type === 'membre';
+        $champsMembre.prop('hidden', !membre).find('input').prop('disabled', !membre);
+        $champsExterne.prop('hidden', membre).find('input').prop('disabled', membre);
+    }
+
+    function appliquerValeursProfil(type, data) {
+        activerChampsFiche(type);
+        $('#profil-id').val(data.id);
+
+        if (type === 'membre') {
+            $('#pm-nom').val(data.nom);
+            $('#pm-prenom').val(data.prenom);
+            $('#pm-naissance').val(data.date_naissance);
+            $('#pm-lieu').val(data.lieu_naissance);
+            $('#pm-licence').val(data.numero_licence);
+            $('#pm-adresse1').val(data.adresse1);
+            $('#pm-adresse2').val(data.adresse2 || '');
+            $('#pm-cp').val(data.code_postal);
+            $('#pm-ville').val(data.ville);
+            $('#pm-tel').val(data.telephone);
+            $('#pm-email').val(data.email);
+            $('#pm-certificat').prop('checked', data.certificat_medical == 1);
+        } else {
+            $('#pe-nom').val(data.nom);
+            $('#pe-prenom').val(data.prenom);
+            $('#pe-club').val(data.club);
+            $('#pe-tel').val(data.telephone || '');
+            $('#pe-email').val(data.email || '');
+            $('#pe-etranger').prop('checked', data.etranger == 1);
+        }
+    }
+
+    function collecterValeursProfil(type) {
+        if (type === 'membre') {
+            return {
+                id                : $('#profil-id').val(),
+                nom               : $('#pm-nom').val(),
+                prenom            : $('#pm-prenom').val(),
+                date_naissance    : $('#pm-naissance').val(),
+                lieu_naissance    : $('#pm-lieu').val(),
+                numero_licence    : $('#pm-licence').val(),
+                adresse1          : $('#pm-adresse1').val(),
+                adresse2          : $('#pm-adresse2').val(),
+                code_postal       : $('#pm-cp').val(),
+                ville             : $('#pm-ville').val(),
+                telephone         : $('#pm-tel').val(),
+                email             : $('#pm-email').val(),
+                certificat_medical: $('#pm-certificat').is(':checked') ? 1 : 0,
+            };
+        }
+        return {
+            id       : $('#profil-id').val(),
+            nom      : $('#pe-nom').val(),
+            prenom   : $('#pe-prenom').val(),
+            club     : $('#pe-club').val(),
+            telephone: $('#pe-tel').val(),
+            email    : $('#pe-email').val(),
+            etranger : $('#pe-etranger').is(':checked') ? 1 : 0,
+        };
+    }
+
+    function reinitialiserFiche() {
+        $ficheContenu.attr('hidden', true);
+        $ficheVide.removeAttr('hidden');
+        $ficheBadge.attr('hidden', true);
+        $formProfil[0].reset();
         $form[0].reset();
         modeModification = false;
+        tireurActuel = null;
+        profilOriginal = null;
         tireurSelectionneGauche = null;
         $('.ligne-dispo').removeClass('ligne-selectionnee');
         $btnVers.prop('disabled', true);
@@ -280,7 +398,7 @@ $(document).ready(function () {
         cacherErreur();
     }
 
-    function soumettre(endpoint, btnLabel, $btn) {
+    function soumettreInscription(endpoint, btnLabel, $btn) {
         cacherErreur();
         $btn.prop('disabled', true).text('Enregistrement…');
 
@@ -294,7 +412,7 @@ $(document).ready(function () {
             if (rep.success) {
                 rafraichirPanneaux(rep.panneaux);
                 afficherAlerte(rep.message, 'succes');
-                fermerPanneau();
+                reinitialiserFiche();
             } else {
                 afficherErreur(rep.erreurs || [rep.message]);
             }
@@ -308,6 +426,12 @@ $(document).ready(function () {
         })
         .always(function () {
             $btn.prop('disabled', false).text(btnLabel);
+        });
+    }
+
+    function rafraichirListesChallenge() {
+        $.getJSON(APP_URL + '/challenges/' + CHALLENGE_ID + '/panneaux', function (rep) {
+            if (rep.success) rafraichirPanneaux(rep.panneaux);
         });
     }
 

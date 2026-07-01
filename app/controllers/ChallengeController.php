@@ -70,13 +70,28 @@ class ChallengeController extends Controller
         $disciplines = $this->disciplines->findAll();
 
         $this->render('challenges/inscriptions', [
-            'titrePage'   => htmlspecialchars($challenge['libelle']) . ' — ' . APP_NAME,
-            'challenge'   => $challenge,
-            'membres'     => $membres,
-            'externes'    => $externes,
-            'inscrits'    => $inscrits,
-            'disciplines' => $disciplines,
+            'titrePage'             => htmlspecialchars($challenge['libelle']) . ' — ' . APP_NAME,
+            'challenge'             => $challenge,
+            'membres'               => $membres,
+            'externes'              => $externes,
+            'inscrits'              => $inscrits,
+            'disciplinesParFamille' => $this->grouperDisciplinesParFamille($disciplines),
         ]);
+    }
+
+    // ----------------------------------------------------------------
+    // GET /challenges/:id/panneaux — rafraîchit les listes après une
+    // modification de fiche tireur (sans recharger la page)
+    // ----------------------------------------------------------------
+    public function panneaux(string $id): void
+    {
+        $id = (int) $id;
+        $challenge = $this->model->findById($id);
+        if (!$challenge) {
+            $this->json(['success' => false, 'message' => 'Challenge introuvable.'], 404);
+        }
+
+        $this->json(['success' => true, 'panneaux' => $this->htmlPanneaux($id)]);
     }
 
     // ----------------------------------------------------------------
@@ -371,6 +386,34 @@ class ChallengeController extends Controller
             'externes' => $this->renderPartiel('partials/challenge_externes_dispo',  ['externes' => $externes, 'challengeId' => $challengeId]),
             'inscrits' => $this->renderPartiel('partials/challenge_inscrits_liste', ['inscrits' => $inscrits,  'challengeId' => $challengeId]),
         ];
+    }
+
+    /**
+     * Regroupe les disciplines par famille (mêmes bornes que le filtre de la liste des inscrits).
+     */
+    private function grouperDisciplinesParFamille(array $disciplines): array
+    {
+        $familles = [
+            'Gros Calibre'  => [400, 403],
+            'Petit Calibre' => [404, 407],
+            'Field'         => [408, 409],
+            'Carabine PC'   => [410, 411],
+            'Carabine GC'   => [412, 413],
+        ];
+
+        $groupes = array_fill_keys(array_keys($familles), []);
+
+        foreach ($disciplines as $d) {
+            $code = (int) $d['code'];
+            foreach ($familles as $nom => [$min, $max]) {
+                if ($code >= $min && $code <= $max) {
+                    $groupes[$nom][] = $d;
+                    break;
+                }
+            }
+        }
+
+        return array_filter($groupes);
     }
 
     private function validerInscription(string $type, int $tireurId, array $disciplineIds): array
