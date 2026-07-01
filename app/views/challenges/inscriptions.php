@@ -32,43 +32,47 @@
 <div class="alert alert-warning">Ce challenge est archivé. Les inscriptions sont en lecture seule.</div>
 <?php endif; ?>
 
-<div class="row g-3">
+<div class="row g-3 inscriptions-row">
 
     <!-- ===================================================
          COLONNE GAUCHE : tireurs disponibles
          =================================================== -->
     <div class="col-lg-5">
-        <div class="card form-card">
+        <div class="card form-card dispo-card">
 
             <!-- Membres disponibles -->
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h2 class="card-titre mb-0">Membres disponibles</h2>
-                <span class="badge bg-secondary" id="cpt-membres"><?= count($membres) ?></span>
-            </div>
-            <div class="dispo-recherche px-2 pt-2">
-                <input type="search"
-                       id="recherche-membres"
-                       class="form-control form-control-sm"
-                       placeholder="Rechercher un membre…"
-                       aria-label="Rechercher dans la liste des membres disponibles">
-            </div>
-            <div class="dispo-zone" id="zone-membres-dispo">
-                <?php require APP_ROOT . '/app/views/partials/challenge_membres_dispo.php'; ?>
+            <div class="dispo-section">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h2 class="card-titre mb-0">Membres disponibles</h2>
+                    <span class="badge bg-secondary" id="cpt-membres"><?= count($membres) ?></span>
+                </div>
+                <div class="dispo-recherche px-2 pt-2">
+                    <input type="search"
+                           id="recherche-membres"
+                           class="form-control form-control-sm"
+                           placeholder="Rechercher un membre…"
+                           aria-label="Rechercher dans la liste des membres disponibles">
+                </div>
+                <div class="dispo-zone" id="zone-membres-dispo">
+                    <?php require APP_ROOT . '/app/views/partials/challenge_membres_dispo.php'; ?>
+                </div>
             </div>
 
-            <div class="card-header d-flex justify-content-between align-items-center mt-1">
-                <h2 class="card-titre mb-0">Non membres disponibles</h2>
-                <span class="badge bg-secondary" id="cpt-externes"><?= count($externes) ?></span>
-            </div>
-            <div class="dispo-recherche px-2 pt-2">
-                <input type="search"
-                       id="recherche-externes"
-                       class="form-control form-control-sm"
-                       placeholder="Rechercher un non membre…"
-                       aria-label="Rechercher dans la liste des non membres disponibles">
-            </div>
-            <div class="dispo-zone" id="zone-externes-dispo">
-                <?php require APP_ROOT . '/app/views/partials/challenge_externes_dispo.php'; ?>
+            <div class="dispo-section">
+                <div class="card-header d-flex justify-content-between align-items-center mt-1">
+                    <h2 class="card-titre mb-0">Non membres disponibles</h2>
+                    <span class="badge bg-secondary" id="cpt-externes"><?= count($externes) ?></span>
+                </div>
+                <div class="dispo-recherche px-2 pt-2">
+                    <input type="search"
+                           id="recherche-externes"
+                           class="form-control form-control-sm"
+                           placeholder="Rechercher un non membre…"
+                           aria-label="Rechercher dans la liste des non membres disponibles">
+                </div>
+                <div class="dispo-zone" id="zone-externes-dispo">
+                    <?php require APP_ROOT . '/app/views/partials/challenge_externes_dispo.php'; ?>
+                </div>
             </div>
 
             <?php if (!$archive): ?>
