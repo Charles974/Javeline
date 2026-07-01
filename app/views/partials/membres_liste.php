@@ -6,14 +6,14 @@
     <p class="liste-vide">Aucun membre enregistré.</p>
 <?php else: ?>
     <div class="table-responsive">
-        <table class="table table-hover membres-table" aria-label="Liste des tireurs membres">
+        <table class="table table-hover membres-table table-triable" aria-label="Liste des tireurs membres">
             <thead>
                 <tr>
-                    <th scope="col">Nom</th>
-                    <th scope="col">Prénom</th>
-                    <th scope="col">Date de naissance</th>
-                    <th scope="col">Téléphone</th>
-                    <th scope="col">Email</th>
+                    <th scope="col" data-tri="texte" tabindex="0" role="button" aria-label="Trier par nom">Nom</th>
+                    <th scope="col" data-tri="texte" tabindex="0" role="button" aria-label="Trier par prénom">Prénom</th>
+                    <th scope="col" data-tri="date" tabindex="0" role="button" aria-label="Trier par date de naissance">Date de naissance</th>
+                    <th scope="col" data-tri="texte" tabindex="0" role="button" aria-label="Trier par téléphone">Téléphone</th>
+                    <th scope="col" data-tri="texte" tabindex="0" role="button" aria-label="Trier par email">Email</th>
                     <th scope="col" class="col-actions">Actions</th>
                 </tr>
             </thead>
@@ -31,7 +31,7 @@
                     aria-label="Sélectionner <?= htmlspecialchars($membre['nom'] . ' ' . $membre['prenom']) ?>">
                     <td><?= htmlspecialchars($membre['nom']) ?></td>
                     <td><?= htmlspecialchars($membre['prenom']) ?></td>
-                    <td><?= date('d/m/Y', strtotime($membre['date_naissance'])) ?></td>
+                    <td data-valeur="<?= htmlspecialchars($membre['date_naissance']) ?>"><?= date('d/m/Y', strtotime($membre['date_naissance'])) ?></td>
                     <td><?= htmlspecialchars($membre['telephone']) ?></td>
                     <td><?= htmlspecialchars($membre['email']) ?></td>
                     <td>
