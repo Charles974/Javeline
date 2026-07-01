@@ -15,6 +15,7 @@ $router->get('/challenges/:id/resume',                          'ChallengeContro
 $router->get('/challenges/:id/classements',                     'ChallengeController', 'classements');
 $router->post('/challenges/:id/saisir-score',                   'ChallengeController', 'saisirScore');
 $router->get('/challenges/:id/disciplines-tireur',              'ChallengeController', 'disciplinesTireur');
+$router->get('/challenges/:id/panneaux',                        'ChallengeController', 'panneaux');
 $router->get('/challenges/:id/imprimer',                        'ChallengeController', 'imprimer');
 $router->post('/challenges/:id/inscrire',                       'ChallengeController', 'inscrire');
 $router->post('/challenges/:id/modifier-inscriptions',          'ChallengeController', 'modifierInscriptions');

@@ -32,126 +32,244 @@
 <div class="alert alert-warning">Ce challenge est archivé. Les inscriptions sont en lecture seule.</div>
 <?php endif; ?>
 
-<div class="row g-3">
+<div class="row g-3 inscriptions-row">
 
     <!-- ===================================================
          COLONNE GAUCHE : tireurs disponibles
          =================================================== -->
     <div class="col-lg-5">
-        <div class="card form-card">
+        <div class="card form-card dispo-card">
 
             <!-- Membres disponibles -->
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h2 class="card-titre mb-0">Membres disponibles</h2>
-                <span class="badge bg-secondary" id="cpt-membres"><?= count($membres) ?></span>
-            </div>
-            <div class="dispo-recherche px-2 pt-2">
-                <input type="search"
-                       id="recherche-membres"
-                       class="form-control form-control-sm"
-                       placeholder="Rechercher un membre…"
-                       aria-label="Rechercher dans la liste des membres disponibles">
-            </div>
-            <div class="dispo-zone" id="zone-membres-dispo">
-                <?php require APP_ROOT . '/app/views/partials/challenge_membres_dispo.php'; ?>
+            <div class="dispo-section">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h2 class="card-titre mb-0">Membres disponibles</h2>
+                    <span class="badge bg-secondary" id="cpt-membres"><?= count($membres) ?></span>
+                </div>
+                <div class="dispo-recherche px-2 pt-2">
+                    <input type="search"
+                           id="recherche-membres"
+                           class="form-control form-control-sm"
+                           placeholder="Rechercher un membre…"
+                           aria-label="Rechercher dans la liste des membres disponibles">
+                </div>
+                <div class="dispo-zone" id="zone-membres-dispo">
+                    <?php require APP_ROOT . '/app/views/partials/challenge_membres_dispo.php'; ?>
+                </div>
             </div>
 
-            <div class="card-header d-flex justify-content-between align-items-center mt-1">
-                <h2 class="card-titre mb-0">Non membres disponibles</h2>
-                <span class="badge bg-secondary" id="cpt-externes"><?= count($externes) ?></span>
-            </div>
-            <div class="dispo-recherche px-2 pt-2">
-                <input type="search"
-                       id="recherche-externes"
-                       class="form-control form-control-sm"
-                       placeholder="Rechercher un non membre…"
-                       aria-label="Rechercher dans la liste des non membres disponibles">
-            </div>
-            <div class="dispo-zone" id="zone-externes-dispo">
-                <?php require APP_ROOT . '/app/views/partials/challenge_externes_dispo.php'; ?>
+            <div class="dispo-section">
+                <div class="card-header d-flex justify-content-between align-items-center mt-1">
+                    <h2 class="card-titre mb-0">Non membres disponibles</h2>
+                    <span class="badge bg-secondary" id="cpt-externes"><?= count($externes) ?></span>
+                </div>
+                <div class="dispo-recherche px-2 pt-2">
+                    <input type="search"
+                           id="recherche-externes"
+                           class="form-control form-control-sm"
+                           placeholder="Rechercher un non membre…"
+                           aria-label="Rechercher dans la liste des non membres disponibles">
+                </div>
+                <div class="dispo-zone" id="zone-externes-dispo">
+                    <?php require APP_ROOT . '/app/views/partials/challenge_externes_dispo.php'; ?>
+                </div>
             </div>
 
             <?php if (!$archive): ?>
             <div class="card-footer text-center">
-                <button type="button"
-                        id="btn-vers-inscription"
-                        class="btn btn-primary"
-                        disabled
-                        aria-label="Ouvrir le panneau d'inscription pour ce tireur">
-                    Inscrire ce tireur →
-                </button>
-                <p class="dispo-hint mt-1 mb-0">Double-clic sur un tireur pour accéder directement au formulaire</p>
+                <p class="dispo-hint mb-0">Double-clic sur un tireur pour accéder directement à sa fiche</p>
             </div>
             <?php endif; ?>
         </div>
     </div>
 
     <!-- ===================================================
-         COLONNE DROITE : formulaire + liste inscrits
+         COLONNE CENTRALE : bouton de transfert
          =================================================== -->
-    <div class="col-lg-7 d-flex flex-column gap-3">
+    <?php if (!$archive): ?>
+    <div class="col-lg-auto d-flex flex-column align-items-center justify-content-center transfer-col">
+        <button type="button"
+                id="btn-vers-inscription"
+                class="btn btn-primary btn-transfer"
+                disabled
+                aria-label="Inscrire ce tireur au challenge">
+            <span aria-hidden="true">&rarr;</span>
+        </button>
+    </div>
+    <?php endif; ?>
 
-        <!-- Panneau d'inscription -->
-        <div class="card form-card" id="panneau-inscription" hidden>
+    <!-- ===================================================
+         COLONNE DROITE : fiche tireur + liste inscrits
+         =================================================== -->
+    <div class="col-lg d-flex flex-column gap-3 inscript-col">
+
+        <!-- Fiche tireur (toujours visible) -->
+        <div class="card form-card fiche-card">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <h2 class="card-titre mb-0" id="panneau-titre">Inscription</h2>
-                <button type="button" class="btn-close btn-close-white" id="btn-annuler-inscription"
-                        aria-label="Annuler et fermer le panneau"></button>
+                <h2 class="card-titre mb-0">Fiche tireur</h2>
+                <span class="badge bg-info" id="fiche-type-badge" hidden></span>
             </div>
-            <div class="card-body">
+            <div class="card-body fiche-body">
 
-                <div id="insc-erreurs" class="form-erreurs" role="alert" aria-live="assertive" hidden></div>
+                <p class="fiche-vide" id="fiche-vide">
+                    Sélectionnez un tireur dans la liste de gauche pour afficher sa fiche,
+                    modifier ses informations ou l'inscrire au challenge.
+                </p>
 
-                <form id="form-inscription" novalidate>
-                    <input type="hidden" id="insc-challenge-id" value="<?= (int)$challenge['id'] ?>">
-                    <input type="hidden" id="insc-tireur-type" name="tireur_type" value="">
-                    <input type="hidden" id="insc-tireur-id"   name="tireur_id"   value="">
+                <div id="fiche-contenu" hidden>
 
-                    <div class="tireur-info-bloc mb-3">
-                        <div class="tireur-info-nom" id="insc-nom-affiche"></div>
-                        <div class="tireur-info-detail" id="insc-detail-affiche"></div>
-                    </div>
+                    <div id="insc-erreurs" class="form-erreurs" role="alert" aria-live="assertive" hidden></div>
 
-                    <!-- Disciplines -->
-                    <fieldset>
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <legend class="form-label fw-semibold mb-0">
-                                Disciplines <span aria-hidden="true">*</span>
-                            </legend>
-                            <span id="disc-compteur" class="disc-compteur-badge">0 sélectionnée</span>
-                        </div>
-                        <div class="disciplines-grille">
-                            <?php foreach ($disciplines as $d): ?>
-                            <div class="form-check discipline-item">
-                                <input type="checkbox"
-                                       class="form-check-input disc-checkbox"
-                                       id="disc-<?= (int)$d['code'] ?>"
-                                       name="discipline_ids[]"
-                                       value="<?= (int)$d['id'] ?>"
-                                       aria-label="<?= htmlspecialchars($d['libelle_fr']) ?>">
-                                <label class="form-check-label" for="disc-<?= (int)$d['code'] ?>">
-                                    <span class="discipline-code"><?= (int)$d['code'] ?></span>
-                                    <?= htmlspecialchars($d['libelle_fr']) ?>
-                                </label>
+                    <!-- Profil du tireur (éditable) -->
+                    <form id="form-profil" class="fiche-form" novalidate>
+                        <input type="hidden" id="profil-id" name="id" value="">
+
+                        <p class="fiche-section-titre">Informations du tireur</p>
+
+                        <!-- Champs membre -->
+                        <div id="champs-membre" class="fiche-grille mb-2" hidden>
+                            <div>
+                                <label for="pm-nom" class="form-label">Nom <span aria-hidden="true">*</span></label>
+                                <input type="text" class="form-control" id="pm-nom" name="nom" maxlength="100" autocomplete="off">
                             </div>
-                            <?php endforeach; ?>
+                            <div>
+                                <label for="pm-prenom" class="form-label">Prénom <span aria-hidden="true">*</span></label>
+                                <input type="text" class="form-control" id="pm-prenom" name="prenom" maxlength="100" autocomplete="off">
+                            </div>
+                            <div>
+                                <label for="pm-naissance" class="form-label">Date de naissance <span aria-hidden="true">*</span></label>
+                                <input type="date" class="form-control" id="pm-naissance" name="date_naissance">
+                            </div>
+                            <div>
+                                <label for="pm-lieu" class="form-label">Lieu de naissance <span aria-hidden="true">*</span></label>
+                                <input type="text" class="form-control" id="pm-lieu" name="lieu_naissance" maxlength="150" autocomplete="off">
+                            </div>
+                            <div class="col-span-2">
+                                <label for="pm-licence" class="form-label">N° de licence <span aria-hidden="true">*</span></label>
+                                <input type="text" class="form-control" id="pm-licence" name="numero_licence" maxlength="50" autocomplete="off">
+                            </div>
+                            <div class="col-span-2">
+                                <label for="pm-adresse1" class="form-label">Adresse <span aria-hidden="true">*</span></label>
+                                <input type="text" class="form-control" id="pm-adresse1" name="adresse1" maxlength="200" autocomplete="off">
+                            </div>
+                            <div class="col-span-2">
+                                <label for="pm-adresse2" class="form-label">Adresse (complément)</label>
+                                <input type="text" class="form-control" id="pm-adresse2" name="adresse2" maxlength="200" autocomplete="off">
+                            </div>
+                            <div>
+                                <label for="pm-cp" class="form-label">Code postal <span aria-hidden="true">*</span></label>
+                                <input type="text" class="form-control" id="pm-cp" name="code_postal" maxlength="5" inputmode="numeric" pattern="[0-9]{5}" autocomplete="off">
+                            </div>
+                            <div>
+                                <label for="pm-ville" class="form-label">Ville <span aria-hidden="true">*</span></label>
+                                <input type="text" class="form-control" id="pm-ville" name="ville" maxlength="100" autocomplete="off">
+                            </div>
+                            <div>
+                                <label for="pm-tel" class="form-label">Téléphone <span aria-hidden="true">*</span></label>
+                                <input type="tel" class="form-control" id="pm-tel" name="telephone" maxlength="15" inputmode="numeric" pattern="[0-9]+" autocomplete="off">
+                            </div>
+                            <div>
+                                <label for="pm-email" class="form-label">Email <span aria-hidden="true">*</span></label>
+                                <input type="email" class="form-control" id="pm-email" name="email" maxlength="150" autocomplete="off">
+                            </div>
+                            <div class="col-span-2 form-check">
+                                <input type="checkbox" class="form-check-input" id="pm-certificat" name="certificat_medical" value="1">
+                                <label class="form-check-label" for="pm-certificat">Certificat médical valide</label>
+                            </div>
                         </div>
-                    </fieldset>
 
-                    <div class="form-actions mt-3">
-                        <button type="submit" id="btn-ajouter-insc" class="btn btn-primary">
-                            Ajouter au challenge
-                        </button>
-                        <button type="button" id="btn-modifier-insc" class="btn btn-warning" hidden>
-                            Mettre à jour
-                        </button>
-                    </div>
-                </form>
+                        <!-- Champs non membre -->
+                        <div id="champs-externe" class="fiche-grille mb-2" hidden>
+                            <div>
+                                <label for="pe-nom" class="form-label">Nom <span aria-hidden="true">*</span></label>
+                                <input type="text" class="form-control" id="pe-nom" name="nom" maxlength="100" autocomplete="off">
+                            </div>
+                            <div>
+                                <label for="pe-prenom" class="form-label">Prénom <span aria-hidden="true">*</span></label>
+                                <input type="text" class="form-control" id="pe-prenom" name="prenom" maxlength="100" autocomplete="off">
+                            </div>
+                            <div class="col-span-2">
+                                <label for="pe-club" class="form-label">Club <span aria-hidden="true">*</span></label>
+                                <input type="text" class="form-control" id="pe-club" name="club" maxlength="150" autocomplete="off">
+                            </div>
+                            <div>
+                                <label for="pe-tel" class="form-label">Téléphone</label>
+                                <input type="tel" class="form-control" id="pe-tel" name="telephone" maxlength="20" autocomplete="off">
+                            </div>
+                            <div>
+                                <label for="pe-email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="pe-email" name="email" maxlength="150" autocomplete="off">
+                            </div>
+                            <div class="col-span-2 form-check">
+                                <input type="checkbox" class="form-check-input" id="pe-etranger" name="etranger" value="1">
+                                <label class="form-check-label" for="pe-etranger">Tireur étranger (libellés en anglais)</label>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" id="btn-enregistrer-profil" class="btn btn-success btn-sm">
+                                Enregistrer les modifications
+                            </button>
+                            <button type="button" id="btn-annuler-profil" class="btn btn-outline-secondary btn-sm">
+                                Annuler
+                            </button>
+                        </div>
+                    </form>
+
+                    <hr class="fiche-separateur">
+
+                    <!-- Inscription aux disciplines du challenge -->
+                    <form id="form-inscription" class="fiche-form" novalidate>
+                        <input type="hidden" id="insc-challenge-id" value="<?= (int)$challenge['id'] ?>">
+                        <input type="hidden" id="insc-tireur-type" name="tireur_type" value="">
+                        <input type="hidden" id="insc-tireur-id"   name="tireur_id"   value="">
+
+                        <p class="fiche-section-titre">Disciplines pour ce challenge</p>
+
+                        <div class="dropdown mb-2">
+                            <button type="button"
+                                    class="btn btn-outline-secondary disc-dropdown-toggle dropdown-toggle"
+                                    data-bs-toggle="dropdown"
+                                    data-bs-auto-close="outside"
+                                    aria-expanded="false"
+                                    aria-label="Choisir les disciplines">
+                                <span id="disc-compteur" class="disc-compteur-badge disc-compteur-vide">0 sélectionnée</span>
+                            </button>
+                            <ul class="dropdown-menu disc-dropdown-menu p-2" aria-label="Disciplines disponibles">
+                                <?php foreach ($disciplinesParFamille as $famille => $items): ?>
+                                <li class="filtre-groupe-titre"><?= htmlspecialchars($famille) ?></li>
+                                <?php foreach ($items as $d): ?>
+                                <li>
+                                    <label class="filtre-option">
+                                        <input type="checkbox"
+                                               class="disc-checkbox"
+                                               id="disc-<?= (int)$d['code'] ?>"
+                                               name="discipline_ids[]"
+                                               value="<?= (int)$d['id'] ?>">
+                                        <span class="discipline-code"><?= (int)$d['code'] ?></span>
+                                        <?= htmlspecialchars($d['libelle_fr']) ?>
+                                    </label>
+                                </li>
+                                <?php endforeach; ?>
+                                <?php endforeach; ?>
+                            </ul>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" id="btn-ajouter-insc" class="btn btn-primary btn-sm">
+                                Ajouter au challenge
+                            </button>
+                            <button type="button" id="btn-modifier-insc" class="btn btn-warning btn-sm" hidden>
+                                Mettre à jour
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
 
         <!-- Liste des inscrits -->
-        <div class="card liste-card">
+        <div class="card liste-card inscrits-card">
             <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
                 <h2 class="card-titre mb-0">Inscrits au challenge</h2>
                 <div class="d-flex align-items-center gap-2 flex-wrap">
