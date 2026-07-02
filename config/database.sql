@@ -138,14 +138,7 @@ CREATE TABLE scores (
 -- Migrations — à exécuter sur une base existante
 -- ============================================================
 
--- Suppression de la colonne categorie_age (retirée de l'application)
-ALTER TABLE membres DROP COLUMN categorie_age;
-
 -- Typage numérique du code postal et du téléphone
 ALTER TABLE membres
     MODIFY COLUMN code_postal CHAR(5)     NOT NULL,
     MODIFY COLUMN telephone   VARCHAR(15) NOT NULL;
-
--- Suppression de la colonne categorie_id dans inscriptions (concept de catégories supprimé)
-ALTER TABLE inscriptions DROP FOREIGN KEY fk_inscription_categorie;
-ALTER TABLE inscriptions DROP COLUMN categorie_id;
