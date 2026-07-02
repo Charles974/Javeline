@@ -103,7 +103,8 @@
          =================================================== -->
     <div class="col-lg d-flex flex-column gap-3 inscript-col">
 
-        <!-- Fiche tireur (toujours visible) -->
+        <!-- Fiche tireur (masquee pour un challenge archive) -->
+        <?php if (!$archive): ?>
         <div class="card form-card fiche-card">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h2 class="card-titre mb-0">Fiche tireur</h2>
@@ -267,6 +268,7 @@
                 </div>
             </div>
         </div>
+        <?php endif; ?>
 
         <!-- Liste des inscrits -->
         <div class="card liste-card inscrits-card">

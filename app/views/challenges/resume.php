@@ -99,6 +99,12 @@
                aria-label="Générer le PDF de tous les classements">
                 Tous les classements
             </a>
+            <a href="<?= APP_URL ?>/challenges/<?= (int)$challenge['id'] ?>/classements-combines"
+               target="_blank"
+               class="btn btn-sm btn-outline-primary"
+               aria-label="Générer le PDF des classements combinés">
+                Combinés
+            </a>
             <button type="button"
                     class="btn btn-sm btn-outline-secondary"
                     id="btn-classement-filtre"

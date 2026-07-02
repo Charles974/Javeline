@@ -13,6 +13,7 @@ $router->post('/challenges/creer',                              'ChallengeContro
 $router->get('/challenges/:id',                                 'ChallengeController', 'detail');
 $router->get('/challenges/:id/resume',                          'ChallengeController', 'resume');
 $router->get('/challenges/:id/classements',                     'ChallengeController', 'classements');
+$router->get('/challenges/:id/classements-combines',            'ChallengeController', 'classementsCombines');
 $router->post('/challenges/:id/saisir-score',                   'ChallengeController', 'saisirScore');
 $router->get('/challenges/:id/disciplines-tireur',              'ChallengeController', 'disciplinesTireur');
 $router->get('/challenges/:id/panneaux',                        'ChallengeController', 'panneaux');

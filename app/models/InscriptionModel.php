@@ -117,6 +117,58 @@ class InscriptionModel extends Model
     }
 
     /**
+     * Classement d'un combiné (aggregate) : additionne les scores d'un tireur
+     * sur plusieurs disciplines. Un tireur apparaît dès qu'il a au moins un
+     * score parmi les disciplines du combiné (total partiel accepté).
+     * Tri : règles de classement (total, mouflons, dindons, cochons, poulets) DESC.
+     */
+    public function findClassementCombine(int $challengeId, array $disciplineCodes): array
+    {
+        if (empty($disciplineCodes)) {
+            return [];
+        }
+
+        $params        = [':cid' => $challengeId];
+        $placeholders  = [];
+        foreach (array_values($disciplineCodes) as $i => $code) {
+            $cle               = ":code{$i}";
+            $placeholders[]    = $cle;
+            $params[$cle]      = $code;
+        }
+
+        $sql = "SELECT
+                    i.tireur_type,
+                    i.tireur_id,
+                    CASE WHEN i.tireur_type = 'membre'
+                         THEN m.nom   ELSE e.nom   END AS nom,
+                    CASE WHEN i.tireur_type = 'membre'
+                         THEN m.prenom ELSE e.prenom END AS prenom,
+                    CASE WHEN i.tireur_type = 'externe'
+                         THEN e.club ELSE NULL END AS club,
+                    COUNT(DISTINCT d.id)  AS nb_disciplines,
+                    SUM(s.poulets)        AS poulets,
+                    SUM(s.cochons)        AS cochons,
+                    SUM(s.dindons)        AS dindons,
+                    SUM(s.mouflons)       AS mouflons,
+                    SUM(s.poulets + s.cochons + s.dindons + s.mouflons) AS total
+                FROM inscriptions i
+                JOIN disciplines d    ON d.id = i.discipline_id
+                LEFT JOIN membres m   ON i.tireur_type = 'membre'   AND m.id = i.tireur_id
+                LEFT JOIN externes e  ON i.tireur_type = 'externe'  AND e.id = i.tireur_id
+                JOIN matchs ma        ON ma.inscription_id = i.id
+                JOIN scores s         ON s.match_id = ma.id
+                WHERE i.challenge_id = :cid
+                  AND d.code IN (" . implode(',', $placeholders) . ")
+                GROUP BY i.tireur_type, i.tireur_id
+                ORDER BY total DESC, mouflons DESC, dindons DESC, cochons DESC,
+                         poulets DESC, nom ASC, prenom ASC";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll();
+    }
+
+    /**
      * Enregistre (insert ou update) les scores d'une inscription.
      * Crée le match automatiquement si aucun plan de tir n'a encore été assigné.
      * Retourne un tableau avec match_id et score_id.

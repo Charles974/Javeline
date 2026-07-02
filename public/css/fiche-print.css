@@ -194,6 +194,20 @@ body {
     width: 2.2cm;
 }
 
+.classements-table .col-epreuves {
+    text-align: center;
+    width: 1.6cm;
+    color: #555;
+}
+
+.classements-libelle-en {
+    font-size: 9pt;
+    font-weight: 400;
+    font-style: italic;
+    opacity: 0.75;
+    margin-left: 0.4em;
+}
+
 /* Ligne ex-æquo */
 .classements-table .ligne-exaequo {
     background-color: #fafafa;

@@ -8,6 +8,16 @@ require_once APP_ROOT . '/app/models/ExterneModel.php';
 
 class ChallengeController extends Controller
 {
+    // Definition fixe des combines (aggregates) — cahier des charges §Combinés
+    private const COMBINES = [
+        'gros-calibre'  => ['libelle_fr' => 'Combiné Gros Calibre',             'libelle_en' => 'Aggregate Big Bore',        'codes' => [400, 401, 402, 403]],
+        'petit-calibre' => ['libelle_fr' => 'Combiné Petit Calibre',            'libelle_en' => 'Aggregate Small Bore',      'codes' => [404, 405, 406, 407]],
+        'field'         => ['libelle_fr' => 'Combiné Field',                   'libelle_en' => 'Aggregate Field',           'codes' => [408, 409]],
+        'carabine-pc'   => ['libelle_fr' => 'Combiné Carabine Petit Calibre',   'libelle_en' => 'Aggregate Small Bore Rifle','codes' => [410, 411]],
+        'carabine-gc'   => ['libelle_fr' => 'Combiné Carabine Gros Calibre',    'libelle_en' => 'Aggregate Big Bore Rifle',  'codes' => [412, 413]],
+        'debout'        => ['libelle_fr' => 'Combiné Debout',                  'libelle_en' => 'Aggregate Standing',        'codes' => [403, 407, 408, 409]],
+    ];
+
     private ChallengeModel    $model;
     private InscriptionModel  $inscriptions;
     private DisciplineModel   $disciplines;
@@ -306,36 +316,8 @@ class ChallengeController extends Controller
             $groupes[$code]['tireurs'][] = $row;
         }
 
-        // Calcul des rangs et médailles par discipline
-        foreach ($groupes as $code => &$groupe) {
-            // Passe 1 : assigner les rangs (ex-æquo = même rang, rang suivant = position réelle)
-            foreach ($groupe['tireurs'] as $i => &$t) {
-                if ($i === 0) {
-                    $t['rang'] = 1;
-                } else {
-                    $prev      = $groupe['tireurs'][$i - 1];
-                    $memeScore = (int)$t['total']    === (int)$prev['total']
-                              && (int)$t['mouflons'] === (int)$prev['mouflons']
-                              && (int)$t['dindons']  === (int)$prev['dindons']
-                              && (int)$t['cochons']  === (int)$prev['cochons']
-                              && (int)$t['poulets']  === (int)$prev['poulets'];
-                    $t['rang'] = $memeScore ? $prev['rang'] : $i + 1;
-                }
-                $t['medaille'] = match ($t['rang']) {
-                    1       => 'or',
-                    2       => 'argent',
-                    3       => 'bronze',
-                    default => null,
-                };
-            }
-            unset($t);
-
-            // Passe 2 : marquer les ex-æquos (plusieurs tireurs au même rang)
-            $compteRangs = array_count_values(array_column($groupe['tireurs'], 'rang'));
-            foreach ($groupe['tireurs'] as &$t) {
-                $t['exaequo'] = $compteRangs[$t['rang']] > 1;
-            }
-            unset($t);
+        foreach ($groupes as &$groupe) {
+            $this->calculerRangsEtMedailles($groupe['tireurs']);
         }
         unset($groupe);
 
@@ -344,6 +326,41 @@ class ChallengeController extends Controller
             'challenge'      => $challenge,
             'groupes'        => $groupes,
             'disciplineCode' => $disciplineCode,
+        ], 'print');
+    }
+
+    // ----------------------------------------------------------------
+    // GET /challenges/:id/classements-combines — classements combines (aggregates)
+    // ----------------------------------------------------------------
+    public function classementsCombines(string $id): void
+    {
+        $id = (int) $id;
+        $challenge = $this->model->findById($id);
+        if (!$challenge) {
+            $this->erreur404();
+            return;
+        }
+
+        $groupes = [];
+        foreach (self::COMBINES as $slug => $combine) {
+            $tireurs = $this->inscriptions->findClassementCombine($id, $combine['codes']);
+            if (empty($tireurs)) {
+                continue;
+            }
+            $this->calculerRangsEtMedailles($tireurs);
+            $groupes[$slug] = [
+                'libelle_fr'   => $combine['libelle_fr'],
+                'libelle_en'   => $combine['libelle_en'],
+                'codes'        => $combine['codes'],
+                'nb_epreuves'  => count($combine['codes']),
+                'tireurs'      => $tireurs,
+            ];
+        }
+
+        $this->render('challenges/classements_combines', [
+            'titrePage' => 'Classements combinés — ' . htmlspecialchars($challenge['libelle']),
+            'challenge' => $challenge,
+            'groupes'   => $groupes,
         ], 'print');
     }
 
@@ -386,6 +403,43 @@ class ChallengeController extends Controller
             'externes' => $this->renderPartiel('partials/challenge_externes_dispo',  ['externes' => $externes, 'challengeId' => $challengeId]),
             'inscrits' => $this->renderPartiel('partials/challenge_inscrits_liste', ['inscrits' => $inscrits,  'challengeId' => $challengeId]),
         ];
+    }
+
+    /**
+     * Calcule les rangs, médailles et ex-æquos d'une liste de tireurs déjà triée
+     * par les règles de classement (total, mouflons, dindons, cochons, poulets).
+     * Modifie le tableau passé par référence.
+     */
+    private function calculerRangsEtMedailles(array &$tireurs): void
+    {
+        // Passe 1 : assigner les rangs (ex-æquo = même rang, rang suivant = position réelle)
+        foreach ($tireurs as $i => &$t) {
+            if ($i === 0) {
+                $t['rang'] = 1;
+            } else {
+                $prev      = $tireurs[$i - 1];
+                $memeScore = (int)$t['total']    === (int)$prev['total']
+                          && (int)$t['mouflons'] === (int)$prev['mouflons']
+                          && (int)$t['dindons']  === (int)$prev['dindons']
+                          && (int)$t['cochons']  === (int)$prev['cochons']
+                          && (int)$t['poulets']  === (int)$prev['poulets'];
+                $t['rang'] = $memeScore ? $prev['rang'] : $i + 1;
+            }
+            $t['medaille'] = match ($t['rang']) {
+                1       => 'or',
+                2       => 'argent',
+                3       => 'bronze',
+                default => null,
+            };
+        }
+        unset($t);
+
+        // Passe 2 : marquer les ex-æquos (plusieurs tireurs au même rang)
+        $compteRangs = array_count_values(array_column($tireurs, 'rang'));
+        foreach ($tireurs as &$t) {
+            $t['exaequo'] = $compteRangs[$t['rang']] > 1;
+        }
+        unset($t);
     }
 
     /**

@@ -235,25 +235,29 @@ main {
 .table-triable thead th[data-tri] {
     cursor: pointer;
     user-select: none;
-    position: relative;
-    padding-right: 1.4rem;
+    white-space: nowrap;
+}
+
+.table-triable thead th[data-tri]:hover {
+    background-color: #e9ecef;
 }
 
 .table-triable thead th[data-tri]::after {
-    content: '\2195';
-    position: absolute;
-    right: 0.5rem;
-    opacity: 0.35;
+    content: '\25B2';
+    display: inline-block;
+    width: 0.9rem;
+    margin-left: 0.35rem;
+    font-size: 0.7rem;
+    color: transparent;
 }
 
 .table-triable thead th[data-tri].tri-asc::after {
-    content: '\2191';
-    opacity: 1;
+    color: #999;
 }
 
 .table-triable thead th[data-tri].tri-desc::after {
-    content: '\2193';
-    opacity: 1;
+    content: '\25BC';
+    color: #999;
 }
 
 .col-actions {
