@@ -5,10 +5,10 @@
 <!-- Message retour AJAX -->
 <div id="membres-alerte" class="membres-alerte" role="alert" aria-live="polite" hidden></div>
 
-<div class="row g-4 align-items-start">
+<div class="row g-4">
 
-    <!-- ====== Colonne gauche : formulaire ====== -->
-    <div class="col-lg-5">
+    <!-- ====== Formulaire ====== -->
+    <div class="col-12">
         <div class="card form-card">
             <div class="card-header">
                 <h2 class="card-titre" id="form-titre">Nouveau membre</h2>
@@ -126,9 +126,9 @@
         </div>
     </div>
 
-    <!-- ====== Colonne droite : liste des membres ====== -->
-    <div class="col-lg-7">
-        <div class="card liste-card h-100">
+    <!-- ====== Liste des membres ====== -->
+    <div class="col-12">
+        <div class="card liste-card">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h2 class="card-titre">Liste des membres</h2>
                 <span id="membres-compteur" class="badge bg-secondary">
