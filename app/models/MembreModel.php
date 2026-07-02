@@ -41,4 +41,31 @@ class MembreModel extends Model
         $stmt->execute([':licence' => $licence, ':id' => $excludeId]);
         return (bool) $stmt->fetchColumn();
     }
+
+    /**
+     * Retourne l'historique des challenges auxquels ce membre a participé,
+     * avec son score total (toutes disciplines confondues) pour chacun.
+     */
+    public function findHistoriqueChallenges(int $membreId): array
+    {
+        $sql = "SELECT
+                    c.id,
+                    c.libelle,
+                    c.date_debut,
+                    c.date_fin,
+                    c.statut,
+                    COUNT(DISTINCT i.discipline_id) AS nb_disciplines,
+                    COALESCE(SUM(s.poulets + s.cochons + s.dindons + s.mouflons), 0) AS total_score
+                FROM inscriptions i
+                JOIN challenges c   ON c.id = i.challenge_id
+                LEFT JOIN matchs ma ON ma.inscription_id = i.id
+                LEFT JOIN scores s  ON s.match_id = ma.id
+                WHERE i.tireur_type = 'membre' AND i.tireur_id = :mid
+                GROUP BY c.id, c.libelle, c.date_debut, c.date_fin, c.statut
+                ORDER BY c.date_debut DESC";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([':mid' => $membreId]);
+        return $stmt->fetchAll();
+    }
 }

@@ -1,5 +1,9 @@
 /* Fiche d'impression membre — styles dédiés à la vue imprimable */
 
+@page {
+    size: landscape;
+}
+
 * {
     box-sizing: border-box;
     margin: 0;

@@ -20,7 +20,7 @@
                         <th scope="col">Dates</th>
                         <th scope="col" class="text-center">Membres</th>
                         <th scope="col" class="text-center">Non membres</th>
-                        <th scope="col" class="text-center">Total inscrits</th>
+                        <th scope="col" class="text-center">Total matchs</th>
                         <th scope="col" class="text-center">Statut</th>
                         <th scope="col"></th>
                     </tr>
@@ -38,7 +38,7 @@
                         <td class="text-muted small"><?= $dates ?></td>
                         <td class="text-center"><?= (int)$c['nb_membres'] ?></td>
                         <td class="text-center"><?= (int)$c['nb_externes'] ?></td>
-                        <td class="text-center fw-semibold"><?= (int)$c['nb_membres'] + (int)$c['nb_externes'] ?></td>
+                        <td class="text-center fw-semibold"><?= (int)$c['nb_matchs'] ?></td>
                         <td class="text-center">
                             <?php if ($archive): ?>
                                 <span class="badge bg-secondary">Archivé</span>

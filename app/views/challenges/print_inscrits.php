@@ -29,7 +29,12 @@
                     <td><?= htmlspecialchars($inscrit['nom']) ?></td>
                     <td><?= htmlspecialchars($inscrit['prenom']) ?></td>
                     <td><?= $inscrit['tireur_type'] === 'membre' ? 'Membre' : 'Externe' ?></td>
-                    <td><?= (int)$inscrit['discipline_code'] ?> — <?= htmlspecialchars($inscrit['discipline_fr']) ?></td>
+                    <?php
+                        $libelleDiscipline = $inscrit['etranger']
+                            ? $inscrit['discipline_en']
+                            : $inscrit['discipline_fr'];
+                    ?>
+                    <td><?= (int)$inscrit['discipline_code'] ?> — <?= htmlspecialchars($libelleDiscipline) ?></td>
                 </tr>
                 <?php endforeach; ?>
             </tbody>

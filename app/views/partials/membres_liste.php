@@ -9,9 +9,9 @@
         <table class="table table-hover membres-table table-triable" aria-label="Liste des tireurs membres">
             <thead>
                 <tr>
-                    <th scope="col" data-tri="texte" tabindex="0" role="button" aria-label="Trier par nom">Nom</th>
-                    <th scope="col" data-tri="texte" tabindex="0" role="button" aria-label="Trier par prénom">Prénom</th>
-                    <th scope="col" data-tri="date" tabindex="0" role="button" aria-label="Trier par date de naissance">Date de naissance</th>
+                    <th scope="col" class="col-nom" data-tri="texte" tabindex="0" role="button" aria-label="Trier par nom">Nom</th>
+                    <th scope="col" class="col-prenom" data-tri="texte" tabindex="0" role="button" aria-label="Trier par prénom">Prénom</th>
+                    <th scope="col" class="col-naissance" data-tri="date" tabindex="0" role="button" aria-label="Trier par date de naissance">Date de naissance</th>
                     <th scope="col" data-tri="texte" tabindex="0" role="button" aria-label="Trier par téléphone">Téléphone</th>
                     <th scope="col" data-tri="texte" tabindex="0" role="button" aria-label="Trier par email">Email</th>
                     <th scope="col" class="col-actions">Actions</th>

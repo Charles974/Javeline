@@ -115,6 +115,28 @@ class ExterneController extends Controller
     }
 
     /**
+     * GET /externes/historique/:id
+     * Liste des challenges auxquels le tireur externe a participé, avec son score.
+     */
+    public function historique(int $id): void
+    {
+        $externe = $this->model->findById($id);
+
+        if (!$externe) {
+            $this->erreur404();
+            return;
+        }
+
+        $challenges = $this->model->findHistoriqueChallenges($id);
+
+        $this->render('externes/historique', [
+            'titrePage'  => 'Historique — ' . htmlspecialchars($externe['nom'] . ' ' . $externe['prenom']) . ' — ' . APP_NAME,
+            'externe'    => $externe,
+            'challenges' => $challenges,
+        ]);
+    }
+
+    /**
      * POST /externes/supprimer
      * Retourne JSON.
      */
@@ -148,7 +170,7 @@ class ExterneController extends Controller
             'nom'       => trim($_POST['nom']       ?? ''),
             'prenom'    => trim($_POST['prenom']    ?? ''),
             'club'      => trim($_POST['club']      ?? ''),
-            'telephone' => trim($_POST['telephone'] ?? '') ?: null,
+            'telephone' => str_replace(' ', '', trim($_POST['telephone'] ?? '')) ?: null,
             'email'     => trim($_POST['email']     ?? '') ?: null,
             'etranger'  => isset($_POST['etranger']) ? 1 : 0,
         ];

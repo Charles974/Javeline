@@ -257,6 +257,83 @@ class ChallengeController extends Controller
     }
 
     // ----------------------------------------------------------------
+    // POST /challenges/:id/modifier-horaire
+    // Met à jour le plan de tir (date/heure) d'une inscription.
+    // N'empêche jamais l'enregistrement : un chevauchement d'horaires pour
+    // le même tireur ne déclenche qu'un avertissement (non bloquant).
+    // ----------------------------------------------------------------
+    public function modifierHoraire(string $id): void
+    {
+        $id = (int) $id;
+        $challenge = $this->model->findById($id);
+        if (!$challenge) {
+            $this->json(['success' => false, 'message' => 'Challenge introuvable.'], 404);
+        }
+        if ($challenge['statut'] === 'archive') {
+            $this->json(['success' => false, 'message' => 'Ce challenge est archivé.'], 403);
+        }
+
+        $inscriptionId = (int)($_POST['inscription_id'] ?? 0);
+        $dateMatch     = trim($_POST['date_match']  ?? '');
+        $heureDebut    = trim($_POST['heure_debut'] ?? '');
+        $heureFin      = trim($_POST['heure_fin']   ?? '');
+
+        $infos = $inscriptionId > 0 ? $this->inscriptions->findInfosTireur($inscriptionId) : false;
+        if (!$infos || (int)$infos['challenge_id'] !== $id) {
+            $this->json(['success' => false, 'message' => 'Inscription introuvable pour ce challenge.'], 404);
+        }
+
+        $erreurs = [];
+        if (!$this->estDateValide($dateMatch)) {
+            $erreurs[] = 'La date du match est invalide.';
+        }
+        if (!$this->estHeureValide($heureDebut)) {
+            $erreurs[] = 'L\'heure de début est invalide.';
+        }
+        if (!$this->estHeureValide($heureFin)) {
+            $erreurs[] = 'L\'heure de fin est invalide.';
+        }
+        if (empty($erreurs) && $heureFin <= $heureDebut) {
+            $erreurs[] = 'L\'heure de fin doit être postérieure à l\'heure de début.';
+        }
+
+        if (!empty($erreurs)) {
+            $this->json(['success' => false, 'erreurs' => $erreurs], 422);
+        }
+
+        $this->inscriptions->modifierHoraire($inscriptionId, $dateMatch, $heureDebut, $heureFin);
+
+        // Détection de chevauchement (avertissement uniquement, non bloquant)
+        $autresMatchs = $this->inscriptions->findAutresMatchsTireur(
+            $id, $infos['tireur_type'], (int)$infos['tireur_id'], $inscriptionId
+        );
+
+        $conflits = [];
+        foreach ($autresMatchs as $m) {
+            if ($m['date_match'] === $dateMatch
+                && $heureDebut < $m['heure_fin']
+                && $m['heure_debut'] < $heureFin
+            ) {
+                $conflits[] = $m['discipline_code'] . ' — ' . $m['discipline_fr']
+                    . ' (' . substr($m['heure_debut'], 0, 5) . '–' . substr($m['heure_fin'], 0, 5) . ')';
+            }
+        }
+
+        $this->json([
+            'success'        => true,
+            'message'        => 'Horaire mis à jour.',
+            'inscription_id' => $inscriptionId,
+            'date_match'     => $dateMatch,
+            'heure_debut'    => $heureDebut,
+            'heure_fin'      => $heureFin,
+            'chevauchement'  => !empty($conflits),
+            'avertissement'  => !empty($conflits)
+                ? 'Chevauchement d\'horaire avec : ' . implode(', ', $conflits)
+                : null,
+        ]);
+    }
+
+    // ----------------------------------------------------------------
     // GET /challenges/:id/resume — tableau de bord des participants
     // ----------------------------------------------------------------
     public function resume(string $id): void
@@ -382,6 +459,27 @@ class ChallengeController extends Controller
             'titrePage' => 'Inscrits — ' . htmlspecialchars($challenge['libelle']),
             'challenge' => $challenge,
             'inscrits'  => $inscrits,
+        ], 'print');
+    }
+
+    // ----------------------------------------------------------------
+    // GET /challenges/:id/planning — planning imprimable des matchs prévus
+    // ----------------------------------------------------------------
+    public function planning(string $id): void
+    {
+        $id = (int) $id;
+        $challenge = $this->model->findById($id);
+        if (!$challenge) {
+            $this->erreur404();
+            return;
+        }
+
+        $planning = $this->inscriptions->findPlanning($id);
+
+        $this->render('challenges/print_planning', [
+            'titrePage' => 'Planning — ' . htmlspecialchars($challenge['libelle']),
+            'challenge' => $challenge,
+            'planning'  => $planning,
         ], 'print');
     }
 
@@ -530,5 +628,11 @@ class ChallengeController extends Controller
     {
         $d = DateTime::createFromFormat('Y-m-d', $date);
         return $d && $d->format('Y-m-d') === $date;
+    }
+
+    private function estHeureValide(string $heure): bool
+    {
+        $h = DateTime::createFromFormat('H:i', $heure);
+        return $h && $h->format('H:i') === $heure;
     }
 }
