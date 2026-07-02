@@ -123,6 +123,28 @@ class MembreController extends Controller
     }
 
     /**
+     * GET /membres/historique/:id
+     * Liste des challenges auxquels le membre a participé, avec son score.
+     */
+    public function historique(int $id): void
+    {
+        $membre = $this->model->findById($id);
+
+        if (!$membre) {
+            $this->erreur404();
+            return;
+        }
+
+        $challenges = $this->model->findHistoriqueChallenges($id);
+
+        $this->render('membres/historique', [
+            'titrePage'  => 'Historique — ' . htmlspecialchars($membre['nom'] . ' ' . $membre['prenom']) . ' — ' . APP_NAME,
+            'membre'     => $membre,
+            'challenges' => $challenges,
+        ]);
+    }
+
+    /**
      * POST /membres/supprimer
      * Retourne JSON.
      */
@@ -162,7 +184,7 @@ class MembreController extends Controller
             'adresse2'          => trim($_POST['adresse2']         ?? '') ?: null,
             'code_postal'       => trim($_POST['code_postal']      ?? ''),
             'ville'             => trim($_POST['ville']            ?? ''),
-            'telephone'         => trim($_POST['telephone']        ?? ''),
+            'telephone'         => str_replace(' ', '', trim($_POST['telephone'] ?? '')),
             'email'             => trim($_POST['email']            ?? ''),
             'certificat_medical'=> isset($_POST['certificat_medical']) ? 1 : 0,
         ];

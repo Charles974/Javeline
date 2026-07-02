@@ -167,7 +167,7 @@
                             </div>
                             <div>
                                 <label for="pm-tel" class="form-label">Téléphone <span aria-hidden="true">*</span></label>
-                                <input type="tel" class="form-control" id="pm-tel" name="telephone" maxlength="15" inputmode="numeric" pattern="[0-9]+" autocomplete="off">
+                                <input type="tel" class="form-control" id="pm-tel" name="telephone" maxlength="20" inputmode="numeric" pattern="[0-9 ]+" autocomplete="off">
                             </div>
                             <div>
                                 <label for="pm-email" class="form-label">Email <span aria-hidden="true">*</span></label>

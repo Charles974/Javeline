@@ -7,6 +7,10 @@
     $nbScores = count(array_filter($participants, fn($p) => $p['score_id'] !== null));
 ?>
 
+<div class="membres-row">
+
+<div id="resume-alerte" class="membres-alerte" role="alert" aria-live="polite" hidden></div>
+
 <div class="page-header mb-3 d-flex align-items-center justify-content-between flex-wrap gap-2">
     <div>
         <h1 class="mb-0"><?= htmlspecialchars($challenge['libelle']) ?></h1>
@@ -93,6 +97,12 @@
 
         <!-- Boutons classements -->
         <div class="d-flex align-items-center gap-2 ms-auto">
+            <a href="<?= APP_URL ?>/challenges/<?= (int)$challenge['id'] ?>/planning"
+               target="_blank"
+               class="btn btn-sm btn-outline-primary"
+               aria-label="Imprimer le planning des matchs prévus">
+                Planning des matchs
+            </a>
             <a href="<?= APP_URL ?>/challenges/<?= (int)$challenge['id'] ?>/classements"
                target="_blank"
                class="btn btn-sm btn-outline-primary"
@@ -119,13 +129,13 @@
 </div>
 
 <!-- Tableau -->
-<div class="card liste-card">
+<div class="card liste-card membres-liste-card">
     <div class="card-body p-0">
         <?php if (empty($participants)): ?>
             <p class="liste-vide-sm">Aucun participant inscrit.</p>
         <?php else: ?>
         <div class="table-responsive">
-            <table class="table table-sm table-hover resume-table mb-0"
+            <table class="table table-sm table-hover membres-table resume-table mb-0"
                    id="table-resume"
                    aria-label="Participants au challenge">
                 <thead>
@@ -173,6 +183,10 @@
                         data-prenom="<?= htmlspecialchars($p['prenom']) ?>"
                         data-club="<?= htmlspecialchars($p['club'] ?? '') ?>"
                         data-tireur-type="<?= htmlspecialchars($p['tireur_type']) ?>"
+                        data-tireur-id="<?= (int)$p['tireur_id'] ?>"
+                        data-date-match="<?= htmlspecialchars($p['date_match'] ?? '') ?>"
+                        data-heure-debut="<?= htmlspecialchars($p['heure_debut'] ? substr($p['heure_debut'], 0, 5) : '') ?>"
+                        data-heure-fin="<?= htmlspecialchars($p['heure_fin'] ? substr($p['heure_fin'], 0, 5) : '') ?>"
                         data-poulets="<?= $aScore ? (int)$p['poulets'] : '' ?>"
                         data-cochons="<?= $aScore ? (int)$p['cochons'] : '' ?>"
                         data-dindons="<?= $aScore ? (int)$p['dindons'] : '' ?>"
@@ -181,13 +195,20 @@
                         aria-label="<?= htmlspecialchars($p['nom'] . ' ' . $p['prenom']) ?> — <?= htmlspecialchars($p['discipline_fr']) ?>">
                         <td><?= htmlspecialchars($p['nom']) ?></td>
                         <td><?= htmlspecialchars($p['prenom']) ?></td>
-                        <td><?= $p['club'] ? htmlspecialchars($p['club']) : '<span class="text-muted">—</span>' ?></td>
+                        <td><?= $p['tireur_type'] === 'membre' ? 'Javeline' : ($p['club'] ? htmlspecialchars($p['club']) : '<span class="text-muted">—</span>') ?></td>
                         <td>
                             <span class="discipline-code"><?= (int)$p['discipline_code'] ?></span>
                             <?= htmlspecialchars($p['discipline_fr']) ?>
                         </td>
                         <td class="resume-col-horaire">
-                            <?= htmlspecialchars($horaire) ?: '<span class="text-muted">—</span>' ?>
+                            <span class="resume-horaire-texte"><?= htmlspecialchars($horaire) ?: '<span class="text-muted">—</span>' ?></span>
+                            <?php if (!$archive): ?>
+                            <button type="button"
+                                    class="btn btn-sm btn-outline-secondary btn-modifier-horaire"
+                                    aria-label="Modifier l'horaire de <?= htmlspecialchars($p['nom'] . ' ' . $p['prenom']) ?>">
+                                ✎
+                            </button>
+                            <?php endif; ?>
                         </td>
                         <td class="resume-col-score">
                             <?php if ($aScore): ?>
@@ -204,6 +225,8 @@
         </div>
         <?php endif; ?>
     </div>
+</div>
+
 </div>
 
 <!-- ===================================================
@@ -290,6 +313,66 @@
                         Enregistrer
                     </button>
                 </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- ===================================================
+     Modale édition de l'horaire du match
+     =================================================== -->
+<div class="modal fade"
+     id="modal-horaire"
+     tabindex="-1"
+     aria-labelledby="modal-horaire-titre"
+     aria-modal="true"
+     role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h3 class="modal-title fs-5" id="modal-horaire-titre">Modifier l'horaire</h3>
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Fermer la fenêtre"></button>
+            </div>
+
+            <div class="modal-body">
+
+                <div class="score-tireur-bloc mb-3">
+                    <div class="score-tireur-nom" id="horaire-nom"></div>
+                    <div class="score-tireur-discipline mt-1" id="horaire-discipline"></div>
+                </div>
+
+                <!-- Avertissement chevauchement (non bloquant) -->
+                <div id="horaire-avertissement" class="alert alert-warning py-2 mb-3" role="alert" hidden></div>
+
+                <div class="row g-2">
+                    <div class="col-sm-4 mb-2">
+                        <label for="horaire-date" class="form-label">Date <span aria-hidden="true">*</span></label>
+                        <input type="date" class="form-control" id="horaire-date" aria-required="true">
+                    </div>
+                    <div class="col-sm-4 mb-2">
+                        <label for="horaire-debut" class="form-label">Heure de début <span aria-hidden="true">*</span></label>
+                        <input type="time" class="form-control" id="horaire-debut" aria-required="true">
+                    </div>
+                    <div class="col-sm-4 mb-2">
+                        <label for="horaire-fin" class="form-label">Heure de fin <span aria-hidden="true">*</span></label>
+                        <input type="time" class="form-control" id="horaire-fin" aria-required="true">
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Annuler
+                </button>
+                <button type="button" class="btn btn-primary" id="btn-horaire-enregistrer">
+                    Enregistrer
+                </button>
             </div>
 
         </div>

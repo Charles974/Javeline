@@ -49,7 +49,7 @@ $(document).ready(function () {
                 $('#membre-adresse2').val(m.adresse2 || '');
                 $('#membre-cp').val(m.code_postal);
                 $('#membre-ville').val(m.ville);
-                $('#membre-tel').val(m.telephone);
+                $('#membre-tel').val(m.telephone).trigger('input');
                 $('#membre-email').val(m.email);
                 $('#membre-certificat').prop('checked', m.certificat_medical == 1);
                 // Scroll vers le formulaire sur mobile
@@ -197,6 +197,7 @@ $(document).ready(function () {
             return '<li>' + $('<span>').text(e).html() + '</li>';
         }).join('');
         $erreurs.html('<ul class="mb-0">' + items + '</ul>').removeAttr('hidden');
+        setTimeout(cacherErreur, 4000);
     }
 
     function cacherErreur() {

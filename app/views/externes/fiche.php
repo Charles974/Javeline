@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Fiche tireur — <?= htmlspecialchars($externe['nom'] . ' ' . $externe['prenom']) ?></title>
-    <link rel="stylesheet" href="<?= APP_URL ?>/css/fiche-print.css">
+    <link rel="stylesheet" href="<?= APP_URL ?>/public/css/fiche-print.css">
 </head>
 <body onload="window.print()">
 

@@ -14,7 +14,7 @@
     >
 
     <!-- Styles personnalisés -->
-    <link rel="stylesheet" href="<?= APP_URL ?>/public/css/style.css">
+    <link rel="stylesheet" href="<?= APP_URL ?>/public/css/style.css?v=<?= filemtime(APP_ROOT . '/public/css/style.css') ?>">
 </head>
 <body>
 
@@ -38,5 +38,6 @@
     </main>
 
     <?php require APP_ROOT . '/app/views/partials/footer.php'; ?>
+    <?php require APP_ROOT . '/app/views/partials/modal_challenge.php'; ?>
 </body>
 </html>

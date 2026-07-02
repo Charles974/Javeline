@@ -10,6 +10,10 @@ $(document).ready(function () {
     const $modal            = $('#modal-score');
     const modalBS           = new bootstrap.Modal($modal[0]);
 
+    let horaireCourant   = null; // données de la ligne dont l'horaire est en cours d'édition
+    const $modalHoraire  = $('#modal-horaire');
+    const modalHoraireBS = new bootstrap.Modal($modalHoraire[0]);
+
     // ----------------------------------------------------------------
     // Filtre combiné : statut de tir + discipline
     // ----------------------------------------------------------------
@@ -116,7 +120,7 @@ $(document).ready(function () {
 
         // Remplir les informations du tireur
         const typeLabel = inscriptionCourante.tireurType === 'membre' ? 'Membre' : 'Non membre';
-        const club      = inscriptionCourante.club || '';
+        const club      = inscriptionCourante.tireurType === 'membre' ? 'Javeline' : (inscriptionCourante.club || '');
         $('#score-nom').text(inscriptionCourante.nom + ' ' + inscriptionCourante.prenom);
         $('#score-detail').text(club ? typeLabel + ' — ' + club : typeLabel);
         $('#score-discipline').text(
@@ -133,6 +137,182 @@ $(document).ready(function () {
         mettreAJourTotal();
 
         modalBS.show();
+    }
+
+    // ----------------------------------------------------------------
+    // Édition de l'horaire d'un match (uniquement si challenge non archivé)
+    // ----------------------------------------------------------------
+    if (!CHALLENGE_ARCHIVE) {
+        $(document).on('click', '.btn-modifier-horaire', function (e) {
+            e.stopPropagation();
+            ouvrirModalHoraire($(this).closest('.ligne-participant'));
+        });
+    }
+
+    function ouvrirModalHoraire($ligne) {
+        horaireCourant = {
+            inscriptionId : $ligne.data('inscription-id'),
+            tireurType    : $ligne.data('tireur-type'),
+            tireurId      : $ligne.data('tireur-id'),
+            nom           : $ligne.data('nom'),
+            prenom        : $ligne.data('prenom'),
+            disciplineCode: $ligne.data('discipline-code'),
+            disciplineFr  : $ligne.data('discipline-fr'),
+        };
+
+        $('#horaire-nom').text(horaireCourant.nom + ' ' + horaireCourant.prenom);
+        $('#horaire-discipline').text(
+            'Discipline : ' + horaireCourant.disciplineCode + ' — ' + horaireCourant.disciplineFr
+        );
+
+        $('#horaire-date').val(convertirDateEnISO($ligne.data('date-match')));
+        $('#horaire-debut').val($ligne.data('heure-debut') || '');
+        $('#horaire-fin').val($ligne.data('heure-fin') || '');
+
+        cacherAvertissementChevauchement();
+        verifierChevauchementLive();
+
+        modalHoraireBS.show();
+    }
+
+    function convertirDateEnISO(dateMatch) {
+        // date_match est déjà au format Y-m-d (issu de la base)
+        return dateMatch || '';
+    }
+
+    // ----------------------------------------------------------------
+    // Avertissement de chevauchement en temps réel (non bloquant),
+    // basé sur les autres lignes du même tireur déjà affichées dans le tableau.
+    // ----------------------------------------------------------------
+    $modalHoraire.on('input', '#horaire-date, #horaire-debut, #horaire-fin', verifierChevauchementLive);
+
+    function verifierChevauchementLive() {
+        if (!horaireCourant) return;
+
+        const date  = $('#horaire-date').val();
+        const debut = $('#horaire-debut').val();
+        const fin   = $('#horaire-fin').val();
+
+        if (!date || !debut || !fin || fin <= debut) {
+            cacherAvertissementChevauchement();
+            return;
+        }
+
+        const conflits = [];
+        $('#table-resume tbody .ligne-participant').each(function () {
+            const $autre = $(this);
+            if (String($autre.data('inscription-id')) === String(horaireCourant.inscriptionId)) return;
+            if ($autre.data('tireur-type') !== horaireCourant.tireurType) return;
+            if (String($autre.data('tireur-id')) !== String(horaireCourant.tireurId)) return;
+
+            const autreDate  = $autre.data('date-match');
+            const autreDebut = $autre.data('heure-debut');
+            const autreFin   = $autre.data('heure-fin');
+            if (!autreDate || !autreDebut || !autreFin) return;
+
+            if (String(autreDate) === date && debut < autreFin && autreDebut < fin) {
+                conflits.push(
+                    $autre.data('discipline-code') + ' — ' + $autre.data('discipline-fr')
+                    + ' (' + autreDebut + '–' + autreFin + ')'
+                );
+            }
+        });
+
+        if (conflits.length) {
+            $('#horaire-avertissement')
+                .text('Chevauchement d\'horaire avec : ' + conflits.join(', '))
+                .removeAttr('hidden');
+        } else {
+            cacherAvertissementChevauchement();
+        }
+    }
+
+    function cacherAvertissementChevauchement() {
+        $('#horaire-avertissement').attr('hidden', true).empty();
+    }
+
+    // ----------------------------------------------------------------
+    // Bouton Enregistrer (horaire) → AJAX. Le chevauchement n'empêche
+    // jamais l'enregistrement, il déclenche seulement un avertissement.
+    // ----------------------------------------------------------------
+    $('#btn-horaire-enregistrer').on('click', function () {
+        if (!horaireCourant) return;
+
+        const date  = $('#horaire-date').val();
+        const debut = $('#horaire-debut').val();
+        const fin   = $('#horaire-fin').val();
+
+        if (!date || !debut || !fin) {
+            alert('Merci de renseigner la date et les heures de début et de fin.');
+            return;
+        }
+        if (fin <= debut) {
+            alert('L\'heure de fin doit être postérieure à l\'heure de début.');
+            return;
+        }
+
+        const $btn = $(this);
+        $btn.prop('disabled', true).text('Enregistrement…');
+
+        $.ajax({
+            url     : APP_URL + '/challenges/' + CHALLENGE_ID + '/modifier-horaire',
+            method  : 'POST',
+            data    : {
+                inscription_id : horaireCourant.inscriptionId,
+                date_match     : date,
+                heure_debut    : debut,
+                heure_fin      : fin,
+            },
+            dataType: 'json',
+        })
+        .done(function (rep) {
+            if (rep.success) {
+                mettreAJourHoraireLigne(rep);
+                modalHoraireBS.hide();
+                if (rep.chevauchement) {
+                    afficherAlerteResume(rep.avertissement, 'avertissement');
+                } else {
+                    afficherAlerteResume('Horaire mis à jour.', 'succes');
+                }
+            } else {
+                alert((rep.erreurs && rep.erreurs.join(' ')) || rep.message || 'Erreur lors de l\'enregistrement.');
+            }
+        })
+        .fail(function (xhr) {
+            let msg = 'Une erreur est survenue. Veuillez réessayer.';
+            try {
+                const data = JSON.parse(xhr.responseText);
+                if (data.erreurs) msg = data.erreurs.join(' ');
+                else if (data.message) msg = data.message;
+            } catch (e) { /* réponse non JSON */ }
+            alert(msg);
+        })
+        .always(function () {
+            $btn.prop('disabled', false).text('Enregistrer');
+        });
+    });
+
+    function mettreAJourHoraireLigne(rep) {
+        const $ligne = $('#table-resume tbody .ligne-participant[data-inscription-id="' + rep.inscription_id + '"]');
+        if (!$ligne.length) return;
+
+        $ligne
+            .data('date-match', rep.date_match).attr('data-date-match', rep.date_match)
+            .data('heure-debut', rep.heure_debut).attr('data-heure-debut', rep.heure_debut)
+            .data('heure-fin', rep.heure_fin).attr('data-heure-fin', rep.heure_fin);
+
+        const [annee, mois, jour] = rep.date_match.split('-');
+        $ligne.find('.resume-horaire-texte').text(jour + '/' + mois + ' ' + rep.heure_debut);
+    }
+
+    function afficherAlerteResume(message, type) {
+        const $alerte = $('#resume-alerte');
+        $alerte
+            .removeClass('alerte-succes alerte-erreur alerte-avertissement')
+            .addClass('alerte-' + type)
+            .text(message)
+            .removeAttr('hidden');
+        setTimeout(function () { $alerte.attr('hidden', true); }, type === 'avertissement' ? 6000 : 4000);
     }
 
     // ----------------------------------------------------------------

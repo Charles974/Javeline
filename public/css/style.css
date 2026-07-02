@@ -162,6 +162,39 @@ main {
     margin: 0;
 }
 
+/* --- Mention d'information RGPD sous le formulaire --- */
+.mention-rgpd {
+    margin-top: 0.75rem;
+    padding: 0.6rem 0.9rem;
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 0.4rem;
+    font-size: 0.85rem;
+    color: #495057;
+}
+
+.mention-rgpd summary {
+    cursor: pointer;
+    font-weight: 500;
+    color: #212529;
+}
+
+.mention-rgpd summary:hover {
+    color: #0d6efd;
+}
+
+.mention-rgpd-contenu {
+    margin-top: 0.6rem;
+}
+
+.mention-rgpd-contenu p {
+    margin-bottom: 0.5rem;
+}
+
+.mention-rgpd-contenu p:last-child {
+    margin-bottom: 0;
+}
+
 /* --- Boutons d'action du formulaire --- */
 .form-actions {
     display: flex;
@@ -172,28 +205,43 @@ main {
     margin-top: 0.5rem;
 }
 
-/* --- Erreurs inline formulaire --- */
+/* --- Erreurs formulaire : bandeau flottant en haut, centré --- */
 .form-erreurs {
+    position: fixed;
+    top: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1080;
     padding: 0.75rem 1rem;
     border-radius: 0.4rem;
     background-color: #f8d7da;
     color: #721c24;
     border: 1px solid #f5c6cb;
     font-size: 0.9rem;
-    margin-bottom: 1rem;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    max-width: calc(100vw - 2rem);
+    text-align: center;
 }
 
 .form-erreurs ul {
     margin: 0;
     padding-left: 1.2rem;
+    text-align: left;
 }
 
-/* --- Alerte retour membres (succès / erreur) --- */
+/* --- Alerte retour membres (succès / erreur) : bandeau flottant en haut, centré --- */
 .membres-alerte {
+    position: fixed;
+    top: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1080;
     padding: 0.75rem 1.25rem;
     border-radius: 0.5rem;
     font-weight: 500;
-    margin-bottom: 1rem;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    max-width: calc(100vw - 2rem);
+    text-align: center;
 }
 
 .membres-alerte.alerte-succes {
@@ -206,6 +254,12 @@ main {
     background-color: #f8d7da;
     color: #721c24;
     border: 1px solid #f5c6cb;
+}
+
+.membres-alerte.alerte-avertissement {
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeeba;
 }
 
 /* --- Tableau des membres --- */
@@ -265,10 +319,48 @@ main {
     white-space: nowrap;
 }
 
+/* --- Largeurs des colonnes de la liste des membres --- */
+.membres-table .col-nom,
+.membres-table .col-prenom {
+    width: 20%;
+}
+
+.membres-table .col-naissance {
+    width: 10%;
+    white-space: nowrap;
+}
+
 .liste-vide {
     padding: 2rem;
     text-align: center;
     color: #888;
+}
+
+/* --- Page membres : la liste occupe la place restante, seule elle defile --- */
+.membres-row {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.membres-liste-card {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.membres-liste-card .card-body {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+}
+
+.membres-liste-card .membres-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
 }
 
 /* --- Champ de recherche dans les listes de gauche --- */
@@ -694,6 +786,13 @@ main {
 .resume-col-horaire {
     white-space: nowrap;
     font-size: 0.85rem;
+}
+
+.btn-modifier-horaire {
+    padding: 0 0.35rem;
+    margin-left: 0.4rem;
+    font-size: 0.75rem;
+    line-height: 1.4;
 }
 
 .resume-col-score {

@@ -5,12 +5,12 @@
 <?php if (empty($membres)): ?>
     <p class="liste-vide-sm">Tous les membres sont inscrits.</p>
 <?php else: ?>
-    <table class="table table-sm table-hover dispo-table mb-0" aria-label="Membres disponibles">
+    <table class="table table-sm table-hover dispo-table table-triable mb-0" aria-label="Membres disponibles">
         <thead>
             <tr>
-                <th scope="col">Nom</th>
-                <th scope="col">Prénom</th>
-                <th scope="col">Licence</th>
+                <th scope="col" data-tri="texte" tabindex="0" role="button" aria-label="Trier par nom">Nom</th>
+                <th scope="col" data-tri="texte" tabindex="0" role="button" aria-label="Trier par prénom">Prénom</th>
+                <th scope="col" data-tri="texte" tabindex="0" role="button" aria-label="Trier par licence">Licence</th>
             </tr>
         </thead>
         <tbody>

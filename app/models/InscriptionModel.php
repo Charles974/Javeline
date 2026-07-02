@@ -53,12 +53,15 @@ class InscriptionModel extends Model
                     i.discipline_id,
                     d.code        AS discipline_code,
                     d.libelle_fr  AS discipline_fr,
+                    d.libelle_en  AS discipline_en,
                     CASE WHEN i.tireur_type = 'membre'
                          THEN m.nom  ELSE e.nom  END AS nom,
                     CASE WHEN i.tireur_type = 'membre'
                          THEN m.prenom ELSE e.prenom END AS prenom,
                     CASE WHEN i.tireur_type = 'externe'
-                         THEN e.club ELSE NULL END AS club
+                         THEN e.club ELSE NULL END AS club,
+                    CASE WHEN i.tireur_type = 'externe'
+                         THEN e.etranger ELSE 0 END AS etranger
                 FROM inscriptions i
                 JOIN disciplines d  ON d.id = i.discipline_id
                 LEFT JOIN membres m ON i.tireur_type = 'membre'  AND m.id = i.tireur_id
@@ -220,6 +223,88 @@ class InscriptionModel extends Model
     }
 
     /**
+     * Retourne le challenge, le type et l'id du tireur d'une inscription
+     * (utilisé pour vérifier l'appartenance au challenge et détecter les
+     * chevauchements d'horaires du même tireur).
+     */
+    public function findInfosTireur(int $inscriptionId): array|false
+    {
+        $stmt = $this->db->prepare(
+            'SELECT challenge_id, tireur_type, tireur_id FROM inscriptions WHERE id = :id'
+        );
+        $stmt->execute([':id' => $inscriptionId]);
+        return $stmt->fetch();
+    }
+
+    /**
+     * Crée ou met à jour le plan de tir (date/horaire) d'une inscription.
+     * Retourne l'id du match.
+     */
+    public function modifierHoraire(int $inscriptionId, string $dateMatch, string $heureDebut, string $heureFin): int
+    {
+        $stmt = $this->db->prepare('SELECT id FROM matchs WHERE inscription_id = :iid');
+        $stmt->execute([':iid' => $inscriptionId]);
+        $match = $stmt->fetch();
+
+        if ($match) {
+            $stmt = $this->db->prepare(
+                'UPDATE matchs SET date_match = :date, heure_debut = :debut, heure_fin = :fin WHERE id = :id'
+            );
+            $stmt->execute([
+                ':date'  => $dateMatch,
+                ':debut' => $heureDebut,
+                ':fin'   => $heureFin,
+                ':id'    => $match['id'],
+            ]);
+            return (int)$match['id'];
+        }
+
+        $stmt = $this->db->prepare(
+            'INSERT INTO matchs (inscription_id, date_match, heure_debut, heure_fin)
+             VALUES (:iid, :date, :debut, :fin)'
+        );
+        $stmt->execute([
+            ':iid'   => $inscriptionId,
+            ':date'  => $dateMatch,
+            ':debut' => $heureDebut,
+            ':fin'   => $heureFin,
+        ]);
+        return (int)$this->db->lastInsertId();
+    }
+
+    /**
+     * Retourne les autres matchs planifiés du même tireur dans ce challenge
+     * (hors l'inscription en cours d'édition), pour détecter les chevauchements.
+     */
+    public function findAutresMatchsTireur(int $challengeId, string $tireurType, int $tireurId, int $excludeInscriptionId): array
+    {
+        $sql = "SELECT
+                    i.id AS inscription_id,
+                    d.code       AS discipline_code,
+                    d.libelle_fr AS discipline_fr,
+                    ma.date_match,
+                    ma.heure_debut,
+                    ma.heure_fin
+                FROM inscriptions i
+                JOIN disciplines d ON d.id = i.discipline_id
+                JOIN matchs ma     ON ma.inscription_id = i.id
+                WHERE i.challenge_id = :cid
+                  AND i.tireur_type = :type
+                  AND i.tireur_id   = :tid
+                  AND i.id != :excl
+                  AND ma.date_match IS NOT NULL";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([
+            ':cid'  => $challengeId,
+            ':type' => $tireurType,
+            ':tid'  => $tireurId,
+            ':excl' => $excludeInscriptionId,
+        ]);
+        return $stmt->fetchAll();
+    }
+
+    /**
      * Retourne les discipline_id déjà assignés à un tireur dans un challenge.
      */
     public function findDisciplinesByTireur(int $challengeId, string $type, int $tireurId): array
@@ -304,6 +389,38 @@ class InscriptionModel extends Model
                     d.code ASC,
                     nom ASC,
                     prenom ASC";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([':cid' => $challengeId]);
+        return $stmt->fetchAll();
+    }
+
+    /**
+     * Retourne les matchs planifiés (date/horaire renseignés) d'un challenge,
+     * triés chronologiquement — pour l'impression du planning.
+     */
+    public function findPlanning(int $challengeId): array
+    {
+        $sql = "SELECT
+                    d.code              AS discipline_code,
+                    d.libelle_fr        AS discipline_fr,
+                    CASE WHEN i.tireur_type = 'membre'
+                         THEN m.nom   ELSE e.nom   END AS nom,
+                    CASE WHEN i.tireur_type = 'membre'
+                         THEN m.prenom ELSE e.prenom END AS prenom,
+                    i.tireur_type,
+                    CASE WHEN i.tireur_type = 'membre'
+                         THEN 'Javeline' ELSE e.club END AS club,
+                    ma.date_match,
+                    ma.heure_debut,
+                    ma.heure_fin
+                FROM inscriptions i
+                JOIN disciplines d   ON d.id = i.discipline_id
+                JOIN matchs ma       ON ma.inscription_id = i.id
+                LEFT JOIN membres m  ON i.tireur_type = 'membre'  AND m.id = i.tireur_id
+                LEFT JOIN externes e ON i.tireur_type = 'externe' AND e.id = i.tireur_id
+                WHERE i.challenge_id = :cid
+                ORDER BY ma.date_match ASC, ma.heure_debut ASC, nom ASC, prenom ASC";
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute([':cid' => $challengeId]);

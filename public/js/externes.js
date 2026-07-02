@@ -42,7 +42,7 @@ $(document).ready(function () {
                 $('#externe-nom').val(ex.nom);
                 $('#externe-prenom').val(ex.prenom);
                 $('#externe-club').val(ex.club);
-                $('#externe-tel').val(ex.telephone || '');
+                $('#externe-tel').val(ex.telephone || '').trigger('input');
                 $('#externe-email').val(ex.email || '');
                 $('#externe-etranger').prop('checked', ex.etranger == 1);
                 $('html, body').animate({ scrollTop: $form.offset().top - 20 }, 300);
@@ -188,6 +188,7 @@ $(document).ready(function () {
             return '<li>' + $('<span>').text(e).html() + '</li>';
         }).join('');
         $erreurs.html('<ul class="mb-0">' + items + '</ul>').removeAttr('hidden');
+        setTimeout(cacherErreur, 4000);
     }
 
     function cacherErreur() {

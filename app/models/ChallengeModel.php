@@ -14,7 +14,8 @@ class ChallengeModel extends Model
     {
         $sql = "SELECT c.*,
                     COUNT(DISTINCT CASE WHEN i.tireur_type = 'membre'   THEN i.tireur_id END) AS nb_membres,
-                    COUNT(DISTINCT CASE WHEN i.tireur_type = 'externe'  THEN i.tireur_id END) AS nb_externes
+                    COUNT(DISTINCT CASE WHEN i.tireur_type = 'externe'  THEN i.tireur_id END) AS nb_externes,
+                    COUNT(i.id) AS nb_matchs
                 FROM challenges c
                 LEFT JOIN inscriptions i ON i.challenge_id = c.id
                 WHERE c.statut = 'ouvert'
@@ -34,7 +35,8 @@ class ChallengeModel extends Model
     {
         $sql = "SELECT c.*,
                     COUNT(DISTINCT CASE WHEN i.tireur_type = 'membre'  THEN i.tireur_id END) AS nb_membres,
-                    COUNT(DISTINCT CASE WHEN i.tireur_type = 'externe' THEN i.tireur_id END) AS nb_externes
+                    COUNT(DISTINCT CASE WHEN i.tireur_type = 'externe' THEN i.tireur_id END) AS nb_externes,
+                    COUNT(i.id) AS nb_matchs
                 FROM challenges c
                 LEFT JOIN inscriptions i ON i.challenge_id = c.id
                 GROUP BY c.id

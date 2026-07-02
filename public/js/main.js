@@ -124,4 +124,17 @@ $(document).ready(function () {
         return $cellule.text().trim();
     }
 
+    // ----------------------------------------------------------------
+    // Masque de saisie des numéros de téléphone : "07 77 01 01 01"
+    // Délégué sur le document car certains champs sont injectés en AJAX.
+    // ----------------------------------------------------------------
+    $(document).on('input', 'input[type="tel"]', function () {
+        const position = this.selectionStart === this.value.length;
+        const chiffres  = this.value.replace(/\D/g, '');
+        this.value = chiffres.replace(/(\d{2})(?=\d)/g, '$1 ');
+        if (position) {
+            this.selectionStart = this.selectionEnd = this.value.length;
+        }
+    });
+
 });

@@ -340,14 +340,14 @@ $(document).ready(function () {
             $('#pm-adresse2').val(data.adresse2 || '');
             $('#pm-cp').val(data.code_postal);
             $('#pm-ville').val(data.ville);
-            $('#pm-tel').val(data.telephone);
+            $('#pm-tel').val(data.telephone).trigger('input');
             $('#pm-email').val(data.email);
             $('#pm-certificat').prop('checked', data.certificat_medical == 1);
         } else {
             $('#pe-nom').val(data.nom);
             $('#pe-prenom').val(data.prenom);
             $('#pe-club').val(data.club);
-            $('#pe-tel').val(data.telephone || '');
+            $('#pe-tel').val(data.telephone || '').trigger('input');
             $('#pe-email').val(data.email || '');
             $('#pe-etranger').prop('checked', data.etranger == 1);
         }
@@ -456,6 +456,7 @@ $(document).ready(function () {
             return '<li>' + $('<span>').text(msg).html() + '</li>';
         }).join('');
         $erreurs.html('<ul class="mb-0">' + items + '</ul>').removeAttr('hidden');
+        setTimeout(cacherErreur, 4000);
     }
 
     function cacherErreur() {
