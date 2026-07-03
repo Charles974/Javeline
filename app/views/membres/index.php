@@ -10,9 +10,12 @@
     <!-- ====== Formulaire ====== -->
     <div class="mb-4">
         <div class="card form-card">
-            <div class="card-header">
+            <div class="card-header form-card-header" data-bs-toggle="collapse" data-bs-target="#form-membre-collapse"
+                 role="button" aria-expanded="false" aria-controls="form-membre-collapse">
                 <h2 class="card-titre" id="form-titre">Nouveau membre</h2>
+                <span class="form-card-chevron" aria-hidden="true"></span>
             </div>
+            <div class="collapse" id="form-membre-collapse">
             <div class="card-body">
 
                 <!-- Erreurs inline -->
@@ -120,6 +123,7 @@
                         </button>
                     </div>
                 </form>
+            </div>
             </div>
         </div>
     </div>
