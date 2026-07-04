@@ -34,6 +34,10 @@
             <th>Tireur étranger</th>
             <td colspan="3"><?= $externe['etranger'] ? 'Oui' : 'Non' ?></td>
         </tr>
+        <tr>
+            <th>Coach</th>
+            <td colspan="3"><?= htmlspecialchars($externe['coach'] ?? '') ?: '—' ?></td>
+        </tr>
     </table>
 
     <div class="fiche-pied">

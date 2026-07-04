@@ -26,6 +26,7 @@ CREATE TABLE membres (
     telephone           VARCHAR(15)     NOT NULL,
     email               VARCHAR(150)    NOT NULL,
     certificat_medical  TINYINT(1)      NOT NULL DEFAULT 0,
+    coach               VARCHAR(150)        NULL DEFAULT NULL,
     created_at          DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -41,6 +42,7 @@ CREATE TABLE externes (
     telephone   VARCHAR(20)         NULL DEFAULT NULL,
     email       VARCHAR(150)        NULL DEFAULT NULL,
     etranger    TINYINT(1)      NOT NULL DEFAULT 0,
+    coach       VARCHAR(150)        NULL DEFAULT NULL,
     created_at  DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -142,3 +144,10 @@ CREATE TABLE scores (
 ALTER TABLE membres
     MODIFY COLUMN code_postal CHAR(5)     NOT NULL,
     MODIFY COLUMN telephone   VARCHAR(15) NOT NULL;
+
+-- Ajout du coach (champ libre) sur les tireurs membres et externes
+ALTER TABLE membres
+    ADD COLUMN coach VARCHAR(150) NULL DEFAULT NULL AFTER certificat_medical;
+
+ALTER TABLE externes
+    ADD COLUMN coach VARCHAR(150) NULL DEFAULT NULL AFTER etranger;

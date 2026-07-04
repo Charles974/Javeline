@@ -47,6 +47,7 @@ $(document).ready(function () {
                 $('#externe-tel').val(ex.telephone || '').trigger('input');
                 $('#externe-email').val(ex.email || '');
                 $('#externe-etranger').prop('checked', ex.etranger == 1);
+                $('#externe-coach').val(ex.coach || '');
                 $('html, body').animate({ scrollTop: $form.offset().top - 20 }, 300);
             })
             .fail(function () {

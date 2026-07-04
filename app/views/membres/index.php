@@ -102,6 +102,14 @@
                         </div>
                     </div>
 
+                    <div class="row g-2">
+                        <div class="col-md-6 mb-2">
+                            <label for="membre-coach" class="form-label visually-hidden">Coach</label>
+                            <input type="text" class="form-control" id="membre-coach" name="coach" placeholder="Coach"
+                                   maxlength="150" autocomplete="off">
+                        </div>
+                    </div>
+
                     <?php $typeFiche = 'membre'; require APP_ROOT . '/app/views/partials/mention_rgpd.php'; ?>
 
                     <!-- Boutons d'action -->

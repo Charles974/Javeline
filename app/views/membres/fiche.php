@@ -50,6 +50,10 @@
             <th>Certificat médical</th>
             <td colspan="3"><?= $membre['certificat_medical'] ? 'Oui' : 'Non' ?></td>
         </tr>
+        <tr>
+            <th>Coach</th>
+            <td colspan="3"><?= htmlspecialchars($membre['coach'] ?? '') ?: '—' ?></td>
+        </tr>
     </table>
 
     <div class="fiche-pied">
