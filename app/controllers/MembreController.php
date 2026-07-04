@@ -187,6 +187,7 @@ class MembreController extends Controller
             'telephone'         => str_replace(' ', '', trim($_POST['telephone'] ?? '')),
             'email'             => trim($_POST['email']            ?? ''),
             'certificat_medical'=> isset($_POST['certificat_medical']) ? 1 : 0,
+            'coach'             => trim($_POST['coach']             ?? '') ?: null,
         ];
     }
 

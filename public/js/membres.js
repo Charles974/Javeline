@@ -54,6 +54,7 @@ $(document).ready(function () {
                 $('#membre-tel').val(m.telephone).trigger('input');
                 $('#membre-email').val(m.email);
                 $('#membre-certificat').prop('checked', m.certificat_medical == 1);
+                $('#membre-coach').val(m.coach || '');
                 // Scroll vers le formulaire sur mobile
                 $('html, body').animate({ scrollTop: $form.offset().top - 20 }, 300);
             })

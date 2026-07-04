@@ -173,6 +173,7 @@ class ExterneController extends Controller
             'telephone' => str_replace(' ', '', trim($_POST['telephone'] ?? '')) ?: null,
             'email'     => trim($_POST['email']     ?? '') ?: null,
             'etranger'  => isset($_POST['etranger']) ? 1 : 0,
+            'coach'     => trim($_POST['coach']     ?? '') ?: null,
         ];
     }
 
