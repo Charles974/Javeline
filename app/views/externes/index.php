@@ -10,12 +10,9 @@
     <!-- ====== Formulaire ====== -->
     <div class="mb-4">
         <div class="card form-card">
-            <div class="card-header form-card-header" data-bs-toggle="collapse" data-bs-target="#form-externe-collapse"
-                 role="button" aria-expanded="false" aria-controls="form-externe-collapse">
+            <div class="card-header">
                 <h2 class="card-titre" id="form-titre">Nouveau tireur</h2>
-                <span class="form-card-chevron" aria-hidden="true"></span>
             </div>
-            <div class="collapse" id="form-externe-collapse">
             <div class="card-body">
 
                 <div id="form-erreurs" class="form-erreurs" role="alert" aria-live="assertive" hidden></div>
@@ -42,17 +39,17 @@
                     </div>
 
                     <div class="row g-2 align-items-center">
-                        <div class="col-sm-4 mb-2">
+                        <div class="col-sm-3 mb-2">
                             <label for="externe-tel" class="form-label visually-hidden">Téléphone</label>
                             <input type="tel" class="form-control" id="externe-tel" name="telephone" placeholder="Téléphone"
                                    maxlength="20" autocomplete="off">
                         </div>
-                        <div class="col-sm-4 mb-2">
+                        <div class="col-sm-3 mb-2">
                             <label for="externe-email" class="form-label visually-hidden">Email</label>
                             <input type="email" class="form-control" id="externe-email" name="email" placeholder="Email"
                                    maxlength="150" autocomplete="off">
                         </div>
-                        <div class="col-sm-4 mb-2">
+                        <div class="col-sm-3 mb-2">
                             <div class="form-check">
                                 <input type="checkbox" class="form-check-input" id="externe-etranger"
                                        name="etranger" value="1">
@@ -61,10 +58,7 @@
                                 </label>
                             </div>
                         </div>
-                    </div>
-
-                    <div class="row g-2">
-                        <div class="col-md-6 mb-2">
+                        <div class="col-sm-3 mb-2">
                             <label for="externe-coach" class="form-label visually-hidden">Coach</label>
                             <input type="text" class="form-control" id="externe-coach" name="coach" placeholder="Coach"
                                    maxlength="150" autocomplete="off">
@@ -91,7 +85,6 @@
                         </button>
                     </div>
                 </form>
-            </div>
             </div>
         </div>
     </div>

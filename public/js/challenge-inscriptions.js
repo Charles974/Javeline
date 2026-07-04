@@ -343,6 +343,7 @@ $(document).ready(function () {
             $('#pm-tel').val(data.telephone).trigger('input');
             $('#pm-email').val(data.email);
             $('#pm-certificat').prop('checked', data.certificat_medical == 1);
+            $('#pm-coach').val(data.coach || '');
         } else {
             $('#pe-nom').val(data.nom);
             $('#pe-prenom').val(data.prenom);
@@ -350,6 +351,7 @@ $(document).ready(function () {
             $('#pe-tel').val(data.telephone || '').trigger('input');
             $('#pe-email').val(data.email || '');
             $('#pe-etranger').prop('checked', data.etranger == 1);
+            $('#pe-coach').val(data.coach || '');
         }
     }
 
@@ -369,6 +371,7 @@ $(document).ready(function () {
                 telephone         : $('#pm-tel').val(),
                 email             : $('#pm-email').val(),
                 certificat_medical: $('#pm-certificat').is(':checked') ? 1 : 0,
+                coach             : $('#pm-coach').val(),
             };
         }
         return {
@@ -379,6 +382,7 @@ $(document).ready(function () {
             telephone: $('#pe-tel').val(),
             email    : $('#pe-email').val(),
             etranger : $('#pe-etranger').is(':checked') ? 1 : 0,
+            coach    : $('#pe-coach').val(),
         };
     }
 

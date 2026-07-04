@@ -12,7 +12,6 @@ $(document).ready(function () {
     const $btnReset     = $('#btn-reset');
     const $erreurs     = $('#form-erreurs');
     const $alerte      = $('#membres-alerte');
-    const $formCollapse = $('#form-membre-collapse');
 
     // ----------------------------------------------------------------
     // Clic sur une ligne du tableau → remplit le formulaire
@@ -35,7 +34,6 @@ $(document).ready(function () {
         $ligne.addClass('ligne-selectionnee');
         cacherErreur();
         cacherAlerte();
-        ouvrirFormulaire();
 
         // Charge les données complètes du membre via AJAX pour remplir le formulaire
         $.getJSON(APP_URL + '/membres/get/' + id)
@@ -176,12 +174,6 @@ $(document).ready(function () {
     // ----------------------------------------------------------------
     // Fonctions utilitaires
     // ----------------------------------------------------------------
-
-    function ouvrirFormulaire() {
-        if ($formCollapse.length && !$formCollapse.hasClass('show')) {
-            $formCollapse.collapse('show');
-        }
-    }
 
     function mettreAJourListe(html) {
         $('#zone-membres-liste').html(html);
