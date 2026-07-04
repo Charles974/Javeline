@@ -12,6 +12,7 @@ $(document).ready(function () {
     const $btnReset     = $('#btn-reset');
     const $erreurs     = $('#form-erreurs');
     const $alerte      = $('#externes-alerte');
+    const $formCollapse = $('#form-externe-collapse');
 
     // ----------------------------------------------------------------
     // Clic sur une ligne → charge et remplit le formulaire
@@ -33,6 +34,7 @@ $(document).ready(function () {
         $ligne.addClass('ligne-selectionnee');
         cacherErreur();
         cacherAlerte();
+        ouvrirFormulaire();
 
         // Charge les données complètes via AJAX pour remplir le formulaire
         $.getJSON(APP_URL + '/externes/get/' + id)
@@ -164,6 +166,12 @@ $(document).ready(function () {
     // ----------------------------------------------------------------
     // Fonctions utilitaires
     // ----------------------------------------------------------------
+
+    function ouvrirFormulaire() {
+        if ($formCollapse.length && !$formCollapse.hasClass('show')) {
+            $formCollapse.collapse('show');
+        }
+    }
 
     function mettreAJourListe(html) {
         $('#zone-externes-liste').html(html);

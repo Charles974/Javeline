@@ -10,9 +10,12 @@
     <!-- ====== Formulaire ====== -->
     <div class="mb-4">
         <div class="card form-card">
-            <div class="card-header">
+            <div class="card-header form-card-header" data-bs-toggle="collapse" data-bs-target="#form-externe-collapse"
+                 role="button" aria-expanded="false" aria-controls="form-externe-collapse">
                 <h2 class="card-titre" id="form-titre">Nouveau tireur</h2>
+                <span class="form-card-chevron" aria-hidden="true"></span>
             </div>
+            <div class="collapse" id="form-externe-collapse">
             <div class="card-body">
 
                 <div id="form-erreurs" class="form-erreurs" role="alert" aria-live="assertive" hidden></div>
@@ -80,6 +83,7 @@
                         </button>
                     </div>
                 </form>
+            </div>
             </div>
         </div>
     </div>
