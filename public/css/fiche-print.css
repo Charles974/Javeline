@@ -335,3 +335,139 @@ body {
     border-top: 1px solid #ccc;
     padding-top: 0.2cm;
 }
+
+/* ============================================================
+   Classement par discipline — mise en page fidele au modele papier
+   ============================================================ */
+
+.cld-page {
+    max-width: none;
+}
+
+.cld-groupe {
+    position: relative;
+    margin-bottom: 0.8cm;
+    padding-top: 0.6cm;
+    page-break-inside: avoid;
+}
+
+.cld-code-badge {
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 1.4cm;
+    padding: 0.15cm 0.25cm;
+    border: 1px solid #000;
+    border-bottom: none;
+    text-align: center;
+    font-size: 13pt;
+    font-weight: 700;
+    background-color: #fff;
+}
+
+.cld-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 9pt;
+    table-layout: fixed;
+}
+
+.cld-table th,
+.cld-table td {
+    border: 1px solid #000;
+    padding: 0.15cm 0.25cm;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.cld-col-classement {
+    width: 1cm;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    font-size: 8pt;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+}
+
+.cld-col-club-dates {
+    width: 6cm;
+    text-align: left;
+    font-weight: 700;
+}
+
+.cld-titre-club {
+    color: #c00000;
+}
+
+.cld-titre-dates {
+    color: #1f4e96;
+}
+
+.cld-discipline-titre {
+    font-weight: 700;
+    line-height: 1.4;
+}
+
+.cld-discipline-fr {
+    font-size: 11pt;
+}
+
+.cld-discipline-en {
+    font-size: 9pt;
+    text-decoration: underline;
+}
+
+
+.cld-col-nom-header {
+    text-align: left;
+}
+
+.cld-col-animal {
+    width: 1.6cm;
+    font-size: 7pt;
+    font-weight: 700;
+}
+
+.cld-animal-icone {
+    display: block;
+    height: 0.45cm;
+}
+
+.cld-col-total-header {
+    width: 1.4cm;
+    font-weight: 700;
+}
+
+.cld-col-rang {
+    width: 1cm;
+    font-weight: 700;
+}
+
+.cld-col-nom {
+    text-align: left;
+    font-weight: 600;
+}
+
+.cld-col-animal-val {
+    font-weight: 600;
+}
+
+.cld-col-total {
+    font-weight: 700;
+    color: #c00000;
+}
+
+.cld-ligne-exaequo {
+    background-color: #fafafa;
+}
+
+.cld-ligne-defect .cld-defect-cell {
+    font-weight: 700;
+    background-color: #ececec;
+    text-align: center;
+}
+
+.cld-vide {
+    color: #666;
+    font-style: italic;
+}

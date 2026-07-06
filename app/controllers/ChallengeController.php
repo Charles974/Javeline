@@ -383,18 +383,32 @@ class ChallengeController extends Controller
 
         $rows = $this->inscriptions->findClassements($id, $disciplineCode);
 
-        // Grouper par discipline
+        // Grouper par discipline, en separant les tireurs notes des DEFECT (pas de score).
         $groupes = [];
         foreach ($rows as $row) {
             $code = (int)$row['discipline_code'];
             if (!isset($groupes[$code])) {
-                $groupes[$code] = ['libelle' => $row['discipline_fr'], 'tireurs' => []];
+                $groupes[$code] = [
+                    'libelle_fr' => $row['discipline_fr'],
+                    'libelle_en' => $row['discipline_en'],
+                    'tireurs'    => [],
+                    'defects'    => [],
+                ];
             }
-            $groupes[$code]['tireurs'][] = $row;
+            if ($row['total'] === null) {
+                $groupes[$code]['defects'][] = $row;
+            } else {
+                $groupes[$code]['tireurs'][] = $row;
+            }
         }
 
         foreach ($groupes as &$groupe) {
             $this->calculerRangsEtMedailles($groupe['tireurs']);
+            $rangSuivant = count($groupe['tireurs']) + 1;
+            foreach ($groupe['defects'] as &$defect) {
+                $defect['rang'] = $rangSuivant++;
+            }
+            unset($defect);
         }
         unset($groupe);
 
