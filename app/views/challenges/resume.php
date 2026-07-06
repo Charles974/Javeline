@@ -101,7 +101,7 @@
                target="_blank"
                class="btn btn-sm btn-outline-primary"
                aria-label="Imprimer le planning des matchs prévus">
-                Planning des matchs
+                Génération du plan de tir
             </a>
             <a href="<?= APP_URL ?>/challenges/<?= (int)$challenge['id'] ?>/classements"
                target="_blank"
