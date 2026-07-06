@@ -75,32 +75,37 @@ class InscriptionModel extends Model
     }
 
     /**
-     * Retourne les participants ayant un score, groupables par discipline, pour le classement.
+     * Retourne tous les inscrits d'une discipline (avec ou sans score), pour le classement.
+     * Les inscrits sans score renseigne (DEFECT) sont places en fin de liste.
      * Si $disciplineCode est fourni, filtre sur cette discipline uniquement.
-     * Tri : code discipline ASC, puis règles de classement (total, mouflons, dindons, cochons, poulets) DESC.
+     * Tri : code discipline ASC, puis avec score d'abord, puis regles de classement
+     * (total, mouflons, dindons, cochons, poulets) DESC.
      */
     public function findClassements(int $challengeId, ?int $disciplineCode = null): array
     {
         $sql = "SELECT
                     d.code              AS discipline_code,
                     d.libelle_fr        AS discipline_fr,
+                    d.libelle_en        AS discipline_en,
+                    i.tireur_type,
                     CASE WHEN i.tireur_type = 'membre'
                          THEN m.nom   ELSE e.nom   END AS nom,
                     CASE WHEN i.tireur_type = 'membre'
                          THEN m.prenom ELSE e.prenom END AS prenom,
-                    CASE WHEN i.tireur_type = 'externe'
-                         THEN e.club ELSE NULL END AS club,
+                    CASE WHEN i.tireur_type = 'membre'
+                         THEN 'JAV' ELSE e.club END AS club,
                     s.poulets,
                     s.cochons,
                     s.dindons,
                     s.mouflons,
-                    (s.poulets + s.cochons + s.dindons + s.mouflons) AS total
+                    CASE WHEN s.id IS NULL THEN NULL
+                         ELSE (s.poulets + s.cochons + s.dindons + s.mouflons) END AS total
                 FROM inscriptions i
                 JOIN disciplines d    ON d.id = i.discipline_id
                 LEFT JOIN membres m   ON i.tireur_type = 'membre'   AND m.id = i.tireur_id
                 LEFT JOIN externes e  ON i.tireur_type = 'externe'  AND e.id = i.tireur_id
-                JOIN matchs ma        ON ma.inscription_id = i.id
-                JOIN scores s         ON s.match_id = ma.id
+                LEFT JOIN matchs ma   ON ma.inscription_id = i.id
+                LEFT JOIN scores s    ON s.match_id = ma.id
                 WHERE i.challenge_id = :cid";
 
         $params = [':cid' => $challengeId];
@@ -110,7 +115,9 @@ class InscriptionModel extends Model
             $params[':dcode'] = $disciplineCode;
         }
 
-        $sql .= ' ORDER BY d.code ASC, total DESC, s.mouflons DESC,
+        $sql .= ' ORDER BY d.code ASC,
+                            (s.id IS NULL) ASC,
+                            total DESC, s.mouflons DESC,
                             s.dindons DESC, s.cochons DESC, s.poulets DESC,
                             nom ASC, prenom ASC';
 
