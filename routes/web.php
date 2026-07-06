@@ -25,7 +25,8 @@ $router->post('/challenges/:id/modifier-inscriptions',          'ChallengeContro
 $router->post('/challenges/:id/supprimer-inscription',          'ChallengeController', 'supprimerInscription');
 
 // Disciplines
-$router->get('/disciplines', 'DisciplineController', 'index');
+$router->get('/disciplines',           'DisciplineController', 'index');
+$router->get('/disciplines/imprimer',  'DisciplineController', 'imprimerListe');
 
 // Membres
 $router->get('/membres',              'MembreController', 'index');

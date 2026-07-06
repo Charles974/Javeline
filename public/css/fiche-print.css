@@ -536,6 +536,16 @@ body {
     width: 2.2cm;
 }
 
+.liste-impression-col-num {
+    width: 5cm;
+}
+
+.liste-impression-col-qualif {
+    text-align: center;
+    width: 3cm;
+    color: #444;
+}
+
 .liste-impression-table tbody tr:nth-child(even) {
     background-color: #fffdf0;
 }
