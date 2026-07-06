@@ -1,45 +1,104 @@
-<div class="fiche">
+<?php
+// Jours de la semaine et mois en francais pour l'entete de chaque tableau.
+$joursFr = [0 => 'Dimanche', 1 => 'Lundi', 2 => 'Mardi', 3 => 'Mercredi', 4 => 'Jeudi', 5 => 'Vendredi', 6 => 'Samedi'];
+$moisFr  = [1 => 'Janvier', 2 => 'Fevrier', 3 => 'Mars', 4 => 'Avril', 5 => 'Mai', 6 => 'Juin',
+            7 => 'Juillet', 8 => 'Aout', 9 => 'Septembre', 10 => 'Octobre', 11 => 'Novembre', 12 => 'Decembre'];
+
+// Regroupement des matchs planifies par date.
+$parJour = [];
+foreach ($planning as $m) {
+    $parJour[$m['date_match']][] = $m;
+}
+ksort($parJour);
+
+// Colonnes du tableau : une par discipline inscrite au challenge (ordre croissant de code).
+$disciplines = [];
+foreach ($planning as $m) {
+    $code = (int) $m['discipline_code'];
+    if (!isset($disciplines[$code])) {
+        $disciplines[$code] = $m['discipline_fr'];
+    }
+}
+ksort($disciplines);
+$nbCols = count($disciplines);
+
+// Le tableau commence toujours a 9h00 ; la zone grise d'ouverture couvre 9h00 -> 9h50 (6 creneaux de 10 min).
+$planningDebut  = '09:00';
+$planningFinMin = '18:10';
+?>
+
+<div class="fiche fiche-planning">
     <div class="fiche-entete">
         <h1>Association Javeline</h1>
-        <h2>Planning des matchs — <?= htmlspecialchars($challenge['libelle']) ?></h2>
-        <p>
-            <?php
-                $debut = date('d/m/Y', strtotime($challenge['date_debut']));
-                $fin   = date('d/m/Y', strtotime($challenge['date_fin']));
-                echo $debut === $fin ? $debut : 'Du ' . $debut . ' au ' . $fin;
-            ?>
-        </p>
+        <h2>Plan de tir — <?= htmlspecialchars($challenge['libelle']) ?></h2>
     </div>
 
     <?php if (empty($planning)): ?>
         <p>Aucun match planifié pour le moment.</p>
     <?php else: ?>
-        <table class="fiche-table">
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Horaire</th>
-                    <th>Nom</th>
-                    <th>Prénom</th>
-                    <th>Club</th>
-                    <th>Discipline</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($planning as $m): ?>
-                <tr>
-                    <td><?= date('d/m/Y', strtotime($m['date_match'])) ?></td>
-                    <td><?= substr($m['heure_debut'], 0, 5) ?> – <?= substr($m['heure_fin'], 0, 5) ?></td>
-                    <td><?= htmlspecialchars($m['nom']) ?></td>
-                    <td><?= htmlspecialchars($m['prenom']) ?></td>
-                    <td><?= htmlspecialchars($m['club']) ?></td>
-                    <td><?= (int)$m['discipline_code'] ?> — <?= htmlspecialchars($m['discipline_fr']) ?></td>
-                </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
+        <?php foreach ($parJour as $date => $matchsJour):
+            // Index [heure][code_discipline] = liste de noms pour cette date.
+            $index      = [];
+            $dernierFin = $planningFinMin;
+            foreach ($matchsJour as $m) {
+                $slot = substr($m['heure_debut'], 0, 5);
+                $code = (int) $m['discipline_code'];
+                $index[$slot][$code][] = $m['nom'] . '/' . $m['prenom'];
+                $finMatch = substr($m['heure_fin'], 0, 5);
+                if ($finMatch > $dernierFin) {
+                    $dernierFin = $finMatch;
+                }
+            }
+
+            // Creneaux de 10 minutes de 9h00 jusqu'a la fin du dernier match (18h10 au minimum).
+            $creneaux = [];
+            $curseur  = strtotime($planningDebut);
+            $limite   = max(strtotime($planningFinMin), strtotime($dernierFin));
+            while ($curseur <= $limite) {
+                $creneaux[] = date('H:i', $curseur);
+                $curseur += 600;
+            }
+
+            $jourSemaine = $joursFr[(int) date('w', strtotime($date))];
+            $libelleJour = $jourSemaine . ' ' . date('d', strtotime($date)) . ' ' . $moisFr[(int) date('n', strtotime($date))] . ' ' . date('Y', strtotime($date));
+        ?>
+        <div class="planning-jour">
+            <h3 class="planning-date"><?= htmlspecialchars($libelleJour) ?></h3>
+            <table class="fiche-table planning-table">
+                <thead>
+                    <tr>
+                        <th class="planning-col-horaire">Horaires</th>
+                        <?php foreach ($disciplines as $code => $libelle): ?>
+                        <th><?= (int) $code ?> — <?= htmlspecialchars($libelle) ?></th>
+                        <?php endforeach; ?>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($creneaux as $heure):
+                        $estOuverture = $heure >= '09:00' && $heure <= '09:50';
+                    ?>
+                    <tr>
+                        <td class="planning-col-horaire"><?= str_replace(':', ' h ', $heure) ?></td>
+                        <?php if ($estOuverture): ?>
+                            <td class="planning-case-grise" colspan="<?= $nbCols ?>">
+                                <?= $heure === '09:00' ? 'Ouverture et préparation du stand' : '' ?>
+                            </td>
+                        <?php else: ?>
+                            <?php foreach ($disciplines as $code => $libelle): ?>
+                            <td class="planning-case">
+                                <?= isset($index[$heure][$code])
+                                    ? implode('<br>', array_map('htmlspecialchars', $index[$heure][$code]))
+                                    : '' ?>
+                            </td>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+        <?php endforeach; ?>
         <p class="fiche-pied">
-            <?= count($planning) ?> match<?= count($planning) > 1 ? 's' : '' ?> planifié<?= count($planning) > 1 ? 's' : '' ?> —
             Édité le <?= date('d/m/Y à H:i') ?>
         </p>
     <?php endif; ?>
