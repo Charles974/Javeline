@@ -546,6 +546,25 @@ body {
     color: #444;
 }
 
+.liste-impression-sous-titre {
+    font-size: 10pt;
+    color: #333;
+    margin-top: 0.1cm;
+}
+
+.liste-impression-table-matchs thead th {
+    background-color: #8fb4e0;
+}
+
+.liste-impression-col-club {
+    color: #444;
+}
+
+.liste-impression-col-cat {
+    text-align: center;
+    width: 2cm;
+}
+
 .liste-impression-table tbody tr:nth-child(even) {
     background-color: #fffdf0;
 }
