@@ -7,7 +7,7 @@
 -- inscriptions / matchs / scores).
 --
 -- Contenu :
---   - 15 tireurs membres, 8 tireurs externes (dont 4 etrangers)
+--   - 20 tireurs membres, 12 tireurs externes (dont 6 etrangers)
 --   - Challenge 1 "archive" (mars 2026) : inscriptions + plan de tir
 --     + scores complets -> permet de tester les classements,
 --     y compris un cas d'ex-aequo
@@ -17,6 +17,11 @@
 --     "plan de tir" + "saisie des scores"
 --   - Challenge 3 "ouvert" futur : inscriptions seules, aucun plan de
 --     tir -> teste le workflow "inscriptions" en amont
+--   - Challenge 4 "archive" (decembre 2025) : inscriptions + plan de
+--     tir + scores complets, avec des tireurs inscrits sur toutes les
+--     disciplines d'un meme combine -> permet de tester le calcul des
+--     combines (aggregates), y compris un quasi ex-aequo departage par
+--     le nombre de mouflons
 -- ============================================================
 
 USE javeline;
@@ -39,7 +44,12 @@ INSERT INTO membres (id, nom, prenom, date_naissance, lieu_naissance, numero_lic
 (12, 'Laurent',  'Emma',      '2000-10-02', 'Montpellier',  'JAV-2023-012', '2 rue Saint-Guilhem',        NULL,                 '34000', 'Montpellier', '06 12 34 56 12', 'emma.laurent@example.com',   0),
 (13, 'Lefebvre', 'Hugo',      '1993-01-11', 'Palavas-les-Flots', 'JAV-2021-013', '14 rue du Levant',      NULL,                 '34250', 'Palavas-les-Flots', '06 12 34 56 13', 'hugo.lefebvre@example.com', 1),
 (14, 'Michel',   'Chloe',     '1987-04-29', 'Montpellier',  'JAV-2018-014', '20 rue Nationale',           NULL,                 '34000', 'Montpellier', '06 12 34 56 14', 'chloe.michel@example.com',   1),
-(15, 'Garcia',   'Lucas',     '1996-09-09', 'Mauguio',      'JAV-2022-015', '1 chemin des Cabanes',       NULL,                 '34130', 'Mauguio',     '06 12 34 56 15', 'lucas.garcia@example.com',   0);
+(15, 'Garcia',   'Lucas',     '1996-09-09', 'Mauguio',      'JAV-2022-015', '1 chemin des Cabanes',       NULL,                 '34130', 'Mauguio',     '06 12 34 56 15', 'lucas.garcia@example.com',   0),
+(16, 'Fontaine', 'Julie',     '1991-03-15', 'Montpellier',  'JAV-2022-016', '10 rue de la Fontaine',      NULL,                 '34000', 'Montpellier', '06 12 34 56 16', 'julie.fontaine@example.com', 1),
+(17, 'Girard',   'Maxime',    '1986-12-01', 'Nimes',        'JAV-2019-017', '7 rue des Marronniers',      NULL,                 '30000', 'Nimes',       '06 12 34 56 17', 'maxime.girard@example.com',  1),
+(18, 'Bonnet',   'Sarah',     '1994-07-08', 'Beziers',      'JAV-2023-018', '13 avenue Jean Jaures',      NULL,                 '34500', 'Beziers',     '06 12 34 56 18', 'sarah.bonnet@example.com',   0),
+(19, 'Francois', 'Paul',      '1982-02-20', 'Sete',         'JAV-2020-019', '5 quai de Bosc',             NULL,                 '34200', 'Sete',        '06 12 34 56 19', 'paul.francois@example.com',  1),
+(20, 'Andre',    'Manon',     '1999-05-05', 'Lattes',       'JAV-2024-020', '18 chemin des Pins',         NULL,                 '34970', 'Lattes',      '06 12 34 56 20', 'manon.andre@example.com',    0);
 
 -- ------------------------------------------------------------
 -- Externes (non-membres)
@@ -52,7 +62,11 @@ INSERT INTO externes (id, nom, prenom, club, telephone, email, etranger) VALUES
 (5, 'Ferrand',  'Julie',  'Club de Tir de Toulouse',     '06 98 76 54 05', 'julie.ferrand@example.com',  0),
 (6, 'Gauthier', 'Marc',   'Club de Tir de Bordeaux',     NULL,             'marc.gauthier@example.com',  0),
 (7, 'Meyer',    'Klaus',  'Munchener Schutzenverein',    '06 98 76 54 07', 'klaus.meyer@example.de',     1),
-(8, 'Brunet',   'Celine', 'Club de Tir de Nimes',        '06 98 76 54 08', NULL,                          0);
+(8, 'Brunet',   'Celine', 'Club de Tir de Nimes',        '06 98 76 54 08', NULL,                          0),
+(9, 'Weber',    'Anna',   'Schutzenverein Wien',         '06 98 76 54 09', 'anna.weber@example.at',       1),
+(10, 'Costa',   'Miguel', 'Clube de Tiro Porto',         '06 98 76 54 10', 'miguel.costa@example.pt',     1),
+(11, 'Dupuis',  'Marc',   'Club de Tir de Perpignan',    '06 98 76 54 11', 'marc.dupuis@example.com',     0),
+(12, 'Novak',   'Petra',  'Strelecky Klub Praha',        NULL,             'petra.novak@example.cz',      1);
 
 -- ------------------------------------------------------------
 -- Challenges
@@ -60,7 +74,8 @@ INSERT INTO externes (id, nom, prenom, club, telephone, email, etranger) VALUES
 INSERT INTO challenges (id, libelle, date_debut, date_fin, statut) VALUES
 (1, 'Challenge de Printemps 2026', '2026-03-14', '2026-03-15', 'archive'),
 (2, 'Challenge d''Ete 2026',       '2026-06-27', '2026-07-05', 'ouvert'),
-(3, 'Challenge d''Automne 2026',   '2026-09-19', '2026-09-20', 'ouvert');
+(3, 'Challenge d''Automne 2026',   '2026-09-19', '2026-09-20', 'ouvert'),
+(4, 'Challenge d''Hiver 2025',     '2025-12-06', '2025-12-07', 'archive');
 
 -- ------------------------------------------------------------
 -- Challenge 1 (archive) — inscriptions
@@ -198,3 +213,89 @@ INSERT INTO inscriptions (id, challenge_id, tireur_type, tireur_id, discipline_i
 (42, 3, 'externe', 7,  (SELECT id FROM disciplines WHERE code = 412)),
 (43, 3, 'membre',  13, (SELECT id FROM disciplines WHERE code = 408)),
 (44, 3, 'membre',  14, (SELECT id FROM disciplines WHERE code = 409));
+
+-- Quelques inscriptions supplementaires au challenge 3, avec les nouveaux
+-- tireurs, pour etoffer le jeu de donnees "inscriptions seules"
+INSERT INTO inscriptions (id, challenge_id, tireur_type, tireur_id, discipline_id) VALUES
+(65, 3, 'membre',  18, (SELECT id FROM disciplines WHERE code = 404)),
+(66, 3, 'membre',  19, (SELECT id FROM disciplines WHERE code = 405)),
+(67, 3, 'externe', 9,  (SELECT id FROM disciplines WHERE code = 400)),
+(68, 3, 'externe', 12, (SELECT id FROM disciplines WHERE code = 410));
+
+-- ------------------------------------------------------------
+-- Challenge 4 (archive) — challenge complet supplementaire, pense pour
+-- tester les combines (aggregates) : plusieurs tireurs inscrits sur
+-- toutes les disciplines d'un meme combine, avec un quasi ex-aequo
+-- sur le Combine Gros Calibre (membres 16 et 17, 124 points chacun,
+-- departage par le nombre de mouflons).
+-- Disciplines : 400-403 (combine Gros Calibre), 407+408+409+403
+-- (combine Debout), 410+411 (combine Carabine PC), 412+413
+-- (combine Carabine GC), 404, 405, 406 (disciplines seules)
+-- ------------------------------------------------------------
+INSERT INTO inscriptions (id, challenge_id, tireur_type, tireur_id, discipline_id) VALUES
+(45, 4, 'membre',  16, (SELECT id FROM disciplines WHERE code = 400)),
+(46, 4, 'membre',  16, (SELECT id FROM disciplines WHERE code = 401)),
+(47, 4, 'membre',  16, (SELECT id FROM disciplines WHERE code = 402)),
+(48, 4, 'membre',  16, (SELECT id FROM disciplines WHERE code = 403)),
+(49, 4, 'membre',  17, (SELECT id FROM disciplines WHERE code = 400)),
+(50, 4, 'membre',  17, (SELECT id FROM disciplines WHERE code = 401)),
+(51, 4, 'membre',  17, (SELECT id FROM disciplines WHERE code = 402)),
+(52, 4, 'membre',  17, (SELECT id FROM disciplines WHERE code = 403)),
+(53, 4, 'externe', 9,  (SELECT id FROM disciplines WHERE code = 403)),
+(54, 4, 'membre',  18, (SELECT id FROM disciplines WHERE code = 407)),
+(55, 4, 'membre',  18, (SELECT id FROM disciplines WHERE code = 408)),
+(56, 4, 'membre',  18, (SELECT id FROM disciplines WHERE code = 409)),
+(57, 4, 'membre',  18, (SELECT id FROM disciplines WHERE code = 403)),
+(58, 4, 'externe', 10, (SELECT id FROM disciplines WHERE code = 404)),
+(59, 4, 'externe', 11, (SELECT id FROM disciplines WHERE code = 405)),
+(60, 4, 'membre',  19, (SELECT id FROM disciplines WHERE code = 410)),
+(61, 4, 'membre',  19, (SELECT id FROM disciplines WHERE code = 411)),
+(62, 4, 'membre',  20, (SELECT id FROM disciplines WHERE code = 412)),
+(63, 4, 'membre',  20, (SELECT id FROM disciplines WHERE code = 413)),
+(64, 4, 'externe', 12, (SELECT id FROM disciplines WHERE code = 406));
+
+-- Plan de tir complet du challenge 4 (2 jours)
+INSERT INTO matchs (id, inscription_id, date_match, heure_debut, heure_fin) VALUES
+(30, 45, '2025-12-06', '08:00:00', '09:00:00'),
+(31, 46, '2025-12-06', '09:00:00', '10:00:00'),
+(32, 47, '2025-12-06', '10:00:00', '11:00:00'),
+(33, 48, '2025-12-06', '11:00:00', '12:00:00'),
+(34, 49, '2025-12-06', '13:00:00', '14:00:00'),
+(35, 50, '2025-12-06', '14:00:00', '15:00:00'),
+(36, 51, '2025-12-06', '15:00:00', '16:00:00'),
+(37, 52, '2025-12-06', '16:00:00', '17:00:00'),
+(38, 53, '2025-12-06', '17:00:00', '18:00:00'),
+(39, 54, '2025-12-06', '18:00:00', '19:00:00'),
+(40, 55, '2025-12-07', '08:00:00', '09:00:00'),
+(41, 56, '2025-12-07', '09:00:00', '10:00:00'),
+(42, 57, '2025-12-07', '10:00:00', '11:00:00'),
+(43, 58, '2025-12-07', '11:00:00', '12:00:00'),
+(44, 59, '2025-12-07', '13:00:00', '14:00:00'),
+(45, 60, '2025-12-07', '14:00:00', '15:00:00'),
+(46, 61, '2025-12-07', '15:00:00', '16:00:00'),
+(47, 62, '2025-12-07', '16:00:00', '17:00:00'),
+(48, 63, '2025-12-07', '17:00:00', '18:00:00'),
+(49, 64, '2025-12-07', '18:00:00', '19:00:00');
+
+-- Scores complets du challenge 4
+INSERT INTO scores (match_id, poulets, cochons, dindons, mouflons) VALUES
+(30, 9,  8,  8,  9),  -- membre 16 (disc 400) : total 34
+(31, 8,  8,  8,  8),  -- membre 16 (disc 401) : total 32
+(32, 7,  8,  7,  8),  -- membre 16 (disc 402) : total 30
+(33, 7,  7,  7,  7),  -- membre 16 (disc 403) : total 28 -> combine GC membre 16 = 124, mouflons = 32
+(34, 8,  8,  8,  10), -- membre 17 (disc 400) : total 34
+(35, 9,  8,  7,  8),  -- membre 17 (disc 401) : total 32
+(36, 7,  7,  8,  8),  -- membre 17 (disc 402) : total 30
+(37, 7,  7,  7,  7),  -- membre 17 (disc 403) : total 28 -> combine GC membre 17 = 124, mouflons = 33 (departage)
+(38, 8,  7,  8,  7),  -- externe 9 (disc 403) : total 30
+(39, 9,  9,  8,  9),  -- membre 18 (disc 407) : total 35
+(40, 8,  8,  7,  8),  -- membre 18 (disc 408) : total 31
+(41, 7,  8,  8,  7),  -- membre 18 (disc 409) : total 30
+(42, 8,  7,  7,  8),  -- membre 18 (disc 403) : total 30 -> combine Debout membre 18 = 126
+(43, 9,  8,  9,  8),  -- externe 10 (disc 404) : total 34
+(44, 7,  7,  6,  7),  -- externe 11 (disc 405) : total 27
+(45, 9,  9,  9,  10), -- membre 19 (disc 410) : total 37
+(46, 8,  8,  8,  9),  -- membre 19 (disc 411) : total 33 -> combine Carabine PC membre 19 = 70
+(47, 10, 9,  9,  10), -- membre 20 (disc 412) : total 38
+(48, 9,  9,  8,  9),  -- membre 20 (disc 413) : total 35 -> combine Carabine GC membre 20 = 73
+(49, 6,  7,  6,  7);  -- externe 12 (disc 406) : total 26
