@@ -52,9 +52,13 @@ $dateFinChallenge2   = date('d/m/Y', strtotime($challenge['date_fin']));
             $index      = [];
             $dernierFin = $planningFinMin;
             foreach ($matchsJour as $m) {
-                $slot = substr($m['heure_debut'], 0, 5);
-                $code = (int) $m['discipline_code'];
-                $index[$slot][$code][] = $m['nom'] . '/' . $m['prenom'];
+                $slot  = substr($m['heure_debut'], 0, 5);
+                $code  = (int) $m['discipline_code'];
+                $coach = $m['coach'];
+                if (!$coach) {
+                    $coach = $m['tireur_type'] === 'membre' ? 'Javeline' : '???';
+                }
+                $index[$slot][$code][] = $m['nom'] . '/' . $coach;
                 $finMatch = substr($m['heure_fin'], 0, 5);
                 if ($finMatch > $dernierFin) {
                     $dernierFin = $finMatch;

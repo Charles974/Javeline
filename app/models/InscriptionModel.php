@@ -412,6 +412,8 @@ class InscriptionModel extends Model
                     i.tireur_type,
                     CASE WHEN i.tireur_type = 'membre'
                          THEN 'Javeline' ELSE e.club END AS club,
+                    CASE WHEN i.tireur_type = 'membre'
+                         THEN m.coach ELSE e.coach END AS coach,
                     ma.date_match,
                     ma.heure_debut,
                     ma.heure_fin
