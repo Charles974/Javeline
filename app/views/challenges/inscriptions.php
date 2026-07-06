@@ -130,80 +130,88 @@
                         <!-- Champs membre -->
                         <div id="champs-membre" class="fiche-grille mb-2" hidden>
                             <div>
-                                <label for="pm-nom" class="form-label">Nom <span aria-hidden="true">*</span></label>
-                                <input type="text" class="form-control" id="pm-nom" name="nom" maxlength="100" autocomplete="off">
+                                <label for="pm-nom" class="form-label visually-hidden">Nom <span aria-hidden="true">*</span></label>
+                                <input type="text" class="form-control" id="pm-nom" name="nom" placeholder="Nom *" maxlength="100" autocomplete="off">
                             </div>
                             <div>
-                                <label for="pm-prenom" class="form-label">Prénom <span aria-hidden="true">*</span></label>
-                                <input type="text" class="form-control" id="pm-prenom" name="prenom" maxlength="100" autocomplete="off">
+                                <label for="pm-prenom" class="form-label visually-hidden">Prénom <span aria-hidden="true">*</span></label>
+                                <input type="text" class="form-control" id="pm-prenom" name="prenom" placeholder="Prénom *" maxlength="100" autocomplete="off">
                             </div>
                             <div>
-                                <label for="pm-naissance" class="form-label">Date de naissance <span aria-hidden="true">*</span></label>
-                                <input type="date" class="form-control" id="pm-naissance" name="date_naissance">
+                                <label for="pm-naissance" class="form-label visually-hidden">Date de naissance <span aria-hidden="true">*</span></label>
+                                <input type="date" class="form-control" id="pm-naissance" name="date_naissance" placeholder="Date de naissance *">
                             </div>
                             <div>
-                                <label for="pm-lieu" class="form-label">Lieu de naissance <span aria-hidden="true">*</span></label>
-                                <input type="text" class="form-control" id="pm-lieu" name="lieu_naissance" maxlength="150" autocomplete="off">
+                                <label for="pm-lieu" class="form-label visually-hidden">Lieu de naissance <span aria-hidden="true">*</span></label>
+                                <input type="text" class="form-control" id="pm-lieu" name="lieu_naissance" placeholder="Lieu de naissance *" maxlength="150" autocomplete="off">
                             </div>
                             <div class="col-span-2">
-                                <label for="pm-licence" class="form-label">N° de licence <span aria-hidden="true">*</span></label>
-                                <input type="text" class="form-control" id="pm-licence" name="numero_licence" maxlength="50" autocomplete="off">
+                                <label for="pm-licence" class="form-label visually-hidden">N° de licence <span aria-hidden="true">*</span></label>
+                                <input type="text" class="form-control" id="pm-licence" name="numero_licence" placeholder="N° de licence *" maxlength="50" autocomplete="off">
                             </div>
                             <div class="col-span-2">
-                                <label for="pm-adresse1" class="form-label">Adresse <span aria-hidden="true">*</span></label>
-                                <input type="text" class="form-control" id="pm-adresse1" name="adresse1" maxlength="200" autocomplete="off">
+                                <label for="pm-adresse1" class="form-label visually-hidden">Adresse <span aria-hidden="true">*</span></label>
+                                <input type="text" class="form-control" id="pm-adresse1" name="adresse1" placeholder="Adresse *" maxlength="200" autocomplete="off">
                             </div>
                             <div class="col-span-2">
-                                <label for="pm-adresse2" class="form-label">Adresse (complément)</label>
-                                <input type="text" class="form-control" id="pm-adresse2" name="adresse2" maxlength="200" autocomplete="off">
+                                <label for="pm-adresse2" class="form-label visually-hidden">Adresse (complément)</label>
+                                <input type="text" class="form-control" id="pm-adresse2" name="adresse2" placeholder="Adresse (complément)" maxlength="200" autocomplete="off">
                             </div>
                             <div>
-                                <label for="pm-cp" class="form-label">Code postal <span aria-hidden="true">*</span></label>
-                                <input type="text" class="form-control" id="pm-cp" name="code_postal" maxlength="5" inputmode="numeric" pattern="[0-9]{5}" autocomplete="off">
+                                <label for="pm-cp" class="form-label visually-hidden">Code postal <span aria-hidden="true">*</span></label>
+                                <input type="text" class="form-control" id="pm-cp" name="code_postal" placeholder="Code postal *" maxlength="5" inputmode="numeric" pattern="[0-9]{5}" autocomplete="off">
                             </div>
                             <div>
-                                <label for="pm-ville" class="form-label">Ville <span aria-hidden="true">*</span></label>
-                                <input type="text" class="form-control" id="pm-ville" name="ville" maxlength="100" autocomplete="off">
+                                <label for="pm-ville" class="form-label visually-hidden">Ville <span aria-hidden="true">*</span></label>
+                                <input type="text" class="form-control" id="pm-ville" name="ville" placeholder="Ville *" maxlength="100" autocomplete="off">
                             </div>
                             <div>
-                                <label for="pm-tel" class="form-label">Téléphone <span aria-hidden="true">*</span></label>
-                                <input type="tel" class="form-control" id="pm-tel" name="telephone" maxlength="20" inputmode="numeric" pattern="[0-9 ]+" autocomplete="off">
+                                <label for="pm-tel" class="form-label visually-hidden">Téléphone <span aria-hidden="true">*</span></label>
+                                <input type="tel" class="form-control" id="pm-tel" name="telephone" placeholder="Téléphone *" maxlength="20" inputmode="numeric" pattern="[0-9 ]+" autocomplete="off">
                             </div>
                             <div>
-                                <label for="pm-email" class="form-label">Email <span aria-hidden="true">*</span></label>
-                                <input type="email" class="form-control" id="pm-email" name="email" maxlength="150" autocomplete="off">
+                                <label for="pm-email" class="form-label visually-hidden">Email <span aria-hidden="true">*</span></label>
+                                <input type="email" class="form-control" id="pm-email" name="email" placeholder="Email *" maxlength="150" autocomplete="off">
                             </div>
-                            <div class="col-span-2 form-check">
+                            <div class="form-check">
                                 <input type="checkbox" class="form-check-input" id="pm-certificat" name="certificat_medical" value="1">
                                 <label class="form-check-label" for="pm-certificat">Certificat médical valide</label>
+                            </div>
+                            <div>
+                                <label for="pm-coach" class="form-label visually-hidden">Coach</label>
+                                <input type="text" class="form-control" id="pm-coach" name="coach" placeholder="Coach" maxlength="150" autocomplete="off">
                             </div>
                         </div>
 
                         <!-- Champs non membre -->
                         <div id="champs-externe" class="fiche-grille mb-2" hidden>
                             <div>
-                                <label for="pe-nom" class="form-label">Nom <span aria-hidden="true">*</span></label>
-                                <input type="text" class="form-control" id="pe-nom" name="nom" maxlength="100" autocomplete="off">
+                                <label for="pe-nom" class="form-label visually-hidden">Nom <span aria-hidden="true">*</span></label>
+                                <input type="text" class="form-control" id="pe-nom" name="nom" placeholder="Nom *" maxlength="100" autocomplete="off">
                             </div>
                             <div>
-                                <label for="pe-prenom" class="form-label">Prénom <span aria-hidden="true">*</span></label>
-                                <input type="text" class="form-control" id="pe-prenom" name="prenom" maxlength="100" autocomplete="off">
+                                <label for="pe-prenom" class="form-label visually-hidden">Prénom <span aria-hidden="true">*</span></label>
+                                <input type="text" class="form-control" id="pe-prenom" name="prenom" placeholder="Prénom *" maxlength="100" autocomplete="off">
                             </div>
                             <div class="col-span-2">
-                                <label for="pe-club" class="form-label">Club <span aria-hidden="true">*</span></label>
-                                <input type="text" class="form-control" id="pe-club" name="club" maxlength="150" autocomplete="off">
+                                <label for="pe-club" class="form-label visually-hidden">Club <span aria-hidden="true">*</span></label>
+                                <input type="text" class="form-control" id="pe-club" name="club" placeholder="Club *" maxlength="150" autocomplete="off">
                             </div>
                             <div>
-                                <label for="pe-tel" class="form-label">Téléphone</label>
-                                <input type="tel" class="form-control" id="pe-tel" name="telephone" maxlength="20" autocomplete="off">
+                                <label for="pe-tel" class="form-label visually-hidden">Téléphone</label>
+                                <input type="tel" class="form-control" id="pe-tel" name="telephone" placeholder="Téléphone" maxlength="20" autocomplete="off">
                             </div>
                             <div>
-                                <label for="pe-email" class="form-label">Email</label>
-                                <input type="email" class="form-control" id="pe-email" name="email" maxlength="150" autocomplete="off">
+                                <label for="pe-email" class="form-label visually-hidden">Email</label>
+                                <input type="email" class="form-control" id="pe-email" name="email" placeholder="Email" maxlength="150" autocomplete="off">
                             </div>
-                            <div class="col-span-2 form-check">
+                            <div class="form-check">
                                 <input type="checkbox" class="form-check-input" id="pe-etranger" name="etranger" value="1">
                                 <label class="form-check-label" for="pe-etranger">Tireur étranger (libellés en anglais)</label>
+                            </div>
+                            <div>
+                                <label for="pe-coach" class="form-label visually-hidden">Coach</label>
+                                <input type="text" class="form-control" id="pe-coach" name="coach" placeholder="Coach" maxlength="150" autocomplete="off">
                             </div>
                         </div>
 

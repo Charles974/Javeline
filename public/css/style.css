@@ -162,29 +162,6 @@ main {
     margin: 0;
 }
 
-/* --- En-tete de formulaire repliable (fiche tireur) --- */
-.form-card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    cursor: pointer;
-    user-select: none;
-}
-
-.form-card-chevron {
-    width: 0.6rem;
-    height: 0.6rem;
-    border-right: 2px solid #fff;
-    border-bottom: 2px solid #fff;
-    transform: rotate(45deg);
-    transition: transform 0.2s ease;
-    flex-shrink: 0;
-}
-
-.form-card-header[aria-expanded="true"] .form-card-chevron {
-    transform: rotate(-135deg);
-}
-
 /* --- Mention d'information RGPD sous le formulaire --- */
 .mention-rgpd {
     margin-top: 0.75rem;

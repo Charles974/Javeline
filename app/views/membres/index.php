@@ -10,12 +10,9 @@
     <!-- ====== Formulaire ====== -->
     <div class="mb-4">
         <div class="card form-card">
-            <div class="card-header form-card-header" data-bs-toggle="collapse" data-bs-target="#form-membre-collapse"
-                 role="button" aria-expanded="false" aria-controls="form-membre-collapse">
+            <div class="card-header">
                 <h2 class="card-titre" id="form-titre">Nouveau membre</h2>
-                <span class="form-card-chevron" aria-hidden="true"></span>
             </div>
-            <div class="collapse" id="form-membre-collapse">
             <div class="card-body">
 
                 <!-- Erreurs inline -->
@@ -91,7 +88,7 @@
                             <input type="text" class="form-control" id="membre-ville" name="ville" placeholder="Ville *"
                                    required maxlength="100" autocomplete="off" aria-required="true">
                         </div>
-                        <div class="col-md-6 mb-2">
+                        <div class="col-md-3 mb-2">
                             <div class="form-check">
                                 <input type="checkbox" class="form-check-input" id="membre-certificat"
                                        name="certificat_medical" value="1">
@@ -100,10 +97,7 @@
                                 </label>
                             </div>
                         </div>
-                    </div>
-
-                    <div class="row g-2">
-                        <div class="col-md-6 mb-2">
+                        <div class="col-md-3 mb-2">
                             <label for="membre-coach" class="form-label visually-hidden">Coach</label>
                             <input type="text" class="form-control" id="membre-coach" name="coach" placeholder="Coach"
                                    maxlength="150" autocomplete="off">
@@ -131,7 +125,6 @@
                         </button>
                     </div>
                 </form>
-            </div>
             </div>
         </div>
     </div>
