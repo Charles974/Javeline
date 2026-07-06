@@ -125,8 +125,6 @@
                     <form id="form-profil" class="fiche-form" novalidate>
                         <input type="hidden" id="profil-id" name="id" value="">
 
-                        <p class="fiche-section-titre">Informations du tireur</p>
-
                         <!-- Champs membre -->
                         <div id="champs-membre" class="fiche-grille mb-2" hidden>
                             <div>

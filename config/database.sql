@@ -137,39 +137,3 @@ CREATE TABLE scores (
     UNIQUE KEY uk_score_match (match_id),
     CONSTRAINT fk_score_match FOREIGN KEY (match_id) REFERENCES matchs (id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- ============================================================
--- Migrations — à exécuter sur une base existante
--- ============================================================
-
--- Typage numérique du code postal et du téléphone
-ALTER TABLE membres
-    MODIFY COLUMN code_postal CHAR(5)     NOT NULL,
-    MODIFY COLUMN telephone   VARCHAR(15) NOT NULL;
-
--- Ajout du coach (champ libre) sur les tireurs membres et externes
-ALTER TABLE membres
-    ADD COLUMN coach VARCHAR(150) NULL DEFAULT NULL AFTER certificat_medical;
-
-ALTER TABLE externes
-    ADD COLUMN coach VARCHAR(150) NULL DEFAULT NULL AFTER etranger;
-
--- Ajout des seuils de qualification (F1/F2) sur les disciplines
-ALTER TABLE disciplines
-    ADD COLUMN qualif_f1 SMALLINT NOT NULL DEFAULT 0 AFTER libelle_en,
-    ADD COLUMN qualif_f2 SMALLINT NOT NULL DEFAULT 0 AFTER qualif_f1;
-
-UPDATE disciplines SET qualif_f1 = 28, qualif_f2 = 26 WHERE code = 400;
-UPDATE disciplines SET qualif_f1 = 30, qualif_f2 = 28 WHERE code = 401;
-UPDATE disciplines SET qualif_f1 = 34, qualif_f2 = 32 WHERE code = 402;
-UPDATE disciplines SET qualif_f1 = 18, qualif_f2 = 16 WHERE code = 403;
-UPDATE disciplines SET qualif_f1 = 30, qualif_f2 = 28 WHERE code = 404;
-UPDATE disciplines SET qualif_f1 = 32, qualif_f2 = 30 WHERE code = 405;
-UPDATE disciplines SET qualif_f1 = 36, qualif_f2 = 34 WHERE code = 406;
-UPDATE disciplines SET qualif_f1 = 20, qualif_f2 = 18 WHERE code = 407;
-UPDATE disciplines SET qualif_f1 = 22, qualif_f2 = 20 WHERE code = 408;
-UPDATE disciplines SET qualif_f1 = 24, qualif_f2 = 22 WHERE code = 409;
-UPDATE disciplines SET qualif_f1 = 14, qualif_f2 = 10 WHERE code = 410;
-UPDATE disciplines SET qualif_f1 = 16, qualif_f2 = 12 WHERE code = 411;
-UPDATE disciplines SET qualif_f1 = 14, qualif_f2 = 11 WHERE code = 412;
-UPDATE disciplines SET qualif_f1 = 14, qualif_f2 = 11 WHERE code = 413;
