@@ -36,7 +36,9 @@ $planningFinMin = '18:10';
     <?php if (empty($planning)): ?>
         <p>Aucun match planifié pour le moment.</p>
     <?php else: ?>
-        <?php foreach ($parJour as $date => $matchsJour):
+        <?php
+        $dateFinChallenge = date('Y-m-d', strtotime($challenge['date_fin']));
+        foreach ($parJour as $date => $matchsJour):
             // Index [heure][code_discipline] = liste de noms pour cette date.
             $index      = [];
             $dernierFin = $planningFinMin;
@@ -59,6 +61,12 @@ $planningFinMin = '18:10';
                 $curseur += 600;
             }
 
+            // Zone grise de fin de journee : demarre juste apres le dernier creneau utilise.
+            $dernierCreneauUtilise = !empty($index) ? max(array_keys($index)) : '09:50';
+            $debutCloture   = date('H:i', strtotime($dernierCreneauUtilise) + 600);
+            $estDernierJour = $date === $dateFinChallenge;
+            $derniereLigne  = $creneaux[count($creneaux) - 1];
+
             $jourSemaine = $joursFr[(int) date('w', strtotime($date))];
             $libelleJour = $jourSemaine . ' ' . date('d', strtotime($date)) . ' ' . $moisFr[(int) date('n', strtotime($date))] . ' ' . date('Y', strtotime($date));
         ?>
@@ -76,12 +84,28 @@ $planningFinMin = '18:10';
                 <tbody>
                     <?php foreach ($creneaux as $heure):
                         $estOuverture = $heure >= '09:00' && $heure <= '09:50';
+                        $estCloture   = !$estOuverture && $heure >= $debutCloture;
+
+                        $libelleCloture = '';
+                        if ($estCloture) {
+                            if ($estDernierJour) {
+                                $libelleCloture = $heure === $derniereLigne
+                                    ? 'Remise des médailles'
+                                    : ($heure === $debutCloture ? 'Rangement des bêtes' : '');
+                            } else {
+                                $libelleCloture = $heure === $debutCloture ? 'Requillage Ensemble des Silhouettes' : '';
+                            }
+                        }
                     ?>
                     <tr>
                         <td class="planning-col-horaire"><?= str_replace(':', ' h ', $heure) ?></td>
                         <?php if ($estOuverture): ?>
                             <td class="planning-case-grise" colspan="<?= $nbCols ?>">
                                 <?= $heure === '09:00' ? 'Ouverture et préparation du stand' : '' ?>
+                            </td>
+                        <?php elseif ($estCloture): ?>
+                            <td class="planning-case-grise" colspan="<?= $nbCols ?>">
+                                <?= htmlspecialchars($libelleCloture) ?>
                             </td>
                         <?php else: ?>
                             <?php foreach ($disciplines as $code => $libelle): ?>
