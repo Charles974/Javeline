@@ -69,24 +69,26 @@ CREATE TABLE disciplines (
     code        SMALLINT        NOT NULL UNIQUE,
     libelle_fr  VARCHAR(100)    NOT NULL,
     libelle_en  VARCHAR(100)    NOT NULL,
+    qualif_f1   SMALLINT        NOT NULL DEFAULT 0,
+    qualif_f2   SMALLINT        NOT NULL DEFAULT 0,
     PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO disciplines (code, libelle_fr, libelle_en) VALUES
-    (400, 'Gros Calibre Revolver',             'Big Bore Revolver'),
-    (401, 'Gros Calibre Production',           'Big Bore Production'),
-    (402, 'Gros Calibre Unlimited',            'Big Bore Unlimited'),
-    (403, 'Gros Calibre Debout',               'Big Bore Standing'),
-    (404, 'Petit Calibre Revolver',            'Small Bore Revolver'),
-    (405, 'Petit Calibre Production',          'Small Bore Production'),
-    (406, 'Petit Calibre Unlimited',           'Small Bore Unlimited'),
-    (407, 'Petit Calibre Debout',              'Small Bore Standing'),
-    (408, 'Field Visée Ouverte',               'Field Pistol Any Sight'),
-    (409, 'Field Optique',                     'Field Pistol Production'),
-    (410, 'Carabine Petit Calibre Légère',     'Small Bore Light Rifle'),
-    (411, 'Carabine Petit Calibre Silhouette', 'Small Bore Silhouette Rifle'),
-    (412, 'Carabine Gros Calibre Hunting',     'Big Bore Hunting Rifle'),
-    (413, 'Carabine Gros Calibre Silhouette',  'Big Bore Silhouette Rifle');
+INSERT INTO disciplines (code, libelle_fr, libelle_en, qualif_f1, qualif_f2) VALUES
+    (400, 'Gros Calibre Revolver',             'Big Bore Revolver',           28, 26),
+    (401, 'Gros Calibre Production',           'Big Bore Production',         30, 28),
+    (402, 'Gros Calibre Unlimited',            'Big Bore Unlimited',          34, 32),
+    (403, 'Gros Calibre Debout',               'Big Bore Standing',           18, 16),
+    (404, 'Petit Calibre Revolver',            'Small Bore Revolver',         30, 28),
+    (405, 'Petit Calibre Production',          'Small Bore Production',       32, 30),
+    (406, 'Petit Calibre Unlimited',           'Small Bore Unlimited',        36, 34),
+    (407, 'Petit Calibre Debout',              'Small Bore Standing',         20, 18),
+    (408, 'Field Visée Ouverte',               'Field Pistol Any Sight',      22, 20),
+    (409, 'Field Optique',                     'Field Pistol Production',     24, 22),
+    (410, 'Carabine Petit Calibre Légère',     'Small Bore Light Rifle',      14, 10),
+    (411, 'Carabine Petit Calibre Silhouette', 'Small Bore Silhouette Rifle', 16, 12),
+    (412, 'Carabine Gros Calibre Hunting',     'Big Bore Hunting Rifle',      14, 11),
+    (413, 'Carabine Gros Calibre Silhouette',  'Big Bore Silhouette Rifle',   14, 11);
 
 -- ------------------------------------------------------------
 -- Inscriptions : un tireur s'inscrit à une discipline d'un challenge

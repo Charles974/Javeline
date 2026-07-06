@@ -11,7 +11,7 @@ class ExterneModel extends Model
     public function findAll(): array
     {
         $stmt = $this->db->query(
-            'SELECT id, nom, prenom, club, telephone, email
+            'SELECT id, nom, prenom, club, telephone, email, etranger
              FROM externes
              ORDER BY nom ASC, prenom ASC'
         );

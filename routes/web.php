@@ -25,10 +25,12 @@ $router->post('/challenges/:id/modifier-inscriptions',          'ChallengeContro
 $router->post('/challenges/:id/supprimer-inscription',          'ChallengeController', 'supprimerInscription');
 
 // Disciplines
-$router->get('/disciplines', 'DisciplineController', 'index');
+$router->get('/disciplines',           'DisciplineController', 'index');
+$router->get('/disciplines/imprimer',  'DisciplineController', 'imprimerListe');
 
 // Membres
 $router->get('/membres',              'MembreController', 'index');
+$router->get('/membres/imprimer',     'MembreController', 'imprimerListe');
 $router->get('/membres/get/:id',      'MembreController', 'get');
 $router->get('/membres/fiche/:id',    'MembreController', 'fiche');
 $router->get('/membres/historique/:id', 'MembreController', 'historique');
@@ -38,6 +40,7 @@ $router->post('/membres/supprimer',   'MembreController', 'supprimer');
 
 // Tireurs non membres (externes)
 $router->get('/externes',             'ExterneController', 'index');
+$router->get('/externes/imprimer',    'ExterneController', 'imprimerListe');
 $router->get('/externes/get/:id',     'ExterneController', 'get');
 $router->get('/externes/fiche/:id',   'ExterneController', 'fiche');
 $router->get('/externes/historique/:id', 'ExterneController', 'historique');

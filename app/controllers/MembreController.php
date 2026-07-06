@@ -25,6 +25,20 @@ class MembreController extends Controller
     }
 
     /**
+     * GET /membres/imprimer
+     * Vue imprimable de la liste des tireurs membres.
+     */
+    public function imprimerListe(): void
+    {
+        $membres = $this->model->findAll();
+
+        $this->render('membres/print_liste', [
+            'titrePage' => 'Liste des tireurs membres — ' . APP_NAME,
+            'membres'   => $membres,
+        ], 'print');
+    }
+
+    /**
      * POST /membres/ajouter
      * Retourne JSON.
      */
