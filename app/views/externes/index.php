@@ -93,9 +93,17 @@
     <div class="card liste-card membres-liste-card">
         <div class="card-header d-flex justify-content-between align-items-center">
             <h2 class="card-titre">Liste des tireurs non membres</h2>
-            <span id="externes-compteur" class="badge bg-secondary">
-                <?= count($externes) ?> tireur<?= count($externes) > 1 ? 's' : '' ?>
-            </span>
+            <div class="d-flex align-items-center gap-2">
+                <span id="externes-compteur" class="badge bg-secondary">
+                    <?= count($externes) ?> tireur<?= count($externes) > 1 ? 's' : '' ?>
+                </span>
+                <a href="<?= APP_URL ?>/externes/imprimer"
+                   target="_blank"
+                   class="btn btn-sm btn-outline-primary"
+                   aria-label="Imprimer la liste des tireurs non membres">
+                    Imprimer la liste
+                </a>
+            </div>
         </div>
         <div class="card-body p-0" id="zone-externes-liste">
             <?php require APP_ROOT . '/app/views/partials/externes_liste.php'; ?>

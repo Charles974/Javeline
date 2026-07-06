@@ -38,6 +38,7 @@ $router->post('/membres/supprimer',   'MembreController', 'supprimer');
 
 // Tireurs non membres (externes)
 $router->get('/externes',             'ExterneController', 'index');
+$router->get('/externes/imprimer',    'ExterneController', 'imprimerListe');
 $router->get('/externes/get/:id',     'ExterneController', 'get');
 $router->get('/externes/fiche/:id',   'ExterneController', 'fiche');
 $router->get('/externes/historique/:id', 'ExterneController', 'historique');

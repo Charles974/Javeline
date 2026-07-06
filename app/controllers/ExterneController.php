@@ -25,6 +25,20 @@ class ExterneController extends Controller
     }
 
     /**
+     * GET /externes/imprimer
+     * Vue imprimable de la liste des tireurs non membres.
+     */
+    public function imprimerListe(): void
+    {
+        $externes = $this->model->findAll();
+
+        $this->render('externes/print_liste', [
+            'titrePage' => 'Liste des tireurs non membres — ' . APP_NAME,
+            'externes'  => $externes,
+        ], 'print');
+    }
+
+    /**
      * GET /externes/get/:id
      * Retourne les données complètes d'un tireur externe en JSON.
      */

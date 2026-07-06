@@ -471,3 +471,79 @@ body {
     color: #666;
     font-style: italic;
 }
+
+/* ============================================================
+   Liste des tireurs non membres — export imprimable
+   ============================================================ */
+
+.liste-impression {
+    max-width: none;
+}
+
+.liste-impression-entete {
+    position: relative;
+    text-align: center;
+    border-bottom: 2px solid #6a9bd8;
+    padding-bottom: 0.5cm;
+    margin-bottom: 0.6cm;
+}
+
+.liste-impression-entete h1 {
+    font-size: 16pt;
+    letter-spacing: 0.03em;
+}
+
+.liste-impression-entete h2 {
+    font-size: 12pt;
+    font-weight: normal;
+    color: #333;
+    margin-top: 0.15cm;
+}
+
+.liste-impression-date {
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 9pt;
+    color: #333;
+}
+
+.liste-impression-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 10pt;
+}
+
+.liste-impression-table th,
+.liste-impression-table td {
+    padding: 0.25cm 0.35cm;
+    text-align: left;
+}
+
+.liste-impression-table thead th {
+    background-color: #6a9bd8;
+    color: #fff;
+    font-weight: 600;
+    border: 1px solid #fff;
+}
+
+.liste-impression-table tbody td {
+    border-bottom: 1px solid #e2e2e2;
+}
+
+.liste-impression-table tbody tr:nth-child(even) {
+    background-color: #fffdf0;
+}
+
+.liste-impression-vide {
+    text-align: center;
+    color: #666;
+    font-style: italic;
+    margin-top: 1cm;
+}
+
+.liste-impression-pied {
+    margin-top: 0.5cm;
+    font-size: 9pt;
+    color: #444;
+}
