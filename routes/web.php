@@ -29,6 +29,7 @@ $router->get('/disciplines', 'DisciplineController', 'index');
 
 // Membres
 $router->get('/membres',              'MembreController', 'index');
+$router->get('/membres/imprimer',     'MembreController', 'imprimerListe');
 $router->get('/membres/get/:id',      'MembreController', 'get');
 $router->get('/membres/fiche/:id',    'MembreController', 'fiche');
 $router->get('/membres/historique/:id', 'MembreController', 'historique');
