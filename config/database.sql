@@ -135,19 +135,3 @@ CREATE TABLE scores (
     UNIQUE KEY uk_score_match (match_id),
     CONSTRAINT fk_score_match FOREIGN KEY (match_id) REFERENCES matchs (id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- ============================================================
--- Migrations — à exécuter sur une base existante
--- ============================================================
-
--- Typage numérique du code postal et du téléphone
-ALTER TABLE membres
-    MODIFY COLUMN code_postal CHAR(5)     NOT NULL,
-    MODIFY COLUMN telephone   VARCHAR(15) NOT NULL;
-
--- Ajout du coach (champ libre) sur les tireurs membres et externes
-ALTER TABLE membres
-    ADD COLUMN coach VARCHAR(150) NULL DEFAULT NULL AFTER certificat_medical;
-
-ALTER TABLE externes
-    ADD COLUMN coach VARCHAR(150) NULL DEFAULT NULL AFTER etranger;
