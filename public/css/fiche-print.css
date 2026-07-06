@@ -83,6 +83,12 @@ body {
     max-width: none;
 }
 
+.planning-dates-challenge {
+    font-size: 10pt;
+    font-weight: 700;
+    margin-top: 0.1cm;
+}
+
 .planning-jour {
     margin-bottom: 1cm;
 }
@@ -116,6 +122,8 @@ body {
 .planning-table thead th {
     background-color: #fff;
     font-weight: 700;
+    font-size: 7pt;
+    line-height: 1.3;
 }
 
 .planning-col-horaire {
@@ -131,6 +139,11 @@ body {
 .planning-case-grise {
     background-color: #d9d9d9;
     font-weight: 700;
+}
+
+.planning-case-ouverture {
+    text-align: center;
+    vertical-align: middle;
 }
 
 /* ============================================================
