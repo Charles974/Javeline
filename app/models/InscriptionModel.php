@@ -404,6 +404,7 @@ class InscriptionModel extends Model
         $sql = "SELECT
                     d.code              AS discipline_code,
                     d.libelle_fr        AS discipline_fr,
+                    d.libelle_en        AS discipline_en,
                     CASE WHEN i.tireur_type = 'membre'
                          THEN m.nom   ELSE e.nom   END AS nom,
                     CASE WHEN i.tireur_type = 'membre'
@@ -411,6 +412,8 @@ class InscriptionModel extends Model
                     i.tireur_type,
                     CASE WHEN i.tireur_type = 'membre'
                          THEN 'Javeline' ELSE e.club END AS club,
+                    CASE WHEN i.tireur_type = 'membre'
+                         THEN m.coach ELSE e.coach END AS coach,
                     ma.date_match,
                     ma.heure_debut,
                     ma.heure_fin
