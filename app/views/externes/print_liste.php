@@ -20,6 +20,7 @@
                     <th>Club</th>
                     <th>Téléphone</th>
                     <th>Email</th>
+                    <th class="liste-impression-col-etr">Étranger</th>
                 </tr>
             </thead>
             <tbody>
@@ -30,6 +31,7 @@
                     <td><?= htmlspecialchars($externe['club']) ?></td>
                     <td><?= htmlspecialchars($externe['telephone'] ?? '—') ?></td>
                     <td><?= htmlspecialchars($externe['email'] ?? '—') ?></td>
+                    <td class="liste-impression-col-etr"><?= $externe['etranger'] ? '☑' : '' ?></td>
                 </tr>
                 <?php endforeach; ?>
             </tbody>

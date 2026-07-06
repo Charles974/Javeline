@@ -531,6 +531,11 @@ body {
     border-bottom: 1px solid #e2e2e2;
 }
 
+.liste-impression-col-etr {
+    text-align: center;
+    width: 2.2cm;
+}
+
 .liste-impression-table tbody tr:nth-child(even) {
     background-color: #fffdf0;
 }
