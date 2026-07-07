@@ -1032,45 +1032,11 @@ main {
     text-align: center;
 }
 
-/* Pictogramme silhouette (placeholder CSS) */
+/* Pictogramme silhouette */
 .score-animal-picto {
-    width: 48px;
+    width: 56px;
     height: 56px;
-    background-color: #dee2e6;
-    border-radius: 4px 4px 8px 8px;
-    position: relative;
-}
-
-.score-animal-picto::before {
-    content: '';
-    position: absolute;
-    top: -14px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 22px;
-    height: 22px;
-    background-color: #dee2e6;
-    border-radius: 50%;
-}
-
-.score-saisie-animal:nth-child(1) .score-animal-picto,
-.score-saisie-animal:nth-child(1) .score-animal-picto::before {
-    background-color: #b8ddf7;
-}
-
-.score-saisie-animal:nth-child(2) .score-animal-picto,
-.score-saisie-animal:nth-child(2) .score-animal-picto::before {
-    background-color: #f7c9b8;
-}
-
-.score-saisie-animal:nth-child(3) .score-animal-picto,
-.score-saisie-animal:nth-child(3) .score-animal-picto::before {
-    background-color: #c8e6c9;
-}
-
-.score-saisie-animal:nth-child(4) .score-animal-picto,
-.score-saisie-animal:nth-child(4) .score-animal-picto::before {
-    background-color: #e8d5c4;
+    object-fit: contain;
 }
 
 .score-saisie-animal .form-control {
