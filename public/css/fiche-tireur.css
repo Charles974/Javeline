@@ -1,0 +1,138 @@
+/* Fiche tireur (membre / non-membre) — export PDF portrait au format A4 */
+
+* {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+
+@page {
+    size: A4;
+    margin: 0;
+}
+
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+    background: #e9e7e2;
+}
+
+@media print {
+    body {
+        background: #fff;
+    }
+
+    .fiche-sheet {
+        margin: 0;
+        box-shadow: none;
+    }
+}
+
+.fiche-sheet {
+    width: 210mm;
+    min-height: 297mm;
+    margin: 0 auto;
+    background: #fff;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+}
+
+/* En-tête : logo + titre */
+.fiche-tireur-entete {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 26px 40px 18px;
+    border-bottom: 2px solid #2c3e50;
+}
+
+.fiche-tireur-logo {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+}
+
+.fiche-tireur-entete-texte {
+    flex: 1;
+}
+
+.fiche-tireur-association {
+    font-size: 12px;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+    color: #e74c3c;
+    font-weight: 700;
+}
+
+.fiche-tireur-titre {
+    font-size: 22px;
+    font-weight: 800;
+    color: #2c3e50;
+    line-height: 1.1;
+}
+
+/* Corps : tableau d'informations continu */
+.fiche-tireur-corps {
+    padding: 24px 40px 0;
+    flex: 1;
+}
+
+.fiche-tireur-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+}
+
+.fiche-tireur-table tbody tr:nth-child(odd) {
+    background: #f6f8fa;
+}
+
+.fiche-tireur-table th,
+.fiche-tireur-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid #eef1f4;
+}
+
+.fiche-tireur-table th {
+    color: #66717c;
+    font-weight: normal;
+    width: 34%;
+    text-align: left;
+}
+
+.fiche-tireur-table td {
+    font-weight: 600;
+    color: #212529;
+}
+
+/* Badge de statut (certificat médical, etc.) */
+.fiche-tireur-badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    padding: .2em .6em;
+    border-radius: 999px;
+}
+
+.fiche-tireur-badge-ok {
+    background: #d1e7dd;
+    color: #0f5132;
+}
+
+.fiche-tireur-badge-off {
+    background: #f1f3f5;
+    color: #66717c;
+}
+
+/* Pied de page */
+.fiche-tireur-pied {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 40px;
+    border-top: 1px solid #dfe4e9;
+    font-size: 10.5px;
+    color: #8a97a3;
+    margin-top: 20px;
+}

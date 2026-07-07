@@ -1,65 +1,67 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Fiche membre — <?= htmlspecialchars($membre['nom'] . ' ' . $membre['prenom']) ?></title>
-    <link rel="stylesheet" href="<?= APP_URL ?>/public/css/fiche-print.css">
-</head>
-<body onload="window.print()">
-
-<div class="fiche">
-    <div class="fiche-entete">
-        <h1>Association Javeline</h1>
-        <h2>Fiche membre</h2>
+<div class="fiche-sheet">
+    <div class="fiche-tireur-entete">
+        <img class="fiche-tireur-logo" src="<?= APP_URL ?>/public/img/images.png" alt="Logo Javeline">
+        <div class="fiche-tireur-entete-texte">
+            <div class="fiche-tireur-association">Association Javeline</div>
+            <div class="fiche-tireur-titre">Fiche membre</div>
+        </div>
     </div>
 
-    <table class="fiche-table">
-        <tr>
-            <th>Nom</th>
-            <td><?= htmlspecialchars($membre['nom']) ?></td>
-            <th>Prénom</th>
-            <td><?= htmlspecialchars($membre['prenom']) ?></td>
-        </tr>
-        <tr>
-            <th>Date de naissance</th>
-            <td><?= date('d/m/Y', strtotime($membre['date_naissance'])) ?></td>
-            <th>Lieu de naissance</th>
-            <td><?= htmlspecialchars($membre['lieu_naissance']) ?></td>
-        </tr>
-        <tr>
-            <th>N° de licence</th>
-            <td colspan="3"><?= htmlspecialchars($membre['numero_licence']) ?></td>
-        </tr>
-        <tr>
-            <th>Adresse</th>
-            <td colspan="3">
-                <?= htmlspecialchars($membre['adresse1']) ?>
-                <?php if ($membre['adresse2']): ?>
-                    <br><?= htmlspecialchars($membre['adresse2']) ?>
-                <?php endif; ?>
-                <br><?= htmlspecialchars($membre['code_postal']) ?> <?= htmlspecialchars($membre['ville']) ?>
-            </td>
-        </tr>
-        <tr>
-            <th>Téléphone</th>
-            <td><?= htmlspecialchars($membre['telephone']) ?></td>
-            <th>Email</th>
-            <td><?= htmlspecialchars($membre['email']) ?></td>
-        </tr>
-        <tr>
-            <th>Certificat médical</th>
-            <td colspan="3"><?= $membre['certificat_medical'] ? 'Oui' : 'Non' ?></td>
-        </tr>
-        <tr>
-            <th>Coach</th>
-            <td colspan="3"><?= htmlspecialchars($membre['coach'] ?? '') ?: '—' ?></td>
-        </tr>
-    </table>
+    <div class="fiche-tireur-corps">
+        <table class="fiche-tireur-table">
+            <tbody>
+                <tr>
+                    <th>Nom</th>
+                    <td><?= htmlspecialchars($membre['nom']) ?></td>
+                    <th>Prénom</th>
+                    <td><?= htmlspecialchars($membre['prenom']) ?></td>
+                </tr>
+                <tr>
+                    <th>Date de naissance</th>
+                    <td><?= date('d/m/Y', strtotime($membre['date_naissance'])) ?></td>
+                    <th>Lieu de naissance</th>
+                    <td><?= htmlspecialchars($membre['lieu_naissance']) ?></td>
+                </tr>
+                <tr>
+                    <th>N° de licence</th>
+                    <td colspan="3"><?= htmlspecialchars($membre['numero_licence']) ?></td>
+                </tr>
+                <tr>
+                    <th>Certificat médical</th>
+                    <td colspan="3">
+                        <?php if ($membre['certificat_medical']): ?>
+                            <span class="fiche-tireur-badge fiche-tireur-badge-ok">Valide</span>
+                        <?php else: ?>
+                            <span class="fiche-tireur-badge fiche-tireur-badge-off">Non fourni</span>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Coach</th>
+                    <td colspan="3"><?= htmlspecialchars($membre['coach'] ?? '') ?: '—' ?></td>
+                </tr>
+                <tr>
+                    <th>Téléphone</th>
+                    <td><?= htmlspecialchars($membre['telephone']) ?></td>
+                    <th>Email</th>
+                    <td><?= htmlspecialchars($membre['email']) ?></td>
+                </tr>
+                <tr>
+                    <th>Adresse</th>
+                    <td colspan="3">
+                        <?= htmlspecialchars($membre['adresse1']) ?>
+                        <?php if ($membre['adresse2']): ?>
+                            <br><?= htmlspecialchars($membre['adresse2']) ?>
+                        <?php endif; ?>
+                        <br><?= htmlspecialchars($membre['code_postal']) ?> <?= htmlspecialchars($membre['ville']) ?>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 
-    <div class="fiche-pied">
-        Édité le <?= date('d/m/Y à H:i') ?>
+    <div class="fiche-tireur-pied">
+        <span>Édité le <?= date('d/m/Y à H:i') ?></span>
+        <span>© <?= date('Y') ?> Javeline — Tous droits réservés</span>
     </div>
 </div>
-
-</body>
-</html>
