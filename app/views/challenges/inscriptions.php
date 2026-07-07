@@ -93,7 +93,7 @@
                 class="btn btn-primary btn-transfer"
                 disabled
                 aria-label="Inscrire ce tireur au challenge">
-            <span aria-hidden="true">&rarr;</span>
+            <span class="btn-transfer-icone" aria-hidden="true"></span>
         </button>
     </div>
     <?php endif; ?>
