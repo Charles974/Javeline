@@ -21,35 +21,30 @@
                     <input type="hidden" id="externe-id" name="id" value="">
 
                     <div class="row g-2">
-                        <div class="col-6 col-md-3 mb-2">
+                        <div class="col-6 col-md-6 mb-2">
                             <label for="externe-nom" class="form-label visually-hidden">Nom <span aria-hidden="true">*</span></label>
                             <input type="text" class="form-control" id="externe-nom" name="nom" placeholder="Nom *"
                                    required maxlength="100" autocomplete="off" aria-required="true">
                         </div>
-                        <div class="col-6 col-md-3 mb-2">
+                        <div class="col-6 col-md-6 mb-2">
                             <label for="externe-prenom" class="form-label visually-hidden">Prénom <span aria-hidden="true">*</span></label>
                             <input type="text" class="form-control" id="externe-prenom" name="prenom" placeholder="Prénom *"
                                    required maxlength="100" autocomplete="off" aria-required="true">
                         </div>
-                        <div class="col-md-6 mb-2">
+                    </div>
+
+                    <div class="row g-2 align-items-center">
+                        <div class="col-md-4 mb-2">
                             <label for="externe-club" class="form-label visually-hidden">Club <span aria-hidden="true">*</span></label>
                             <input type="text" class="form-control" id="externe-club" name="club" placeholder="Club *"
                                    required maxlength="150" autocomplete="off" aria-required="true">
                         </div>
-                    </div>
-
-                    <div class="row g-2 align-items-center">
-                        <div class="col-sm-3 mb-2">
-                            <label for="externe-tel" class="form-label visually-hidden">Téléphone</label>
-                            <input type="tel" class="form-control" id="externe-tel" name="telephone" placeholder="Téléphone"
-                                   maxlength="20" autocomplete="off">
-                        </div>
-                        <div class="col-sm-3 mb-2">
-                            <label for="externe-email" class="form-label visually-hidden">Email</label>
-                            <input type="email" class="form-control" id="externe-email" name="email" placeholder="Email"
+                        <div class="col-md-4 mb-2">
+                            <label for="externe-coach" class="form-label visually-hidden">Coach</label>
+                            <input type="text" class="form-control" id="externe-coach" name="coach" placeholder="Coach"
                                    maxlength="150" autocomplete="off">
                         </div>
-                        <div class="col-sm-3 mb-2">
+                        <div class="col-md-4 mb-2">
                             <div class="form-check">
                                 <input type="checkbox" class="form-check-input" id="externe-etranger"
                                        name="etranger" value="1">
@@ -58,9 +53,17 @@
                                 </label>
                             </div>
                         </div>
-                        <div class="col-sm-3 mb-2">
-                            <label for="externe-coach" class="form-label visually-hidden">Coach</label>
-                            <input type="text" class="form-control" id="externe-coach" name="coach" placeholder="Coach"
+                    </div>
+
+                    <div class="row g-2">
+                        <div class="col-md-6 mb-2">
+                            <label for="externe-tel" class="form-label visually-hidden">Téléphone</label>
+                            <input type="tel" class="form-control" id="externe-tel" name="telephone" placeholder="Téléphone"
+                                   maxlength="20" autocomplete="off">
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <label for="externe-email" class="form-label visually-hidden">Email</label>
+                            <input type="email" class="form-control" id="externe-email" name="email" placeholder="Email"
                                    maxlength="150" autocomplete="off">
                         </div>
                     </div>
