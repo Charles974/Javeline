@@ -51,11 +51,74 @@ main {
     letter-spacing: 0.05em;
 }
 
-/* --- Hero --- */
-.hero {
-    padding: 4rem 1rem;
+/* --- Hero accueil : identité + challenge sur deux colonnes --- */
+.hero-accueil {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: center;
+    padding: 3rem 1rem;
     background-color: #ffffff;
     border-bottom: 1px solid #e0e0e0;
+}
+
+.hero-identite {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+}
+
+.hero-logo {
+    width: 66px;
+    height: 66px;
+    border-radius: 50%;
+}
+
+.hero-eyebrow {
+    margin: 0;
+    font-size: 0.75rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--couleur-secondaire);
+}
+
+.hero-presentation h1 {
+    margin: 0.1rem 0 0;
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--couleur-primaire);
+    line-height: 1.1;
+}
+
+.hero-texte {
+    max-width: 440px;
+    color: #5a6a78;
+}
+
+.hero-texte strong {
+    color: var(--couleur-primaire);
+}
+
+.hero-challenge {
+    display: flex;
+}
+
+@media (max-width: 767.98px) {
+    .hero-accueil {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+
+    .hero-identite {
+        justify-content: center;
+    }
+
+    .hero-texte {
+        max-width: none;
+        margin: 0 auto;
+    }
 }
 
 /* --- Footer --- */
@@ -67,9 +130,45 @@ main {
 .challenge-card,
 .challenge-vide {
     max-width: 540px;
+    width: 100%;
     border: none;
+    border-left: 5px solid var(--couleur-secondaire);
     border-radius: 0.75rem;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 16px rgba(44, 62, 80, 0.08);
+}
+
+.challenge-card-entete {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.challenge-card-souscription {
+    font-size: 0.75rem;
+    color: #8a97a3;
+}
+
+.challenge-card-stats {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    margin-bottom: 1.1rem;
+}
+
+.challenge-card-separateur {
+    height: 38px;
+    width: 1px;
+    background-color: #e3ebf2;
+}
+
+.challenge-card-animaux {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.challenge-card-animaux img {
+    height: 34px;
+    mix-blend-mode: multiply;
 }
 
 .badge-statut {
@@ -106,10 +205,9 @@ main {
 .liste-inscrits {
     list-style: none;
     padding: 0;
-    margin: 0.75rem 0 1.25rem;
+    margin: 0;
     display: flex;
     gap: 1.5rem;
-    justify-content: center;
 }
 
 .liste-inscrits li {
@@ -699,46 +797,58 @@ main {
     padding-left: 1.2rem;
 }
 
-/* --- Navigation principale (boutons d'accueil) --- */
-.navigation-principale {
-    padding: 1rem 0 3rem;
+/* --- Accès rapide (barre de liens d'accueil) --- */
+.acces-rapide {
+    padding: 1.5rem 0 3rem;
 }
 
-.nav-boutons {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    justify-content: center;
+.acces-rapide-titre {
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #8a97a3;
+    font-weight: 700;
+    margin-bottom: 0.85rem;
 }
 
-.btn-nav {
-    min-width: 220px;
-    padding: 0.85rem 1.5rem;
-    border-radius: 0.5rem;
-    font-size: 1rem;
-    font-weight: 500;
+.acces-rapide-grille {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 0.75rem;
+}
+
+.acces-rapide-lien {
+    display: block;
+    width: 100%;
+    text-align: center;
+    padding: 0.7rem 0.9rem;
     background-color: #ffffff;
+    border: 1px solid #e3ebf2;
+    border-radius: 0.6rem;
     color: var(--couleur-primaire);
-    border: 2px solid var(--couleur-primaire);
-    transition: background-color 0.2s ease, color 0.2s ease;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.btn-nav:hover,
-.btn-nav:focus {
-    background-color: var(--couleur-primaire);
-    color: #ffffff;
+.acces-rapide-lien:hover,
+.acces-rapide-lien:focus {
+    border-color: var(--couleur-primaire);
+    box-shadow: 0 4px 12px rgba(44, 62, 80, 0.08);
+    color: var(--couleur-primaire);
 }
 
-.btn-nav-accent {
+.acces-rapide-accent {
+    background-color: #fbeeee;
+    border-color: #f3c9c4;
+    color: #c0392b;
+}
+
+.acces-rapide-accent:hover,
+.acces-rapide-accent:focus {
     background-color: var(--couleur-secondaire);
-    color: #ffffff;
     border-color: var(--couleur-secondaire);
-}
-
-.btn-nav-accent:hover,
-.btn-nav-accent:focus {
-    background-color: #c0392b;
-    border-color: #c0392b;
     color: #ffffff;
 }
 
