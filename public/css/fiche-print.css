@@ -436,9 +436,12 @@ body {
     font-size: 11pt;
 }
 
+.cld-discipline-sep {
+    font-size: 11pt;
+}
+
 .cld-discipline-en {
-    font-size: 9pt;
-    text-decoration: underline;
+    font-size: 11pt;
 }
 
 
@@ -455,6 +458,8 @@ body {
 .cld-animal-icone {
     display: block;
     height: 0.45cm;
+    width: auto;
+    margin: 0 auto 0.1cm;
 }
 
 .cld-col-total-header {

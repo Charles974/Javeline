@@ -73,17 +73,16 @@
                         </th>
                         <th colspan="5" rowspan="2" class="cld-discipline-titre"
                             style="background-color: <?= $couleur['bg'] ?>; color: <?= $couleur['texte'] ?>;">
-                            <span class="cld-discipline-fr"><?= htmlspecialchars($groupe['libelle_fr']) ?></span><br>
-                            <span class="cld-discipline-en"><?= htmlspecialchars($groupe['libelle_en']) ?></span>
+                            <span class="cld-discipline-fr"><?= htmlspecialchars($groupe['libelle_fr']) ?></span><span class="cld-discipline-sep"> / </span><span class="cld-discipline-en"><?= htmlspecialchars($groupe['libelle_en']) ?></span>
                         </th>
                     </tr>
                     <tr></tr>
                     <tr>
                         <th class="cld-col-nom-header">NOM / NAME / CLUB</th>
-                        <th class="cld-col-animal"><span class="cld-animal-icone" aria-hidden="true"></span>CHICKENS</th>
-                        <th class="cld-col-animal"><span class="cld-animal-icone" aria-hidden="true"></span>PIGS</th>
-                        <th class="cld-col-animal"><span class="cld-animal-icone" aria-hidden="true"></span>TURKEYS</th>
-                        <th class="cld-col-animal"><span class="cld-animal-icone" aria-hidden="true"></span>RAMS</th>
+                        <th class="cld-col-animal"><img src="<?= APP_URL ?>/public/img/poulet.png" alt="Poulet" class="cld-animal-icone">CHICKENS</th>
+                        <th class="cld-col-animal"><img src="<?= APP_URL ?>/public/img/cochon.png" alt="Cochon" class="cld-animal-icone">PIGS</th>
+                        <th class="cld-col-animal"><img src="<?= APP_URL ?>/public/img/dindon.png" alt="Dindon" class="cld-animal-icone">TURKEYS</th>
+                        <th class="cld-col-animal"><img src="<?= APP_URL ?>/public/img/mouflon.png" alt="Mouflon" class="cld-animal-icone">RAMS</th>
                         <th class="cld-col-total-header">TOTAL</th>
                     </tr>
                 </thead>
