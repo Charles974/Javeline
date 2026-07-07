@@ -44,51 +44,18 @@
                         </div>
                     </div>
 
-                    <div class="row g-2">
+                    <div class="row g-2 align-items-center">
                         <div class="col-md-4 mb-2">
                             <label for="membre-licence" class="form-label visually-hidden">N° de licence <span aria-hidden="true">*</span></label>
                             <input type="text" class="form-control" id="membre-licence" name="numero_licence" placeholder="N° de licence *"
                                    required maxlength="50" autocomplete="off" aria-required="true">
                         </div>
                         <div class="col-md-4 mb-2">
-                            <label for="membre-tel" class="form-label visually-hidden">Téléphone <span aria-hidden="true">*</span></label>
-                            <input type="tel" class="form-control" id="membre-tel" name="telephone" placeholder="Téléphone *"
-                                   required maxlength="20" inputmode="numeric" pattern="[0-9 ]+"
-                                   autocomplete="off" aria-required="true">
+                            <label for="membre-coach" class="form-label visually-hidden">Coach</label>
+                            <input type="text" class="form-control" id="membre-coach" name="coach" placeholder="Coach"
+                                   maxlength="150" autocomplete="off">
                         </div>
                         <div class="col-md-4 mb-2">
-                            <label for="membre-email" class="form-label visually-hidden">Email <span aria-hidden="true">*</span></label>
-                            <input type="email" class="form-control" id="membre-email" name="email" placeholder="Email *"
-                                   required maxlength="150" autocomplete="off" aria-required="true">
-                        </div>
-                    </div>
-
-                    <div class="row g-2">
-                        <div class="col-md-6 mb-2">
-                            <label for="membre-adresse1" class="form-label visually-hidden">Adresse <span aria-hidden="true">*</span></label>
-                            <input type="text" class="form-control" id="membre-adresse1" name="adresse1" placeholder="Adresse *"
-                                   required maxlength="200" autocomplete="off" aria-required="true">
-                        </div>
-                        <div class="col-md-6 mb-2">
-                            <label for="membre-adresse2" class="form-label visually-hidden">Adresse (complément)</label>
-                            <input type="text" class="form-control" id="membre-adresse2" name="adresse2" placeholder="Adresse (complément)"
-                                   maxlength="200" autocomplete="off">
-                        </div>
-                    </div>
-
-                    <div class="row g-2 align-items-center">
-                        <div class="col-6 col-md-2 mb-2">
-                            <label for="membre-cp" class="form-label visually-hidden">Code postal <span aria-hidden="true">*</span></label>
-                            <input type="text" class="form-control" id="membre-cp" name="code_postal" placeholder="Code postal *"
-                                   required maxlength="5" inputmode="numeric" pattern="[0-9]{5}"
-                                   autocomplete="off" aria-required="true">
-                        </div>
-                        <div class="col-6 col-md-4 mb-2">
-                            <label for="membre-ville" class="form-label visually-hidden">Ville <span aria-hidden="true">*</span></label>
-                            <input type="text" class="form-control" id="membre-ville" name="ville" placeholder="Ville *"
-                                   required maxlength="100" autocomplete="off" aria-required="true">
-                        </div>
-                        <div class="col-md-3 mb-2">
                             <div class="form-check">
                                 <input type="checkbox" class="form-check-input" id="membre-certificat"
                                        name="certificat_medical" value="1">
@@ -97,10 +64,43 @@
                                 </label>
                             </div>
                         </div>
-                        <div class="col-md-3 mb-2">
-                            <label for="membre-coach" class="form-label visually-hidden">Coach</label>
-                            <input type="text" class="form-control" id="membre-coach" name="coach" placeholder="Coach"
-                                   maxlength="150" autocomplete="off">
+                    </div>
+
+                    <div class="row g-2">
+                        <div class="col-md-6 mb-2">
+                            <label for="membre-tel" class="form-label visually-hidden">Téléphone <span aria-hidden="true">*</span></label>
+                            <input type="tel" class="form-control" id="membre-tel" name="telephone" placeholder="Téléphone *"
+                                   required maxlength="20" inputmode="numeric" pattern="[0-9 ]+"
+                                   autocomplete="off" aria-required="true">
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <label for="membre-email" class="form-label visually-hidden">Email <span aria-hidden="true">*</span></label>
+                            <input type="email" class="form-control" id="membre-email" name="email" placeholder="Email *"
+                                   required maxlength="150" autocomplete="off" aria-required="true">
+                        </div>
+                    </div>
+
+                    <div class="row g-2">
+                        <div class="col-md-4 mb-2">
+                            <label for="membre-adresse1" class="form-label visually-hidden">Adresse <span aria-hidden="true">*</span></label>
+                            <input type="text" class="form-control" id="membre-adresse1" name="adresse1" placeholder="Adresse *"
+                                   required maxlength="200" autocomplete="off" aria-required="true">
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <label for="membre-adresse2" class="form-label visually-hidden">Adresse (complément)</label>
+                            <input type="text" class="form-control" id="membre-adresse2" name="adresse2" placeholder="Adresse (complément)"
+                                   maxlength="200" autocomplete="off">
+                        </div>
+                        <div class="col-6 col-md-2 mb-2">
+                            <label for="membre-cp" class="form-label visually-hidden">Code postal <span aria-hidden="true">*</span></label>
+                            <input type="text" class="form-control" id="membre-cp" name="code_postal" placeholder="Code postal *"
+                                   required maxlength="5" inputmode="numeric" pattern="[0-9]{5}"
+                                   autocomplete="off" aria-required="true">
+                        </div>
+                        <div class="col-6 col-md-2 mb-2">
+                            <label for="membre-ville" class="form-label visually-hidden">Ville <span aria-hidden="true">*</span></label>
+                            <input type="text" class="form-control" id="membre-ville" name="ville" placeholder="Ville *"
+                                   required maxlength="100" autocomplete="off" aria-required="true">
                         </div>
                     </div>
 

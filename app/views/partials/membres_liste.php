@@ -32,7 +32,7 @@
                     <td><?= htmlspecialchars($membre['nom']) ?></td>
                     <td><?= htmlspecialchars($membre['prenom']) ?></td>
                     <td data-valeur="<?= htmlspecialchars($membre['date_naissance']) ?>"><?= date('d/m/Y', strtotime($membre['date_naissance'])) ?></td>
-                    <td><?= htmlspecialchars($membre['telephone']) ?></td>
+                    <td><?= htmlspecialchars(format_telephone_fr($membre['telephone'])) ?></td>
                     <td><?= htmlspecialchars($membre['email']) ?></td>
                     <td>
                         <a href="<?= APP_URL ?>/membres/historique/<?= (int)$membre['id'] ?>"

@@ -27,7 +27,7 @@
                     <td><?= htmlspecialchars($externe['nom']) ?></td>
                     <td><?= htmlspecialchars($externe['prenom']) ?></td>
                     <td><?= htmlspecialchars($externe['club']) ?></td>
-                    <td><?= htmlspecialchars($externe['telephone'] ?? '—') ?></td>
+                    <td><?= $externe['telephone'] ? htmlspecialchars(format_telephone_fr($externe['telephone'])) : '—' ?></td>
                     <td><?= htmlspecialchars($externe['email'] ?? '—') ?></td>
                     <td>
                         <a href="<?= APP_URL ?>/externes/historique/<?= (int)$externe['id'] ?>"
