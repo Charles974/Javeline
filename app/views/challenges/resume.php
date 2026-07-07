@@ -264,16 +264,18 @@
                 <div class="score-saisie-grille mb-4">
                     <?php
                     $animaux = [
-                        'poulets'  => 'Poulets',
-                        'cochons'  => 'Cochons',
-                        'dindons'  => 'Dindons',
-                        'mouflons' => 'Mouflons',
+                        'poulets'  => ['Poulets', 'poulet.png'],
+                        'cochons'  => ['Cochons', 'cochon.png'],
+                        'dindons'  => ['Dindons', 'dindon.png'],
+                        'mouflons' => ['Mouflons', 'mouflon.png'],
                     ];
-                    foreach ($animaux as $champ => $libelle):
+                    foreach ($animaux as $champ => [$libelle, $image]):
                     ?>
                     <div class="score-saisie-animal">
                         <div class="score-animal-nom"><?= $libelle ?></div>
-                        <div class="score-animal-picto" aria-hidden="true"></div>
+                        <img src="/img/<?= $image ?>"
+                             alt="Silhouette <?= $libelle ?>"
+                             class="score-animal-picto">
                         <input type="number"
                                class="form-control score-input"
                                id="score-<?= $champ ?>"
