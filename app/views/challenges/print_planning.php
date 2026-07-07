@@ -1,8 +1,10 @@
 <?php
-// Jours de la semaine et mois en francais pour l'entete de chaque tableau.
-$joursFr = [0 => 'Dimanche', 1 => 'Lundi', 2 => 'Mardi', 3 => 'Mercredi', 4 => 'Jeudi', 5 => 'Vendredi', 6 => 'Samedi'];
-$moisFr  = [1 => 'Janvier', 2 => 'Fevrier', 3 => 'Mars', 4 => 'Avril', 5 => 'Mai', 6 => 'Juin',
-            7 => 'Juillet', 8 => 'Aout', 9 => 'Septembre', 10 => 'Octobre', 11 => 'Novembre', 12 => 'Decembre'];
+// Blocs horaires libres ajoutes par l'organisateur (ex: pause dejeuner),
+// regroupes par jour et fusionnes avec les zones grises automatiques.
+$blocsLibresParJour = [];
+foreach ($blocsHoraires ?? [] as $bloc) {
+    $blocsLibresParJour[$bloc['jour']][] = $bloc;
+}
 
 // Regroupement des matchs planifies par date.
 $parJour = [];
@@ -83,8 +85,20 @@ $dateFinChallenge2   = date('d/m/Y', strtotime($challenge['date_fin']));
             $estDernierJour = $date === $dateFinChallenge;
             $derniereLigne  = $creneaux[count($creneaux) - 1];
 
-            $jourSemaine = $joursFr[(int) date('w', strtotime($date))];
-            $libelleJour = $jourSemaine . ' ' . date('d', strtotime($date)) . ' ' . $moisFr[(int) date('n', strtotime($date))] . ' ' . date('Y', strtotime($date));
+            $libelleJour     = format_date_fr_complete($date);
+            $blocsLibresJour = $blocsLibresParJour[$date] ?? [];
+
+            // Index heure -> bloc libre couvrant ce creneau, pour fusionner les lignes (rowspan).
+            $blocLibreParHeure = [];
+            foreach ($blocsLibresJour as $bloc) {
+                $debutBloc = substr($bloc['heure_debut'], 0, 5);
+                $finBloc   = substr($bloc['heure_fin'], 0, 5);
+                foreach ($creneaux as $heure) {
+                    if ($heure >= $debutBloc && $heure <= $finBloc) {
+                        $blocLibreParHeure[$heure] = $bloc;
+                    }
+                }
+            }
         ?>
         <div class="planning-jour">
             <h3 class="planning-date"><?= htmlspecialchars($libelleJour) ?></h3>
@@ -100,7 +114,8 @@ $dateFinChallenge2   = date('d/m/Y', strtotime($challenge['date_fin']));
                 <tbody>
                     <?php foreach ($creneaux as $heure):
                         $estOuverture = $estPremierJour && $heure >= '09:00' && $heure <= '09:50';
-                        $estCloture   = !$estOuverture && $heure >= $debutCloture;
+                        $blocLibre    = $estOuverture ? null : ($blocLibreParHeure[$heure] ?? null);
+                        $estCloture   = !$estOuverture && !$blocLibre && $heure >= $debutCloture;
 
                         $libelleCloture = '';
                         if ($estCloture) {
@@ -112,6 +127,11 @@ $dateFinChallenge2   = date('d/m/Y', strtotime($challenge['date_fin']));
                                 $libelleCloture = $heure === $debutCloture ? 'Requillage Ensemble des Silhouettes' : '';
                             }
                         }
+
+                        $debutBlocLibre = $blocLibre ? substr($blocLibre['heure_debut'], 0, 5) : null;
+                        $spanBlocLibre  = $blocLibre
+                            ? count(array_filter($creneaux, fn($h) => $h >= $debutBlocLibre && $h <= substr($blocLibre['heure_fin'], 0, 5)))
+                            : 0;
                     ?>
                     <tr>
                         <td class="planning-col-horaire"><?= str_replace(':', ' h ', $heure) ?></td>
@@ -119,6 +139,12 @@ $dateFinChallenge2   = date('d/m/Y', strtotime($challenge['date_fin']));
                             <?php if ($heure === '09:00'): ?>
                             <td class="planning-case-grise planning-case-ouverture" colspan="<?= $nbCols ?>" rowspan="6">
                                 Ouverture et préparation du stand
+                            </td>
+                            <?php endif; ?>
+                        <?php elseif ($blocLibre): ?>
+                            <?php if ($heure === $debutBlocLibre): ?>
+                            <td class="planning-case-grise" colspan="<?= $nbCols ?>" rowspan="<?= $spanBlocLibre ?>">
+                                <?= htmlspecialchars($blocLibre['libelle']) ?>
                             </td>
                             <?php endif; ?>
                         <?php elseif ($estCloture): ?>

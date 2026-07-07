@@ -124,6 +124,25 @@ CREATE TABLE matchs (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ------------------------------------------------------------
+-- Blocs horaires : créneaux libres d'un challenge non liés à un
+-- tireur (pause déjeuner, rangement, etc.). Les zones d'ouverture
+-- et de clôture standard restent calculées automatiquement à
+-- l'affichage ; cette table ne sert qu'aux blocs ajoutés à la main.
+-- ------------------------------------------------------------
+CREATE TABLE blocs_horaires (
+    id              INT UNSIGNED    NOT NULL AUTO_INCREMENT,
+    challenge_id    INT UNSIGNED    NOT NULL,
+    jour            DATE            NOT NULL,
+    libelle         VARCHAR(150)    NOT NULL,
+    heure_debut     TIME            NOT NULL,
+    heure_fin       TIME            NOT NULL,
+    created_at      DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    CONSTRAINT fk_bloc_challenge FOREIGN KEY (challenge_id) REFERENCES challenges (id) ON DELETE CASCADE,
+    CONSTRAINT chk_bloc_heures CHECK (heure_fin >= heure_debut)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ------------------------------------------------------------
 -- Scores : résultats par match (0-10 par animal)
 -- ------------------------------------------------------------
 CREATE TABLE scores (

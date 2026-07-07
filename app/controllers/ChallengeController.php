@@ -5,6 +5,7 @@ require_once APP_ROOT . '/app/models/InscriptionModel.php';
 require_once APP_ROOT . '/app/models/DisciplineModel.php';
 require_once APP_ROOT . '/app/models/MembreModel.php';
 require_once APP_ROOT . '/app/models/ExterneModel.php';
+require_once APP_ROOT . '/app/models/BlocHoraireModel.php';
 
 class ChallengeController extends Controller
 {
@@ -18,15 +19,21 @@ class ChallengeController extends Controller
         'debout'        => ['libelle_fr' => 'Combiné Debout',                  'libelle_en' => 'Aggregate Standing',        'codes' => [403, 407, 408, 409]],
     ];
 
+    // Durée forfaitaire d'occupation d'un tireur par discipline, utilisée pour
+    // détecter les créneaux trop proches (avertissement non bloquant).
+    private const DUREE_CONFLIT_MINUTES = 60;
+
     private ChallengeModel    $model;
     private InscriptionModel  $inscriptions;
     private DisciplineModel   $disciplines;
+    private BlocHoraireModel  $blocsHoraires;
 
     public function __construct()
     {
-        $this->model        = new ChallengeModel();
-        $this->inscriptions = new InscriptionModel();
-        $this->disciplines  = new DisciplineModel();
+        $this->model         = new ChallengeModel();
+        $this->inscriptions  = new InscriptionModel();
+        $this->disciplines   = new DisciplineModel();
+        $this->blocsHoraires = new BlocHoraireModel();
     }
 
     // ----------------------------------------------------------------
@@ -301,23 +308,26 @@ class ChallengeController extends Controller
             $this->json(['success' => false, 'erreurs' => $erreurs], 422);
         }
 
+        // Un bloc horaire (ouverture, pause déjeuner, rangement...) bloque
+        // strictement l'assignation d'un tireur sur ce créneau.
+        $bloc = $this->blocsHoraires->trouveBlocCouvrant($id, $dateMatch, $heureDebut, $heureFin);
+        if ($bloc) {
+            $this->json([
+                'success' => false,
+                'message' => 'Ce créneau est occupé par « ' . $bloc['libelle'] . ' » ('
+                    . substr($bloc['heure_debut'], 0, 5) . '–' . substr($bloc['heure_fin'], 0, 5) . ').',
+            ], 422);
+        }
+
         $this->inscriptions->modifierHoraire($inscriptionId, $dateMatch, $heureDebut, $heureFin);
 
-        // Détection de chevauchement (avertissement uniquement, non bloquant)
+        // Avertissement de proximité (non bloquant) : deux disciplines du même
+        // tireur démarrées à moins de DUREE_CONFLIT_MINUTES l'une de l'autre.
         $autresMatchs = $this->inscriptions->findAutresMatchsTireur(
             $id, $infos['tireur_type'], (int)$infos['tireur_id'], $inscriptionId
         );
 
-        $conflits = [];
-        foreach ($autresMatchs as $m) {
-            if ($m['date_match'] === $dateMatch
-                && $heureDebut < $m['heure_fin']
-                && $m['heure_debut'] < $heureFin
-            ) {
-                $conflits[] = $m['discipline_code'] . ' — ' . $m['discipline_fr']
-                    . ' (' . substr($m['heure_debut'], 0, 5) . '–' . substr($m['heure_fin'], 0, 5) . ')';
-            }
-        }
+        $conflits = $this->detecterConflitsProximite($dateMatch, $heureDebut, $autresMatchs);
 
         $this->json([
             'success'        => true,
@@ -331,6 +341,159 @@ class ChallengeController extends Controller
                 ? 'Chevauchement d\'horaire avec : ' . implode(', ', $conflits)
                 : null,
         ]);
+    }
+
+    // ----------------------------------------------------------------
+    // POST /challenges/:id/retirer-horaire
+    // Retire l'horaire d'une inscription (remet le tireur en attente).
+    // ----------------------------------------------------------------
+    public function retirerHoraire(string $id): void
+    {
+        $id = (int) $id;
+        $challenge = $this->model->findById($id);
+        if (!$challenge) {
+            $this->json(['success' => false, 'message' => 'Challenge introuvable.'], 404);
+        }
+        if ($challenge['statut'] === 'archive') {
+            $this->json(['success' => false, 'message' => 'Ce challenge est archivé.'], 403);
+        }
+
+        $inscriptionId = (int)($_POST['inscription_id'] ?? 0);
+        $infos = $inscriptionId > 0 ? $this->inscriptions->findInfosTireur($inscriptionId) : false;
+        if (!$infos || (int)$infos['challenge_id'] !== $id) {
+            $this->json(['success' => false, 'message' => 'Inscription introuvable pour ce challenge.'], 404);
+        }
+
+        $retire = $this->inscriptions->supprimerHoraire($inscriptionId);
+        if (!$retire) {
+            $this->json([
+                'success' => false,
+                'message' => 'Impossible de retirer cet horaire : un score a déjà été saisi pour ce tireur.',
+            ], 409);
+        }
+
+        $this->json([
+            'success'        => true,
+            'message'        => 'Horaire retiré, le tireur est de nouveau en attente.',
+            'inscription_id' => $inscriptionId,
+        ]);
+    }
+
+    // ----------------------------------------------------------------
+    // GET /challenges/:id/plan-de-tir — grille d'attribution des horaires
+    // ----------------------------------------------------------------
+    public function planDeTir(string $id): void
+    {
+        $id = (int) $id;
+        $challenge = $this->model->findById($id);
+        if (!$challenge) {
+            $this->erreur404();
+            return;
+        }
+
+        $this->render('challenges/plan_de_tir', [
+            'titrePage'    => 'Plan de tir — ' . htmlspecialchars($challenge['libelle']) . ' — ' . APP_NAME,
+            'challenge'    => $challenge,
+            'jours'        => $this->listerJoursChallenge($challenge),
+            'grille'       => $this->inscriptions->findGrille($id),
+            'blocsHoraires'=> $this->blocsHoraires->findByChallenge($id),
+            'dureeConflit' => self::DUREE_CONFLIT_MINUTES,
+        ]);
+    }
+
+    // ----------------------------------------------------------------
+    // POST /challenges/:id/plan-de-tir/blocs — ajoute un bloc horaire libre
+    // ----------------------------------------------------------------
+    public function ajouterBlocHoraire(string $id): void
+    {
+        $id = (int) $id;
+        $challenge = $this->model->findById($id);
+        if (!$challenge) {
+            $this->json(['success' => false, 'message' => 'Challenge introuvable.'], 404);
+        }
+        if ($challenge['statut'] === 'archive') {
+            $this->json(['success' => false, 'message' => 'Ce challenge est archivé.'], 403);
+        }
+
+        $jour       = trim($_POST['jour']        ?? '');
+        $libelle    = trim($_POST['libelle']     ?? '');
+        $heureDebut = trim($_POST['heure_debut'] ?? '');
+        $heureFin   = trim($_POST['heure_fin']   ?? '');
+
+        $erreurs = [];
+        if (!$this->estDateValide($jour) || $jour < $challenge['date_debut'] || $jour > $challenge['date_fin']) {
+            $erreurs[] = 'Le jour doit faire partie des dates du challenge.';
+        }
+        if ($libelle === '') {
+            $erreurs[] = 'Le libellé est obligatoire.';
+        } elseif (mb_strlen($libelle) > 150) {
+            $erreurs[] = 'Le libellé ne peut pas dépasser 150 caractères.';
+        }
+        if (!$this->estHeureValide($heureDebut)) {
+            $erreurs[] = 'L\'heure de début est invalide.';
+        }
+        if (!$this->estHeureValide($heureFin)) {
+            $erreurs[] = 'L\'heure de fin est invalide.';
+        }
+        if (empty($erreurs) && $heureFin < $heureDebut) {
+            $erreurs[] = 'L\'heure de fin doit être égale ou postérieure à l\'heure de début.';
+        }
+
+        if (!empty($erreurs)) {
+            $this->json(['success' => false, 'erreurs' => $erreurs], 422);
+        }
+
+        // Un bloc ne peut pas être posé par-dessus des tireurs déjà programmés
+        // sur ce créneau (ils seraient masqués sans être réellement retirés).
+        $occupants = $this->inscriptions->findMatchsDansPlage($id, $jour, $heureDebut, $heureFin);
+        if (!empty($occupants)) {
+            $noms = array_map(
+                fn($o) => $o['nom'] . ' (' . $o['discipline_code'] . ' — ' . $o['discipline_fr'] . ')',
+                $occupants
+            );
+            $this->json([
+                'success' => false,
+                'message' => 'Ce créneau contient déjà des tireurs programmés : ' . implode(', ', $noms) . '. Retirez-les d\'abord.',
+            ], 422);
+        }
+
+        $blocId = $this->blocsHoraires->creer($id, $jour, $libelle, $heureDebut, $heureFin);
+
+        $this->json([
+            'success' => true,
+            'message' => 'Bloc horaire ajouté.',
+            'bloc'    => [
+                'id'          => $blocId,
+                'jour'        => $jour,
+                'libelle'     => $libelle,
+                'heure_debut' => $heureDebut,
+                'heure_fin'   => $heureFin,
+            ],
+        ]);
+    }
+
+    // ----------------------------------------------------------------
+    // POST /challenges/:id/plan-de-tir/blocs/supprimer
+    // ----------------------------------------------------------------
+    public function supprimerBlocHoraire(string $id): void
+    {
+        $id = (int) $id;
+        $challenge = $this->model->findById($id);
+        if (!$challenge) {
+            $this->json(['success' => false, 'message' => 'Challenge introuvable.'], 404);
+        }
+        if ($challenge['statut'] === 'archive') {
+            $this->json(['success' => false, 'message' => 'Ce challenge est archivé.'], 403);
+        }
+
+        $blocId = (int)($_POST['bloc_id'] ?? 0);
+        if ($blocId <= 0) {
+            $this->json(['success' => false, 'message' => 'Bloc invalide.'], 400);
+        }
+
+        $this->blocsHoraires->supprimerPourChallenge($blocId, $id);
+
+        $this->json(['success' => true, 'message' => 'Bloc horaire supprimé.']);
     }
 
     // ----------------------------------------------------------------
@@ -491,9 +654,10 @@ class ChallengeController extends Controller
         $planning = $this->inscriptions->findPlanning($id);
 
         $this->render('challenges/print_planning', [
-            'titrePage' => 'Planning — ' . htmlspecialchars($challenge['libelle']),
-            'challenge' => $challenge,
-            'planning'  => $planning,
+            'titrePage'     => 'Planning — ' . htmlspecialchars($challenge['libelle']),
+            'challenge'     => $challenge,
+            'planning'      => $planning,
+            'blocsHoraires' => $this->blocsHoraires->findByChallenge($id),
         ], 'print');
     }
 
@@ -552,6 +716,51 @@ class ChallengeController extends Controller
             $t['exaequo'] = $compteRangs[$t['rang']] > 1;
         }
         unset($t);
+    }
+
+    /**
+     * Détecte les créneaux trop proches (avertissement non bloquant) : même
+     * date et écart entre heures de début inférieur à DUREE_CONFLIT_MINUTES,
+     * quelle que soit l'heure de fin réelle du match.
+     */
+    private function detecterConflitsProximite(string $dateMatch, string $heureDebut, array $autresMatchs): array
+    {
+        $conflits    = [];
+        $debutMinutes = $this->heureEnMinutes($heureDebut);
+
+        foreach ($autresMatchs as $m) {
+            if ($m['date_match'] !== $dateMatch) {
+                continue;
+            }
+            $ecart = abs($debutMinutes - $this->heureEnMinutes($m['heure_debut']));
+            if ($ecart < self::DUREE_CONFLIT_MINUTES) {
+                $conflits[] = $m['discipline_code'] . ' — ' . $m['discipline_fr']
+                    . ' (' . substr($m['heure_debut'], 0, 5) . '–' . substr($m['heure_fin'], 0, 5) . ')';
+            }
+        }
+
+        return $conflits;
+    }
+
+    private function heureEnMinutes(string $heure): int
+    {
+        [$h, $m] = array_map('intval', explode(':', $heure));
+        return $h * 60 + $m;
+    }
+
+    /**
+     * Retourne la liste des jours (Y-m-d) couverts par un challenge.
+     */
+    private function listerJoursChallenge(array $challenge): array
+    {
+        $jours   = [];
+        $curseur = strtotime($challenge['date_debut']);
+        $fin     = strtotime($challenge['date_fin']);
+        while ($curseur <= $fin) {
+            $jours[] = date('Y-m-d', $curseur);
+            $curseur = strtotime('+1 day', $curseur);
+        }
+        return $jours;
     }
 
     /**

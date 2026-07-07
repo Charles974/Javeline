@@ -312,6 +312,41 @@ class InscriptionModel extends Model
     }
 
     /**
+     * Retourne les matchs planifiés d'un challenge qui chevauchent une plage
+     * horaire donnée, un jour donné (toutes disciplines confondues). Sert à
+     * empêcher la création d'un bloc horaire libre par-dessus des tireurs
+     * déjà programmés sur ce créneau.
+     */
+    public function findMatchsDansPlage(int $challengeId, string $jour, string $heureDebut, string $heureFin): array
+    {
+        $sql = "SELECT
+                    d.code       AS discipline_code,
+                    d.libelle_fr AS discipline_fr,
+                    CASE WHEN i.tireur_type = 'membre'
+                         THEN m.nom  ELSE e.nom  END AS nom,
+                    ma.heure_debut,
+                    ma.heure_fin
+                FROM inscriptions i
+                JOIN disciplines d    ON d.id = i.discipline_id
+                JOIN matchs ma        ON ma.inscription_id = i.id
+                LEFT JOIN membres m   ON i.tireur_type = 'membre'  AND m.id = i.tireur_id
+                LEFT JOIN externes e  ON i.tireur_type = 'externe' AND e.id = i.tireur_id
+                WHERE i.challenge_id = :cid
+                  AND ma.date_match  = :jour
+                  AND ma.heure_debut < :fin
+                  AND ma.heure_fin   > :debut";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([
+            ':cid'   => $challengeId,
+            ':jour'  => $jour,
+            ':debut' => $heureDebut,
+            ':fin'   => $heureFin,
+        ]);
+        return $stmt->fetchAll();
+    }
+
+    /**
      * Retourne les discipline_id déjà assignés à un tireur dans un challenge.
      */
     public function findDisciplinesByTireur(int $challengeId, string $type, int $tireurId): array
@@ -435,6 +470,73 @@ class InscriptionModel extends Model
         $stmt = $this->db->prepare($sql);
         $stmt->execute([':cid' => $challengeId]);
         return $stmt->fetchAll();
+    }
+
+    /**
+     * Retourne toutes les inscriptions d'un challenge avec les infos nécessaires
+     * à la grille du plan de tir : discipline, tireur, coach, et match (planifié ou non).
+     * Sert à la fois à construire la grille (matchs planifiés) et le pool des
+     * tireurs en attente d'horaire (date_match IS NULL) par discipline.
+     */
+    public function findGrille(int $challengeId): array
+    {
+        $sql = "SELECT
+                    i.id                AS inscription_id,
+                    i.tireur_type,
+                    i.tireur_id,
+                    d.code              AS discipline_code,
+                    d.libelle_fr        AS discipline_fr,
+                    d.libelle_en        AS discipline_en,
+                    CASE WHEN i.tireur_type = 'membre'
+                         THEN m.nom   ELSE e.nom   END AS nom,
+                    CASE WHEN i.tireur_type = 'membre'
+                         THEN m.prenom ELSE e.prenom END AS prenom,
+                    CASE WHEN i.tireur_type = 'membre'
+                         THEN m.coach ELSE e.coach END AS coach,
+                    ma.date_match,
+                    ma.heure_debut,
+                    ma.heure_fin,
+                    s.id                AS score_id
+                FROM inscriptions i
+                JOIN disciplines d     ON d.id = i.discipline_id
+                LEFT JOIN membres m    ON i.tireur_type = 'membre'   AND m.id = i.tireur_id
+                LEFT JOIN externes e   ON i.tireur_type = 'externe'  AND e.id = i.tireur_id
+                LEFT JOIN matchs ma    ON ma.inscription_id = i.id
+                LEFT JOIN scores s     ON s.match_id = ma.id
+                WHERE i.challenge_id = :cid
+                ORDER BY d.code ASC, nom ASC, prenom ASC";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([':cid' => $challengeId]);
+        return $stmt->fetchAll();
+    }
+
+    /**
+     * Retire l'horaire (le match) d'une inscription, ce qui la remet dans le
+     * pool des tireurs en attente. Refuse si un score a déjà été saisi pour
+     * ne pas perdre de résultat (ON DELETE CASCADE supprimerait le score).
+     * Retourne true si supprimé, false si aucun match ou score déjà présent.
+     */
+    public function supprimerHoraire(int $inscriptionId): bool
+    {
+        $stmt = $this->db->prepare(
+            'SELECT ma.id, s.id AS score_id
+             FROM matchs ma
+             LEFT JOIN scores s ON s.match_id = ma.id
+             WHERE ma.inscription_id = :iid'
+        );
+        $stmt->execute([':iid' => $inscriptionId]);
+        $match = $stmt->fetch();
+
+        if (!$match) {
+            return false;
+        }
+        if ($match['score_id'] !== null) {
+            return false;
+        }
+
+        $stmt = $this->db->prepare('DELETE FROM matchs WHERE id = :id');
+        return $stmt->execute([':id' => $match['id']]);
     }
 
     /**

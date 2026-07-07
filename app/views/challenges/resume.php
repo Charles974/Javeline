@@ -97,6 +97,11 @@
 
         <!-- Boutons classements -->
         <div class="d-flex align-items-center gap-2 ms-auto">
+            <a href="<?= APP_URL ?>/challenges/<?= (int)$challenge['id'] ?>/plan-de-tir"
+               class="btn btn-sm btn-outline-primary"
+               aria-label="Attribuer les horaires du plan de tir">
+                Attribuer les horaires
+            </a>
             <a href="<?= APP_URL ?>/challenges/<?= (int)$challenge['id'] ?>/planning"
                target="_blank"
                class="btn btn-sm btn-outline-primary"
