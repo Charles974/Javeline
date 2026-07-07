@@ -125,7 +125,7 @@ class ExterneController extends Controller
         $this->render('externes/fiche', [
             'titrePage' => 'Fiche tireur — ' . htmlspecialchars($externe['nom'] . ' ' . $externe['prenom']),
             'externe'   => $externe,
-        ]);
+        ], 'print_fiche');
     }
 
     /**

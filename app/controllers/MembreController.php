@@ -133,7 +133,7 @@ class MembreController extends Controller
         $this->render('membres/fiche', [
             'titrePage' => 'Fiche membre — ' . htmlspecialchars($membre['nom'] . ' ' . $membre['prenom']),
             'membre'    => $membre,
-        ]);
+        ], 'print_fiche');
     }
 
     /**
