@@ -233,40 +233,40 @@
 
                         <p class="fiche-section-titre">Disciplines pour ce challenge</p>
 
-                        <div class="dropdown mb-2">
-                            <button type="button"
-                                    class="btn btn-outline-secondary disc-dropdown-toggle dropdown-toggle"
-                                    data-bs-toggle="dropdown"
-                                    data-bs-auto-close="outside"
-                                    aria-expanded="false"
-                                    aria-label="Choisir les disciplines">
-                                <span id="disc-compteur" class="disc-compteur-badge disc-compteur-vide">0 sélectionnée</span>
-                            </button>
-                            <ul class="dropdown-menu disc-dropdown-menu p-2" aria-label="Disciplines disponibles">
-                                <?php foreach ($disciplinesParFamille as $famille => $items): ?>
-                                <li class="filtre-groupe-titre"><?= htmlspecialchars($famille) ?></li>
-                                <?php foreach ($items as $d): ?>
-                                <li>
-                                    <label class="filtre-option">
-                                        <input type="checkbox"
-                                               class="disc-checkbox"
-                                               id="disc-<?= (int)$d['code'] ?>"
-                                               name="discipline_ids[]"
-                                               value="<?= (int)$d['id'] ?>">
-                                        <span class="discipline-code"><?= (int)$d['code'] ?></span>
-                                        <?= htmlspecialchars($d['libelle_fr']) ?>
-                                    </label>
-                                </li>
-                                <?php endforeach; ?>
-                                <?php endforeach; ?>
-                            </ul>
-                        </div>
+                        <div class="disc-row">
+                            <div class="dropdown disc-dropdown-wrapper">
+                                <button type="button"
+                                        class="btn btn-outline-secondary disc-dropdown-toggle dropdown-toggle"
+                                        data-bs-toggle="dropdown"
+                                        data-bs-auto-close="outside"
+                                        aria-expanded="false"
+                                        aria-label="Choisir les disciplines">
+                                    <span id="disc-compteur" class="disc-compteur-badge disc-compteur-vide">0 sélectionnée</span>
+                                </button>
+                                <ul class="dropdown-menu disc-dropdown-menu p-2" aria-label="Disciplines disponibles">
+                                    <?php foreach ($disciplinesParFamille as $famille => $items): ?>
+                                    <li class="filtre-groupe-titre"><?= htmlspecialchars($famille) ?></li>
+                                    <?php foreach ($items as $d): ?>
+                                    <li>
+                                        <label class="filtre-option">
+                                            <input type="checkbox"
+                                                   class="disc-checkbox"
+                                                   id="disc-<?= (int)$d['code'] ?>"
+                                                   name="discipline_ids[]"
+                                                   value="<?= (int)$d['id'] ?>">
+                                            <span class="discipline-code"><?= (int)$d['code'] ?></span>
+                                            <?= htmlspecialchars($d['libelle_fr']) ?>
+                                        </label>
+                                    </li>
+                                    <?php endforeach; ?>
+                                    <?php endforeach; ?>
+                                </ul>
+                            </div>
 
-                        <div class="form-actions">
-                            <button type="submit" id="btn-ajouter-insc" class="btn btn-primary btn-sm">
+                            <button type="submit" id="btn-ajouter-insc" class="btn btn-primary">
                                 Ajouter au challenge
                             </button>
-                            <button type="button" id="btn-modifier-insc" class="btn btn-warning btn-sm" hidden>
+                            <button type="button" id="btn-modifier-insc" class="btn btn-warning" hidden>
                                 Mettre à jour
                             </button>
                         </div>
