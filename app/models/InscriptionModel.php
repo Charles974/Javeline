@@ -438,41 +438,6 @@ class InscriptionModel extends Model
     }
 
     /**
-     * Retourne les matchs planifiés (date/horaire renseignés) d'un challenge,
-     * triés chronologiquement — pour l'impression du planning.
-     */
-    public function findPlanning(int $challengeId): array
-    {
-        $sql = "SELECT
-                    d.code              AS discipline_code,
-                    d.libelle_fr        AS discipline_fr,
-                    d.libelle_en        AS discipline_en,
-                    CASE WHEN i.tireur_type = 'membre'
-                         THEN m.nom   ELSE e.nom   END AS nom,
-                    CASE WHEN i.tireur_type = 'membre'
-                         THEN m.prenom ELSE e.prenom END AS prenom,
-                    i.tireur_type,
-                    CASE WHEN i.tireur_type = 'membre'
-                         THEN 'Javeline' ELSE e.club END AS club,
-                    CASE WHEN i.tireur_type = 'membre'
-                         THEN m.coach ELSE e.coach END AS coach,
-                    ma.date_match,
-                    ma.heure_debut,
-                    ma.heure_fin
-                FROM inscriptions i
-                JOIN disciplines d   ON d.id = i.discipline_id
-                JOIN matchs ma       ON ma.inscription_id = i.id
-                LEFT JOIN membres m  ON i.tireur_type = 'membre'  AND m.id = i.tireur_id
-                LEFT JOIN externes e ON i.tireur_type = 'externe' AND e.id = i.tireur_id
-                WHERE i.challenge_id = :cid
-                ORDER BY ma.date_match ASC, ma.heure_debut ASC, nom ASC, prenom ASC";
-
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute([':cid' => $challengeId]);
-        return $stmt->fetchAll();
-    }
-
-    /**
      * Retourne toutes les inscriptions d'un challenge avec les infos nécessaires
      * à la grille du plan de tir : discipline, tireur, coach, et match (planifié ou non).
      * Sert à la fois à construire la grille (matchs planifiés) et le pool des

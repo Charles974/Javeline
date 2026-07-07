@@ -640,7 +640,7 @@ class ChallengeController extends Controller
     }
 
     // ----------------------------------------------------------------
-    // GET /challenges/:id/planning — planning imprimable des matchs prévus
+    // GET /challenges/:id/planning — plan de tir imprimable (PDF)
     // ----------------------------------------------------------------
     public function planning(string $id): void
     {
@@ -651,14 +651,13 @@ class ChallengeController extends Controller
             return;
         }
 
-        $planning = $this->inscriptions->findPlanning($id);
-
         $this->render('challenges/print_planning', [
-            'titrePage'     => 'Planning — ' . htmlspecialchars($challenge['libelle']),
+            'titrePage'     => 'Plan de tir — ' . htmlspecialchars($challenge['libelle']),
             'challenge'     => $challenge,
-            'planning'      => $planning,
+            'jours'         => $this->listerJoursChallenge($challenge),
+            'grille'        => $this->inscriptions->findGrille($id),
             'blocsHoraires' => $this->blocsHoraires->findByChallenge($id),
-        ], 'print');
+        ], 'print_simple');
     }
 
     // ----------------------------------------------------------------

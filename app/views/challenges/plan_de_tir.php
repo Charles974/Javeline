@@ -260,5 +260,5 @@ $grilleJs = array_map(static function (array $r): array {
         const DUREE_CONFLIT_MIN = <?= (int) $dureeConflit ?>;
         const GRILLE_INITIALE   = <?= json_encode($grilleJs, JSON_UNESCAPED_UNICODE) ?>;
     </script>
-    <script src="<?= APP_URL ?>/public/js/challenge-plan-de-tir.js"></script>
+    <script src="<?= APP_URL ?>/public/js/challenge-plan-de-tir.js?v=<?= filemtime(APP_ROOT . '/public/js/challenge-plan-de-tir.js') ?>"></script>
 <?php endif; ?>

@@ -11,13 +11,34 @@ $(document).ready(function () {
     // Onglets par jour
     // ----------------------------------------------------------------
     $('.plan-jour-tab').on('click', function () {
-        const jour = $(this).data('jour');
+        activerJour($(this).data('jour'));
+    });
+
+    function activerJour(jour) {
+        const $tab = $('.plan-jour-tab[data-jour="' + jour + '"]');
+        if (!$tab.length) return;
         $('.plan-jour-tab').removeClass('active').attr('aria-selected', 'false');
-        $(this).addClass('active').attr('aria-selected', 'true');
+        $tab.addClass('active').attr('aria-selected', 'true');
         $('.plan-jour-panneau').addClass('d-none');
         $('.plan-jour-panneau[data-jour-panneau="' + jour + '"]').removeClass('d-none');
         fermerPopover();
-    });
+    }
+
+    function jourActif() {
+        return $('.plan-jour-tab.active').data('jour');
+    }
+
+    // Recharge la page en conservant le jour affiché (restauré via l'ancre d'URL).
+    function rechargerSurJour() {
+        window.location.hash = 'jour=' + jourActif();
+        window.location.reload();
+    }
+
+    // Au chargement : réactive le jour mémorisé dans l'ancre, le cas échéant.
+    const hashJour = window.location.hash.match(/^#jour=(\d{4}-\d{2}-\d{2})$/);
+    if (hashJour) {
+        activerJour(hashJour[1]);
+    }
 
     // ----------------------------------------------------------------
     // Clic sur une case de la grille
@@ -295,7 +316,7 @@ $(document).ready(function () {
                 return;
             }
             // La fusion des lignes (rowspan) est calculée côté serveur : on recharge la grille.
-            window.location.reload();
+            rechargerSurJour();
         }).fail(function (xhr) {
             afficherErreurBloc(messageErreur(xhr));
         }).always(function () {
@@ -321,7 +342,7 @@ $(document).ready(function () {
                 afficherAlerte(rep.message || 'Erreur lors de la suppression.', 'erreur');
                 return;
             }
-            window.location.reload();
+            rechargerSurJour();
         }).fail(function (xhr) {
             afficherAlerte(messageErreur(xhr), 'erreur');
         });

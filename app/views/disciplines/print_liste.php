@@ -17,6 +17,7 @@
                 <tr>
                     <th class="liste-impression-col-num">Numéro de catégorie</th>
                     <th>Désignation catégorie</th>
+                    <th>Désignation anglaise</th>
                     <th class="liste-impression-col-qualif">Qualif F1</th>
                     <th class="liste-impression-col-qualif">Qualif F2</th>
                 </tr>
@@ -26,6 +27,7 @@
                 <tr>
                     <td><?= (int)$d['code'] ?></td>
                     <td><?= htmlspecialchars($d['libelle_fr']) ?></td>
+                    <td><?= htmlspecialchars($d['libelle_en']) ?></td>
                     <td class="liste-impression-col-qualif"><?= (int)$d['qualif_f1'] ?></td>
                     <td class="liste-impression-col-qualif"><?= (int)$d['qualif_f2'] ?></td>
                 </tr>
