@@ -7,6 +7,7 @@ define('APP_ROOT', __DIR__);
 require_once APP_ROOT . '/config/config.php';
 
 // Chargement des classes du noyau
+require_once APP_ROOT . '/core/helpers.php';
 require_once APP_ROOT . '/core/Database.php';
 require_once APP_ROOT . '/core/Model.php';
 require_once APP_ROOT . '/core/Controller.php';
