@@ -596,6 +596,18 @@ main {
 }
 
 /* --- Menu deroulant multi-choix des disciplines --- */
+.disc-row {
+    display: flex;
+    align-items: stretch;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.disc-dropdown-wrapper {
+    flex: 1 1 auto;
+    min-width: 180px;
+}
+
 .disc-dropdown-menu {
     max-height: 300px;
     overflow-y: auto;
@@ -603,7 +615,7 @@ main {
 }
 
 .disc-dropdown-toggle {
-    min-width: 220px;
+    width: 100%;
     text-align: left;
 }
 
