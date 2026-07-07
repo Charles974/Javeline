@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title><?= htmlspecialchars($titrePage ?? APP_NAME) ?></title>
-    <link rel="stylesheet" href="<?= APP_URL ?>/public/css/fiche-tireur.css?v=<?= filemtime(APP_ROOT . '/public/css/fiche-tireur.css') ?>">
+    <link rel="stylesheet" href="<?= APP_URL ?>/public/css/fiche-print.css?v=<?= filemtime(APP_ROOT . '/public/css/fiche-print.css') ?>">
 </head>
 <body onload="window.print()">
     <?= $contenu ?? '' ?>

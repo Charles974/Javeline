@@ -32,6 +32,6 @@ class DisciplineController extends Controller
         $this->render('disciplines/print_liste', [
             'titrePage'   => 'Liste des catégories — ' . APP_NAME,
             'disciplines' => $disciplines,
-        ], 'print');
+        ], 'print_simple');
     }
 }

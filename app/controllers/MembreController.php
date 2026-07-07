@@ -35,7 +35,7 @@ class MembreController extends Controller
         $this->render('membres/print_liste', [
             'titrePage' => 'Liste des tireurs membres — ' . APP_NAME,
             'membres'   => $membres,
-        ], 'print');
+        ], 'print_simple');
     }
 
     /**

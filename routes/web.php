@@ -18,12 +18,12 @@ $router->post('/challenges/:id/saisir-score',                   'ChallengeContro
 $router->post('/challenges/:id/modifier-horaire',               'ChallengeController', 'modifierHoraire');
 $router->post('/challenges/:id/retirer-horaire',                'ChallengeController', 'retirerHoraire');
 $router->get('/challenges/:id/plan-de-tir',                     'ChallengeController', 'planDeTir');
+$router->get('/challenges/:id/planning',                        'ChallengeController', 'planning');
 $router->post('/challenges/:id/plan-de-tir/blocs',               'ChallengeController', 'ajouterBlocHoraire');
 $router->post('/challenges/:id/plan-de-tir/blocs/supprimer',     'ChallengeController', 'supprimerBlocHoraire');
 $router->get('/challenges/:id/disciplines-tireur',              'ChallengeController', 'disciplinesTireur');
 $router->get('/challenges/:id/panneaux',                        'ChallengeController', 'panneaux');
 $router->get('/challenges/:id/imprimer',                        'ChallengeController', 'imprimer');
-$router->get('/challenges/:id/planning',                        'ChallengeController', 'planning');
 $router->post('/challenges/:id/inscrire',                       'ChallengeController', 'inscrire');
 $router->post('/challenges/:id/modifier-inscriptions',          'ChallengeController', 'modifierInscriptions');
 $router->post('/challenges/:id/supprimer-inscription',          'ChallengeController', 'supprimerInscription');

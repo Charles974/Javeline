@@ -35,7 +35,7 @@ class ExterneController extends Controller
         $this->render('externes/print_liste', [
             'titrePage' => 'Liste des tireurs non membres — ' . APP_NAME,
             'externes'  => $externes,
-        ], 'print');
+        ], 'print_simple');
     }
 
     /**

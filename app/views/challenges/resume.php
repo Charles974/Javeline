@@ -102,12 +102,6 @@
                aria-label="Attribuer les horaires du plan de tir">
                 Attribuer les horaires
             </a>
-            <a href="<?= APP_URL ?>/challenges/<?= (int)$challenge['id'] ?>/planning"
-               target="_blank"
-               class="btn btn-sm btn-outline-primary"
-               aria-label="Imprimer le planning des matchs prévus">
-                Génération du plan de tir
-            </a>
             <a href="<?= APP_URL ?>/challenges/<?= (int)$challenge['id'] ?>/classements"
                target="_blank"
                class="btn btn-sm btn-outline-primary"
@@ -202,13 +196,6 @@
                         </td>
                         <td class="resume-col-horaire">
                             <span class="resume-horaire-texte"><?= htmlspecialchars($horaire) ?: '<span class="text-muted">—</span>' ?></span>
-                            <?php if (!$archive): ?>
-                            <button type="button"
-                                    class="btn btn-sm btn-outline-secondary btn-modifier-horaire"
-                                    aria-label="Modifier l'horaire de <?= htmlspecialchars($p['nom'] . ' ' . $p['prenom']) ?>">
-                                ✎
-                            </button>
-                            <?php endif; ?>
                         </td>
                         <td class="resume-col-score">
                             <?php if ($aScore): ?>
@@ -278,7 +265,7 @@
                     ?>
                     <div class="score-saisie-animal">
                         <div class="score-animal-nom"><?= $libelle ?></div>
-                        <img src="/img/<?= $image ?>"
+                        <img src="<?= APP_URL ?>/public/img/<?= $image ?>"
                              alt="Silhouette <?= $libelle ?>"
                              class="score-animal-picto">
                         <input type="number"
