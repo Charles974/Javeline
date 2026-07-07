@@ -1,12 +1,23 @@
-<section class="hero text-center py-5" aria-labelledby="titre-accueil">
-    <h1 id="titre-accueil">Association Javeline</h1>
-    <p class="lead">Gestion des scores — Silhouette métallique</p>
-</section>
+<section class="hero-accueil" aria-labelledby="titre-accueil">
+    <div class="hero-presentation">
+        <div class="hero-identite">
+            <img src="<?= APP_URL ?>/public/img/images.png" alt="Logo Javeline Nancéienne" class="hero-logo">
+            <div>
+                <p class="hero-eyebrow">Javeline Nancéienne</p>
+                <h1 id="titre-accueil">Association Javeline</h1>
+            </div>
+        </div>
+        <p class="lead hero-texte">
+            Gestion des scores — tir sur <strong>silhouette métallique</strong>.
+            Suivez le challenge en cours et gérez vos tireurs.
+        </p>
+    </div>
 
-<!-- Zone challenge : mise à jour via AJAX après création -->
-<section class="challenge-actif mb-4" id="zone-challenge" aria-labelledby="titre-challenge">
-    <h2 id="titre-challenge" class="visually-hidden">Challenge en cours ou à venir</h2>
-    <?php require APP_ROOT . '/app/views/partials/challenge_card.php'; ?>
+    <!-- Zone challenge : mise à jour via AJAX après création -->
+    <div class="hero-challenge" id="zone-challenge" aria-labelledby="titre-challenge">
+        <h2 id="titre-challenge" class="visually-hidden">Challenge en cours ou à venir</h2>
+        <?php require APP_ROOT . '/app/views/partials/challenge_card.php'; ?>
+    </div>
 </section>
 
 <!-- Message de succès (masqué par défaut) -->
@@ -14,35 +25,36 @@
     <span id="alerte-succes-texte"></span>
 </div>
 
-<!-- Boutons de navigation principale -->
-<section class="navigation-principale text-center" aria-label="Navigation principale">
-    <div class="nav-boutons">
+<!-- Accès rapide -->
+<section class="acces-rapide" aria-label="Accès rapide">
+    <p class="acces-rapide-titre">Accès rapide</p>
+    <div class="acces-rapide-grille">
         <a href="<?= APP_URL ?>/membres"
-           class="btn btn-nav"
+           class="acces-rapide-lien"
            aria-label="Gérer les tireurs membres">
             Tireurs membres
         </a>
         <a href="<?= APP_URL ?>/externes"
-           class="btn btn-nav"
+           class="acces-rapide-lien"
            aria-label="Gérer les tireurs non membres">
             Tireurs non membres
         </a>
-        <button type="button"
-                class="btn btn-nav btn-nav-accent"
-                data-bs-toggle="modal"
-                data-bs-target="#modal-challenge"
-                aria-label="Créer un nouveau challenge">
-            Créer un challenge
-        </button>
         <a href="<?= APP_URL ?>/disciplines"
-           class="btn btn-nav"
+           class="acces-rapide-lien"
            aria-label="Consulter les disciplines disponibles">
             Disciplines
         </a>
         <a href="<?= APP_URL ?>/challenges/historique"
-           class="btn btn-nav"
+           class="acces-rapide-lien"
            aria-label="Voir l'historique des challenges">
             Historique des challenges
         </a>
+        <button type="button"
+                class="acces-rapide-lien acces-rapide-accent"
+                data-bs-toggle="modal"
+                data-bs-target="#modal-challenge"
+                aria-label="Créer un nouveau challenge">
+            + Créer un challenge
+        </button>
     </div>
 </section>
