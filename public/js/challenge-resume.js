@@ -119,10 +119,19 @@ $(document).ready(function () {
         valeurOriginales = { poulets, cochons, dindons, mouflons };
 
         // Remplir les informations du tireur
-        const typeLabel = inscriptionCourante.tireurType === 'membre' ? 'Membre' : 'Non membre';
-        const club      = inscriptionCourante.tireurType === 'membre' ? 'Javeline' : (inscriptionCourante.club || '');
+        const estMembre = inscriptionCourante.tireurType === 'membre';
+        const typeLabel = estMembre ? 'Membre' : 'Non membre';
+        const club      = estMembre ? 'Javeline' : (inscriptionCourante.club || '');
         $('#score-nom').text(inscriptionCourante.nom + ' ' + inscriptionCourante.prenom);
-        $('#score-detail').text(club ? typeLabel + ' — ' + club : typeLabel);
+
+        const badgeClasse = estMembre ? 'score-tireur-badge-membre' : 'score-tireur-badge-externe';
+        const $badge = $('<span>')
+            .addClass('score-tireur-badge ' + badgeClasse)
+            .text(typeLabel);
+        $('#score-detail').empty().append($badge);
+        if (club) {
+            $('#score-detail').append($('<span>').addClass('score-tireur-club').text(club));
+        }
         $('#score-discipline').text(
             'Discipline : ' + inscriptionCourante.disciplineCode + ' — ' + inscriptionCourante.disciplineFr
         );
