@@ -657,7 +657,7 @@ class ChallengeController extends Controller
             'jours'         => $this->listerJoursChallenge($challenge),
             'grille'        => $this->inscriptions->findGrille($id),
             'blocsHoraires' => $this->blocsHoraires->findByChallenge($id),
-        ], 'print_simple');
+        ], 'print');
     }
 
     // ----------------------------------------------------------------
