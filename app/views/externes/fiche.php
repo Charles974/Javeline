@@ -13,16 +13,18 @@
                 <tr>
                     <th>Nom</th>
                     <td><?= htmlspecialchars($externe['nom']) ?></td>
+                </tr>
+                <tr>
                     <th>Prénom</th>
                     <td><?= htmlspecialchars($externe['prenom']) ?></td>
                 </tr>
                 <tr>
                     <th>Club</th>
-                    <td colspan="3"><?= htmlspecialchars($externe['club']) ?></td>
+                    <td><?= htmlspecialchars($externe['club']) ?></td>
                 </tr>
                 <tr>
                     <th>Tireur étranger</th>
-                    <td colspan="3">
+                    <td>
                         <?php if ($externe['etranger']): ?>
                             <span class="fiche-tireur-badge fiche-tireur-badge-ok">Oui</span>
                         <?php else: ?>
@@ -31,12 +33,10 @@
                     </td>
                 </tr>
                 <tr>
-                    <th>Coach</th>
-                    <td colspan="3"><?= htmlspecialchars($externe['coach'] ?? '') ?: '—' ?></td>
-                </tr>
-                <tr>
                     <th>Téléphone</th>
                     <td><?= htmlspecialchars($externe['telephone'] ?? '') ?: '—' ?></td>
+                </tr>
+                <tr>
                     <th>Email</th>
                     <td><?= htmlspecialchars($externe['email'] ?? '') ?: '—' ?></td>
                 </tr>

@@ -13,22 +13,26 @@
                 <tr>
                     <th>Nom</th>
                     <td><?= htmlspecialchars($membre['nom']) ?></td>
+                </tr>
+                <tr>
                     <th>Prénom</th>
                     <td><?= htmlspecialchars($membre['prenom']) ?></td>
                 </tr>
                 <tr>
                     <th>Date de naissance</th>
                     <td><?= date('d/m/Y', strtotime($membre['date_naissance'])) ?></td>
+                </tr>
+                <tr>
                     <th>Lieu de naissance</th>
                     <td><?= htmlspecialchars($membre['lieu_naissance']) ?></td>
                 </tr>
                 <tr>
                     <th>N° de licence</th>
-                    <td colspan="3"><?= htmlspecialchars($membre['numero_licence']) ?></td>
+                    <td><?= htmlspecialchars($membre['numero_licence']) ?></td>
                 </tr>
                 <tr>
                     <th>Certificat médical</th>
-                    <td colspan="3">
+                    <td>
                         <?php if ($membre['certificat_medical']): ?>
                             <span class="fiche-tireur-badge fiche-tireur-badge-ok">Valide</span>
                         <?php else: ?>
@@ -37,18 +41,16 @@
                     </td>
                 </tr>
                 <tr>
-                    <th>Coach</th>
-                    <td colspan="3"><?= htmlspecialchars($membre['coach'] ?? '') ?: '—' ?></td>
-                </tr>
-                <tr>
                     <th>Téléphone</th>
                     <td><?= htmlspecialchars($membre['telephone']) ?></td>
+                </tr>
+                <tr>
                     <th>Email</th>
                     <td><?= htmlspecialchars($membre['email']) ?></td>
                 </tr>
                 <tr>
                     <th>Adresse</th>
-                    <td colspan="3">
+                    <td>
                         <?= htmlspecialchars($membre['adresse1']) ?>
                         <?php if ($membre['adresse2']): ?>
                             <br><?= htmlspecialchars($membre['adresse2']) ?>
