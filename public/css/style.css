@@ -6,7 +6,9 @@
 /* --- Variables globales --- */
 :root {
     --couleur-primaire: #2c3e50;
+    --couleur-primaire-fonce: #1f2d3a;
     --couleur-secondaire: #e74c3c;
+    --couleur-secondaire-fonce: #c0392b;
     --couleur-texte: #333333;
     --couleur-fond: #f9f9f9;
     --police-principale: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -43,6 +45,78 @@ main {
     display: flex;
     flex-direction: column;
     min-height: 0;
+}
+
+/* --- Boutons : style unifie repris de l'accueil ---------------
+   On surcharge les proprietes personnalisees de Bootstrap (--bs-btn-*)
+   plutot que de reecrire chaque variante. Tous les boutons du site
+   (btn-primary, btn-outline-primary, btn-danger...) heritent ainsi du
+   meme aspect : coins arrondis, graisse 600, couleurs de la charte.
+   La hierarchie semantique est conservee :
+   navy = action principale, gris = neutre/annuler, rouge = destructif,
+   vert = succes, ambre = avertissement. */
+.btn {
+    --bs-btn-font-weight: 600;
+    --bs-btn-border-radius: 0.5rem;
+    transition: background-color 0.15s ease, border-color 0.15s ease,
+                color 0.15s ease, box-shadow 0.15s ease;
+}
+
+/* Boutons compacts : coins legerement moins arrondis pour rester nets */
+.btn-sm {
+    --bs-btn-border-radius: 0.4rem;
+}
+
+/* Action principale : navy de la charte (remplace le bleu Bootstrap) */
+.btn-primary {
+    --bs-btn-bg: var(--couleur-primaire);
+    --bs-btn-border-color: var(--couleur-primaire);
+    --bs-btn-hover-bg: var(--couleur-primaire-fonce);
+    --bs-btn-hover-border-color: var(--couleur-primaire-fonce);
+    --bs-btn-active-bg: var(--couleur-primaire-fonce);
+    --bs-btn-active-border-color: var(--couleur-primaire-fonce);
+    --bs-btn-disabled-bg: var(--couleur-primaire);
+    --bs-btn-disabled-border-color: var(--couleur-primaire);
+    --bs-btn-focus-shadow-rgb: 44, 62, 80;
+}
+
+.btn-outline-primary {
+    --bs-btn-color: var(--couleur-primaire);
+    --bs-btn-border-color: var(--couleur-primaire);
+    --bs-btn-hover-bg: var(--couleur-primaire);
+    --bs-btn-hover-border-color: var(--couleur-primaire);
+    --bs-btn-hover-color: #ffffff;
+    --bs-btn-active-bg: var(--couleur-primaire);
+    --bs-btn-active-border-color: var(--couleur-primaire);
+    --bs-btn-disabled-color: var(--couleur-primaire);
+    --bs-btn-disabled-border-color: var(--couleur-primaire);
+    --bs-btn-focus-shadow-rgb: 44, 62, 80;
+}
+
+/* Action destructive / accent : rouge de la charte */
+.btn-danger {
+    --bs-btn-bg: var(--couleur-secondaire);
+    --bs-btn-border-color: var(--couleur-secondaire);
+    --bs-btn-hover-bg: var(--couleur-secondaire-fonce);
+    --bs-btn-hover-border-color: var(--couleur-secondaire-fonce);
+    --bs-btn-active-bg: var(--couleur-secondaire-fonce);
+    --bs-btn-active-border-color: var(--couleur-secondaire-fonce);
+    --bs-btn-disabled-bg: var(--couleur-secondaire);
+    --bs-btn-disabled-border-color: var(--couleur-secondaire);
+    --bs-btn-focus-shadow-rgb: 231, 76, 60;
+}
+
+.btn-outline-danger {
+    --bs-btn-color: var(--couleur-secondaire-fonce);
+    --bs-btn-border-color: var(--couleur-secondaire);
+    --bs-btn-hover-bg: var(--couleur-secondaire);
+    --bs-btn-hover-border-color: var(--couleur-secondaire);
+    --bs-btn-hover-color: #ffffff;
+    --bs-btn-active-bg: var(--couleur-secondaire);
+    --bs-btn-active-border-color: var(--couleur-secondaire);
+    --bs-btn-disabled-color: var(--couleur-secondaire-fonce);
+    --bs-btn-disabled-border-color: var(--couleur-secondaire);
+    --bs-btn-focus-shadow-rgb: 231, 76, 60;
 }
 
 /* --- Navbar (bandeau haut, style Claude Design) --- */
@@ -105,7 +179,7 @@ main {
 
 .navbar-javeline .navbar-nav .nav-cta:hover,
 .navbar-javeline .navbar-nav .nav-cta:focus {
-    background-color: #c0392b;
+    background-color: var(--couleur-secondaire-fonce);
     color: #ffffff;
 }
 
@@ -922,7 +996,7 @@ main {
 .acces-rapide-accent {
     background-color: #fbeeee;
     border-color: #f3c9c4;
-    color: #c0392b;
+    color: var(--couleur-secondaire-fonce);
 }
 
 .acces-rapide-accent:hover,
