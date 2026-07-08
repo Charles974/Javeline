@@ -2,9 +2,27 @@
 // Reprend exactement la logique de construction de la grille de l'ecran
 // "Plan de tir" (app/views/challenges/plan_de_tir.php), pour que l'export
 // PDF reflete fidelement l'interface. Meme source de donnees ($grille).
+//
+// IMPORTANT — pagination :
+// La grille d'un jour compte pres de 58 creneaux (09h00 -> 18h30, pas de
+// 10 min). Une seule <table> aussi haute doit se fragmenter sur plusieurs
+// pages. La fragmentation automatique d'un grand tableau par Paged.js, quand
+// elle est combinee a un saut de page force entre les jours, provoque des
+// pages blanches en cascade (le tableau ne demarrait plus en premiere page
+// et des dizaines de pages vides s'ajoutaient a la fin).
+//
+// Pour fiabiliser l'export, on decoupe nous-memes chaque jour en blocs d'un
+// nombre fixe de lignes. Chaque bloc est un tableau autonome (avec son propre
+// en-tete de colonnes), plus court qu'une page, et marque comme insecable :
+// Paged.js n'a alors que des blocs simples a placer, ce qui supprime la
+// cascade de pages blanches.
 
 $dateDebut = date('d/m/Y', strtotime($challenge['date_debut']));
 $dateFin   = date('d/m/Y', strtotime($challenge['date_fin']));
+
+// Nombre maximal de creneaux par bloc imprime. Choisi pour qu'un bloc
+// (en-tete de colonnes + lignes) tienne largement dans une page A4 paysage.
+$lignesParBloc = 18;
 
 // Disciplines effectivement inscrites au challenge (colonnes de la grille).
 $disciplines = [];
@@ -55,9 +73,12 @@ while ($curseur <= $limite) {
     <?php if (empty($disciplines)): ?>
         <p>Aucun tireur inscrit pour le moment.</p>
     <?php else: ?>
-        <?php foreach ($jours as $jour):
+        <?php
+        $premierBloc = true;
+        foreach ($jours as $jour):
             $estPremierJour = $jour === $challenge['date_debut'];
 
+            // Blocs horaires (pauses, etc.) etendus a chaque creneau du jour.
             $blocsJour    = $blocsParJour[$jour] ?? [];
             $blocParHeure = [];
             foreach ($blocsJour as $bloc) {
@@ -69,9 +90,22 @@ while ($curseur <= $limite) {
                     }
                 }
             }
+
+            // Decoupage des creneaux du jour en blocs de $lignesParBloc lignes.
+            $blocsCreneaux = array_chunk($creneaux, $lignesParBloc);
+            $nbBlocs       = count($blocsCreneaux);
+
+            foreach ($blocsCreneaux as $indexBloc => $creneauxBloc):
+                // Chaque jour demarre sur une nouvelle page (sauf le tout
+                // premier bloc, qui suit directement l'en-tete de la fiche).
+                $sautPage      = !$premierBloc && $indexBloc === 0;
+                $premierBloc   = false;
+                $classesBloc   = 'planning-bloc' . ($sautPage ? ' planning-bloc-saut' : '');
         ?>
-        <div class="planning-jour">
-            <h3 class="planning-date"><?= htmlspecialchars(format_date_fr_complete($jour)) ?></h3>
+        <div class="<?= $classesBloc ?>">
+            <h3 class="planning-date">
+                <?= htmlspecialchars(format_date_fr_complete($jour)) ?><?php if ($nbBlocs > 1): ?> <span class="planning-suite">(<?= $indexBloc + 1 ?>/<?= $nbBlocs ?>)</span><?php endif; ?>
+            </h3>
             <table class="planning-table">
                 <thead>
                     <tr>
@@ -82,7 +116,7 @@ while ($curseur <= $limite) {
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($creneaux as $heure):
+                    <?php foreach ($creneauxBloc as $heure):
                         $estOuverture = $estPremierJour && $heure >= '09:00' && $heure <= '09:50';
                         $bloc         = $estOuverture ? null : ($blocParHeure[$heure] ?? null);
                         $debutBloc    = $bloc ? substr($bloc['heure_debut'], 0, 5) : null;
@@ -112,7 +146,8 @@ while ($curseur <= $limite) {
                 </tbody>
             </table>
         </div>
-        <?php endforeach; ?>
+        <?php endforeach; // blocs de creneaux ?>
+        <?php endforeach; // jours ?>
         <p class="fiche-pied">
             Édité le <?= date('d/m/Y à H:i') ?>
         </p>
