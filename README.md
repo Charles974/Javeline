@@ -19,7 +19,7 @@ L'accès à l'application est libre : il n'y a pas de gestion de compte ni d'aut
 
 ## Prérequis
 
-- PHP 7.4 ou supérieur, avec l'extension **PDO MySQL** activée.
+- PHP 8.0 ou supérieur, avec l'extension **PDO MySQL** activée.
 - MySQL ou MariaDB.
 - Un serveur web avec le module de réécriture d'URL (`mod_rewrite` pour Apache).
 - [WampServer](https://www.wampserver.com/) (ou équivalent : Laragon, XAMPP, MAMP...) pour un environnement de développement local sous Windows.
@@ -90,11 +90,12 @@ Javeline/
 │       ├── layouts/     # Gabarits (header, footer)
 │       └── partials/    # Composants réutilisables
 ├── config/              # Configuration BDD et app
-├── core/                # Classes de base (Router, Controller, Model, Database)
+├── core/                # Classes de base (Router, Controller, Model, Database, helpers)
 ├── public/              # Racine web publique
 │   ├── css/
 │   ├── js/
-│   └── img/
+│   ├── img/
+│   └── vendor/          # Bibliothèques front-end (jQuery, Bootstrap, Paged.js)
 ├── routes/              # Définition des routes
 └── index.php            # Point d'entrée unique
 ```
