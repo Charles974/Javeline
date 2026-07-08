@@ -156,6 +156,7 @@ $(document).ready(function () {
             candidat.heureFin   = heureFin;
 
             mettreAJourCase(jour, candidat.disciplineCode, heure, candidat);
+            mettreAJourCompteurs();
             fermerPopover();
 
             afficherAlerte(
@@ -211,6 +212,7 @@ $(document).ready(function () {
             match.heureFin = null;
 
             viderCase(jour, discipline, heure);
+            mettreAJourCompteurs();
             fermerPopover();
             afficherAlerte('Horaire retiré.', 'succes');
         }).fail(function (xhr) {
@@ -235,6 +237,13 @@ $(document).ready(function () {
 
     function viderCase(jour, discipline, heure) {
         $(selecteurCase(jour, discipline, heure)).removeClass('plan-case-remplie').empty();
+    }
+
+    // Compteurs "Programmés / En attente" de l'en-tête, recalculés depuis l'état local.
+    function mettreAJourCompteurs() {
+        const programmes = grille.filter(function (r) { return r.dateMatch && r.heureDebut; }).length;
+        $('#plan-stat-programmes').text(programmes);
+        $('#plan-stat-attente').text(grille.length - programmes);
     }
 
     function labelDiscipline(code) {
@@ -280,7 +289,7 @@ $(document).ready(function () {
     let jourBlocCourant = null;
 
     $(document).on('click', '.btn-ajouter-bloc', function () {
-        jourBlocCourant = $(this).data('jour');
+        jourBlocCourant = jourActif();
         $('#bloc-libelle').val('');
         $('#bloc-debut').val('');
         $('#bloc-fin').val('');

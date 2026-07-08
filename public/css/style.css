@@ -1083,8 +1083,104 @@ main {
    Plan de tir — grille interactive d'attribution des horaires
    ============================================================ */
 
-.plan-jours-tabs .nav-link {
+/* Compteurs de l'en-tête (programmés / en attente) */
+.plan-stats {
+    gap: 0;
+}
+
+.plan-stat {
+    text-align: right;
+    padding: 0.2rem 0.9rem;
+    border-left: 1px solid #ccc;
+    display: flex;
+    flex-direction: column;
+}
+
+.plan-stat-valeur {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--couleur-primaire);
+    line-height: 1.15;
+}
+
+.plan-stat-label {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #888;
+}
+
+/* Sélecteur de jour segmenté (façon maquette) */
+.plan-jours-tabs {
+    display: inline-flex;
+    gap: 0.25rem;
+    background-color: #eef0ee;
+    border: 1px solid #d8dad8;
+    border-radius: 0.5rem;
+    padding: 0.2rem;
+}
+
+.plan-jour-tab {
+    border: none;
+    background: transparent;
+    color: #666;
     font-weight: 600;
+    font-size: 0.85rem;
+    padding: 0.35rem 0.9rem;
+    border-radius: 0.4rem;
+    cursor: pointer;
+    text-align: left;
+}
+
+.plan-jour-tab.active {
+    background-color: #fff;
+    color: var(--couleur-texte);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+.plan-jour-tab-date {
+    display: block;
+    font-size: 0.68rem;
+    font-weight: 500;
+    color: #999;
+}
+
+/* Légende */
+.plan-legende {
+    font-size: 0.78rem;
+    color: #666;
+}
+
+.plan-legende > span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.plan-legende-puce {
+    width: 0.7rem;
+    height: 0.7rem;
+    border-radius: 0.2rem;
+    display: inline-block;
+    border: 1px solid #c4c6c4;
+}
+
+.plan-puce-libre {
+    background-color: #fff;
+}
+
+.plan-puce-programme {
+    background-color: #e6f4ea;
+    border-color: #2f7d43;
+}
+
+.plan-puce-conflit {
+    background-color: #fff3cd;
+    border-color: #b26a00;
+}
+
+.plan-puce-bloc {
+    background: repeating-linear-gradient(135deg, #d9dcd9 0 4px, transparent 4px 8px);
 }
 
 .plan-grille-scroll {
@@ -1173,7 +1269,7 @@ main {
 }
 
 .plan-case-bloc {
-    background-color: #e9ecef;
+    background: repeating-linear-gradient(135deg, #eceeec 0 8px, #f7f8f7 8px 16px);
     text-align: center;
     font-weight: 600;
     color: #555;
