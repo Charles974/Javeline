@@ -990,6 +990,7 @@ main {
 /* --- Modale saisie des scores --- */
 .score-tireur-bloc {
     background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
     border-radius: 0.5rem;
     padding: 0.75rem 1rem;
 }
@@ -1001,6 +1002,31 @@ main {
 }
 
 .score-tireur-detail {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.25rem;
+}
+
+.score-tireur-badge {
+    display: inline-block;
+    padding: 0.15rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.score-tireur-badge-membre {
+    background-color: #d1e7dd;
+    color: #0f5132;
+}
+
+.score-tireur-badge-externe {
+    background-color: #e2e3e5;
+    color: #41464b;
+}
+
+.score-tireur-club {
     font-size: 0.85rem;
     color: #666;
 }
@@ -1009,6 +1035,9 @@ main {
     font-size: 0.9rem;
     font-weight: 600;
     color: var(--couleur-primaire);
+    border-left: 3px solid var(--couleur-primaire);
+    padding-left: 0.6rem;
+    margin-top: 0.5rem;
 }
 
 /* Grille 4 silhouettes */
