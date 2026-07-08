@@ -5,12 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($titrePage ?? APP_NAME) ?></title>
 
-    <!-- Bootstrap 5 -->
+    <!-- Bootstrap 5 (fichier local, pas de dependance a un CDN) -->
     <link
         rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
-        crossorigin="anonymous"
+        href="<?= APP_URL ?>/public/vendor/bootstrap/css/bootstrap.min.css"
     >
 
     <!-- Styles personnalisés -->
@@ -21,13 +19,10 @@
     <?php require APP_ROOT . '/app/views/partials/navbar.php'; ?>
 
     <!-- jQuery, Bootstrap JS et APP_URL chargés avant le contenu
-         pour que les scripts inline des vues y aient accès -->
-    <script
-        src="https://code.jquery.com/jquery-3.7.1.min.js"
-        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
-        crossorigin="anonymous"
-    ></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+         pour que les scripts inline des vues y aient accès
+         (fichiers locaux, pas de dependance a un CDN) -->
+    <script src="<?= APP_URL ?>/public/vendor/jquery/jquery.min.js"></script>
+    <script src="<?= APP_URL ?>/public/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script>
         const APP_URL = <?= json_encode(APP_URL, JSON_UNESCAPED_SLASHES) ?>;
     </script>

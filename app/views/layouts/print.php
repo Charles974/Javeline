@@ -16,7 +16,7 @@
             after: () => window.print()
         };
     </script>
-    <script src="https://unpkg.com/pagedjs/dist/paged.polyfill.js" onerror="window.print()"></script>
+    <script src="<?= APP_URL ?>/public/vendor/pagedjs/paged.polyfill.js" onerror="window.print()"></script>
 </head>
 <body>
     <?= $contenu ?? '' ?>
