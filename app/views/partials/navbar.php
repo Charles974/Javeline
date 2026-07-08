@@ -2,9 +2,10 @@
     require_once APP_ROOT . '/app/models/ChallengeModel.php';
     $challengeNavbar = (new ChallengeModel())->findActif();
 ?>
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark" aria-label="Navigation principale">
+<nav class="navbar navbar-expand-lg navbar-dark navbar-javeline" aria-label="Navigation principale">
     <div class="container">
         <a class="navbar-brand" href="<?= APP_URL ?>/">
+            <img src="<?= APP_URL ?>/public/img/images.png" alt="" class="navbar-logo">
             <?= htmlspecialchars(APP_NAME) ?>
         </a>
 
@@ -36,19 +37,19 @@
                     <a class="nav-link" href="<?= APP_URL ?>/externes" aria-label="Gérer les tireurs non membres">Tireurs non membres</a>
                 </li>
                 <li class="nav-item">
-                    <button type="button"
-                            class="nav-link border-0 bg-transparent"
-                            data-bs-toggle="modal"
-                            data-bs-target="#modal-challenge"
-                            aria-label="Créer un nouveau challenge">
-                        Créer un challenge
-                    </button>
-                </li>
-                <li class="nav-item">
                     <a class="nav-link" href="<?= APP_URL ?>/disciplines" aria-label="Consulter les disciplines disponibles">Disciplines</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="<?= APP_URL ?>/challenges/historique" aria-label="Voir l'historique des challenges">Historique des challenges</a>
+                </li>
+                <li class="nav-item">
+                    <button type="button"
+                            class="nav-link nav-cta"
+                            data-bs-toggle="modal"
+                            data-bs-target="#modal-challenge"
+                            aria-label="Créer un nouveau challenge">
+                        + Créer un challenge
+                    </button>
                 </li>
             </ul>
         </div>
