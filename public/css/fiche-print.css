@@ -126,11 +126,18 @@ body {
     margin-top: 0.1cm;
 }
 
-.planning-jour {
-    margin-bottom: 1cm;
+/* Bloc imprime : un morceau de la grille d'un jour, decoupe cote PHP pour
+   rester plus court qu'une page. Marque insecable pour que Paged.js le place
+   d'un seul tenant (evite la fragmentation automatique et les pages blanches). */
+.planning-bloc {
+    margin-bottom: 0.6cm;
+    break-inside: avoid;
+    page-break-inside: avoid;
 }
 
-.planning-jour + .planning-jour {
+/* Premier bloc d'un jour (hors tout premier) : demarre une nouvelle page. */
+.planning-bloc-saut {
+    break-before: page;
     page-break-before: always;
 }
 
@@ -139,6 +146,15 @@ body {
     font-weight: 700;
     text-align: center;
     margin-bottom: 0.2cm;
+    break-after: avoid;
+    page-break-after: avoid;
+}
+
+/* Indicateur de sous-partie (ex : 2/3) quand un jour occupe plusieurs blocs. */
+.planning-suite {
+    font-size: 9pt;
+    font-weight: 400;
+    color: #555;
 }
 
 .planning-table {
