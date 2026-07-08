@@ -9,6 +9,8 @@
     --couleur-primaire-fonce: #1f2d3a;
     --couleur-secondaire: #e74c3c;
     --couleur-secondaire-fonce: #c0392b;
+    --couleur-succes: #27ae60;
+    --couleur-succes-fonce: #1e8449;
     --couleur-texte: #333333;
     --couleur-fond: #f9f9f9;
     --police-principale: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -104,6 +106,19 @@ main {
     --bs-btn-disabled-bg: var(--couleur-secondaire);
     --bs-btn-disabled-border-color: var(--couleur-secondaire);
     --bs-btn-focus-shadow-rgb: 231, 76, 60;
+}
+
+/* Action de creation : vert de la charte */
+.btn-success {
+    --bs-btn-bg: var(--couleur-succes);
+    --bs-btn-border-color: var(--couleur-succes);
+    --bs-btn-hover-bg: var(--couleur-succes-fonce);
+    --bs-btn-hover-border-color: var(--couleur-succes-fonce);
+    --bs-btn-active-bg: var(--couleur-succes-fonce);
+    --bs-btn-active-border-color: var(--couleur-succes-fonce);
+    --bs-btn-disabled-bg: var(--couleur-succes);
+    --bs-btn-disabled-border-color: var(--couleur-succes);
+    --bs-btn-focus-shadow-rgb: 39, 174, 96;
 }
 
 .btn-outline-danger {
