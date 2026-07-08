@@ -343,30 +343,12 @@ body {
     background-color: #fafafa;
 }
 
-/* Médailles */
-.medaille {
+/* Médailles (images Or / Argent / Bronze) */
+.medaille-img {
     display: inline-block;
-    width: 1.2em;
-    height: 1.2em;
-    line-height: 1.2em;
-    border-radius: 50%;
-    font-size: 8pt;
-    font-weight: 700;
-    text-align: center;
-    color: #fff;
+    height: 0.7cm;
+    width: auto;
     vertical-align: middle;
-}
-
-.medaille-or {
-    background-color: #d4a017;
-}
-
-.medaille-argent {
-    background-color: #9e9e9e;
-}
-
-.medaille-bronze {
-    background-color: #a0522d;
 }
 
 .exaequo-label {

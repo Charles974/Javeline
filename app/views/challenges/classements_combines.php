@@ -55,15 +55,18 @@
                         <td class="col-total"><?= (int)$t['total'] ?></td>
                         <td class="col-epreuves"><?= (int)$t['nb_disciplines'] ?>/<?= $groupe['nb_epreuves'] ?></td>
                         <td class="col-medaille">
-                            <?php if ($t['medaille']): ?>
-                                <span class="medaille medaille-<?= $t['medaille'] ?>"
-                                      title="<?= ucfirst($t['medaille']) ?>">
-                                    <?= match($t['medaille']) {
-                                        'or'     => 'Or',
-                                        'argent' => 'Ar',
-                                        'bronze' => 'Br',
-                                    } ?>
-                                </span>
+                            <?php if ($t['medaille']):
+                                // Correspondance medaille -> image (1 = or, 2 = argent, 3 = bronze).
+                                $imgMedaille = match ($t['medaille']) {
+                                    'or'     => 'medaille-1.png',
+                                    'argent' => 'medaille-2.png',
+                                    'bronze' => 'medaille-3.png',
+                                };
+                            ?>
+                                <img src="<?= APP_URL ?>/public/img/<?= $imgMedaille ?>"
+                                     alt="<?= ucfirst($t['medaille']) ?>"
+                                     title="<?= ucfirst($t['medaille']) ?>"
+                                     class="medaille-img">
                                 <?php if ($t['exaequo']): ?>
                                     <span class="exaequo-label">Ex-æquo</span>
                                 <?php endif; ?>
