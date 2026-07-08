@@ -34,14 +34,28 @@ foreach ($blocsHoraires as $b) {
     $blocsParJour[$b['jour']][] = $b;
 }
 
-// Creneaux fixes de 10 minutes, 09h00 -> 19h00.
+// Creneaux fixes de 10 minutes, 09h00 -> 18h30.
 $creneaux = [];
 $curseur  = strtotime('09:00');
-$limite   = strtotime('19:00');
+$limite   = strtotime('18:30');
 while ($curseur <= $limite) {
     $creneaux[] = date('H:i', $curseur);
     $curseur += 600;
 }
+
+// Compteurs : matchs programmes vs tireurs en attente d'horaire.
+$nbProgrammes = 0;
+$nbEnAttente  = 0;
+foreach ($grille as $r) {
+    if ($r['date_match'] && $r['heure_debut']) {
+        $nbProgrammes++;
+    } else {
+        $nbEnAttente++;
+    }
+}
+
+// Jours de la semaine abreges pour les onglets (libelle court + date).
+$joursCourtsFr = [0 => 'Dimanche', 1 => 'Lundi', 2 => 'Mardi', 3 => 'Mercredi', 4 => 'Jeudi', 5 => 'Vendredi', 6 => 'Samedi'];
 
 // Donnees pour le JS : popovers d'assignation et verification live des conflits de proximite.
 $grilleJs = array_map(static function (array $r): array {
@@ -74,18 +88,30 @@ $grilleJs = array_map(static function (array $r): array {
             <?php endif; ?>
         </p>
     </div>
-    <div class="d-flex gap-2 flex-wrap">
-        <a href="<?= APP_URL ?>/challenges/<?= (int) $challenge['id'] ?>/resume"
-           class="btn btn-outline-secondary btn-sm"
-           aria-label="Retour au résumé du challenge">
-            ← Résumé
-        </a>
-        <a href="<?= APP_URL ?>/challenges/<?= (int) $challenge['id'] ?>/planning"
-           target="_blank"
-           class="btn btn-sm btn-outline-primary"
-           aria-label="Imprimer le plan de tir">
-            Imprimer le plan de tir
-        </a>
+    <div class="d-flex align-items-center gap-3 flex-wrap">
+        <div class="plan-stats d-flex">
+            <div class="plan-stat">
+                <span class="plan-stat-valeur" id="plan-stat-programmes"><?= $nbProgrammes ?></span>
+                <span class="plan-stat-label">Programmés</span>
+            </div>
+            <div class="plan-stat">
+                <span class="plan-stat-valeur" id="plan-stat-attente"><?= $nbEnAttente ?></span>
+                <span class="plan-stat-label">En attente</span>
+            </div>
+        </div>
+        <div class="d-flex gap-2 flex-wrap">
+            <a href="<?= APP_URL ?>/challenges/<?= (int) $challenge['id'] ?>/resume"
+               class="btn btn-outline-secondary btn-sm"
+               aria-label="Retour au résumé du challenge">
+                ← Résumé
+            </a>
+            <a href="<?= APP_URL ?>/challenges/<?= (int) $challenge['id'] ?>/planning"
+               target="_blank"
+               class="btn btn-sm btn-outline-primary"
+               aria-label="Imprimer le plan de tir">
+                Imprimer le plan de tir
+            </a>
+        </div>
     </div>
 </div>
 
@@ -98,31 +124,42 @@ $grilleJs = array_map(static function (array $r): array {
         Cliquez sur une case libre pour assigner un tireur en attente, ou sur une case remplie pour la retirer.
     </p>
 
-    <!-- Onglets par jour -->
-    <ul class="nav nav-tabs plan-jours-tabs mb-3" role="tablist">
-        <?php $premierJour = true; ?>
-        <?php foreach ($jours as $jour): ?>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link plan-jour-tab <?= $premierJour ? 'active' : '' ?>"
+    <!-- Barre de contrôles : jours, légende, ajout de bloc — sur une seule ligne -->
+    <div class="plan-controles mb-3 d-flex align-items-center justify-content-between flex-wrap gap-3">
+
+        <div class="plan-jours-tabs" role="tablist" aria-label="Choix du jour">
+            <?php $premierJour = true; ?>
+            <?php foreach ($jours as $jour): ?>
+            <button class="plan-jour-tab <?= $premierJour ? 'active' : '' ?>"
                     type="button"
+                    role="tab"
                     data-jour="<?= htmlspecialchars($jour) ?>"
                     aria-selected="<?= $premierJour ? 'true' : 'false' ?>">
-                <?= htmlspecialchars(format_date_fr_complete($jour)) ?>
+                <?= htmlspecialchars($joursCourtsFr[(int) date('w', strtotime($jour))]) ?>
+                <span class="plan-jour-tab-date"><?= date('d/m', strtotime($jour)) ?></span>
             </button>
-        </li>
-        <?php $premierJour = false; ?>
-        <?php endforeach; ?>
-    </ul>
+            <?php $premierJour = false; ?>
+            <?php endforeach; ?>
+        </div>
+
+        <div class="plan-legende d-flex align-items-center gap-3 flex-wrap">
+            <span><i class="plan-legende-puce plan-puce-libre" aria-hidden="true"></i>Créneau libre</span>
+            <span><i class="plan-legende-puce plan-puce-programme" aria-hidden="true"></i>Tireur programmé</span>
+            <span><i class="plan-legende-puce plan-puce-conflit" aria-hidden="true"></i>Créneaux proches</span>
+            <span><i class="plan-legende-puce plan-puce-bloc" aria-hidden="true"></i>Bloc du challenge</span>
+        </div>
+
+        <?php if (!$archive): ?>
+        <button type="button" class="btn btn-sm btn-outline-secondary btn-ajouter-bloc">
+            + Ajouter un bloc horaire
+        </button>
+        <?php endif; ?>
+
+    </div>
 
     <?php $premierJour = true; ?>
     <?php foreach ($jours as $jour): ?>
     <div class="plan-jour-panneau <?= $premierJour ? '' : 'd-none' ?>" data-jour-panneau="<?= htmlspecialchars($jour) ?>">
-
-        <div class="d-flex justify-content-end mb-2">
-            <button type="button" class="btn btn-sm btn-outline-secondary btn-ajouter-bloc" data-jour="<?= htmlspecialchars($jour) ?>">
-                + Ajouter un bloc horaire
-            </button>
-        </div>
 
         <div class="card plan-grille-card mb-4">
             <div class="table-responsive plan-grille-scroll">

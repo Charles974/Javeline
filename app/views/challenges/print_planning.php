@@ -33,10 +33,10 @@ foreach ($blocsHoraires as $b) {
     $blocsParJour[$b['jour']][] = $b;
 }
 
-// Creneaux fixes de 10 minutes, 09h00 -> 19h00 (memes bornes que l'ecran).
+// Creneaux fixes de 10 minutes, 09h00 -> 18h30 (memes bornes que l'ecran).
 $creneaux = [];
 $curseur  = strtotime('09:00');
-$limite   = strtotime('19:00');
+$limite   = strtotime('18:30');
 while ($curseur <= $limite) {
     $creneaux[] = date('H:i', $curseur);
     $curseur += 600;
