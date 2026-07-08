@@ -108,7 +108,7 @@
 
                     <!-- Boutons d'action -->
                     <div class="form-actions">
-                        <button type="submit" id="btn-ajouter" class="btn btn-primary" aria-label="Ajouter le membre">
+                        <button type="submit" id="btn-ajouter" class="btn btn-success" aria-label="Ajouter le membre">
                             Ajouter
                         </button>
                         <button type="button" id="btn-modifier" class="btn btn-warning" disabled aria-label="Modifier le membre sélectionné">
