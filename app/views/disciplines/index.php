@@ -17,7 +17,7 @@
                     <span class="badge bg-secondary"><?= count($disciplines) ?></span>
                     <a href="<?= APP_URL ?>/disciplines/imprimer"
                        target="_blank"
-                       class="btn btn-sm btn-outline-primary"
+                       class="btn btn-sm btn-outline-light"
                        aria-label="Imprimer la liste des catégories">
                         Imprimer la liste
                     </a>

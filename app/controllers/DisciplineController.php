@@ -32,6 +32,8 @@ class DisciplineController extends Controller
         $this->render('disciplines/print_liste', [
             'titrePage'   => 'Liste des catégories — ' . APP_NAME,
             'disciplines' => $disciplines,
-        ], 'print');
+            // Reprend le style des fiches membres mais en format paysage
+            'ficheCss'    => 'fiche-liste-disciplines',
+        ], 'print_fiche');
     }
 }
