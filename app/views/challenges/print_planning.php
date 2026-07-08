@@ -11,18 +11,20 @@
 // pages blanches en cascade (le tableau ne demarrait plus en premiere page
 // et des dizaines de pages vides s'ajoutaient a la fin).
 //
-// Pour fiabiliser l'export, on decoupe nous-memes chaque jour en blocs d'un
-// nombre fixe de lignes. Chaque bloc est un tableau autonome (avec son propre
-// en-tete de colonnes), plus court qu'une page, et marque comme insecable :
-// Paged.js n'a alors que des blocs simples a placer, ce qui supprime la
-// cascade de pages blanches.
+// Pour fiabiliser l'export, on decoupe nous-memes chaque jour en blocs de
+// lignes. Chaque bloc est un tableau autonome (avec son propre en-tete de
+// colonnes), plus court qu'une page, et marque comme insecable : Paged.js
+// n'a alors que des blocs simples a placer, ce qui supprime la cascade de
+// pages blanches.
+//
+// Decoupage : la hauteur de chaque creneau depend du nombre de disciplines
+// (colonnes plus etroites -> noms des tireurs sur 2 lignes) ; on estime donc
+// la hauteur reelle de chaque ligne, puis chaque page est remplie au maximum
+// de sa hauteur disponible. Les creneaux restants d'un jour sont repartis a
+// hauteurs egales sur le nombre minimal de pages (pas de page presque vide).
 
 $dateDebut = date('d/m/Y', strtotime($challenge['date_debut']));
 $dateFin   = date('d/m/Y', strtotime($challenge['date_fin']));
-
-// Nombre maximal de creneaux par bloc imprime. Choisi pour qu'un bloc
-// (en-tete de colonnes + lignes) tienne largement dans une page A4 paysage.
-$lignesParBloc = 18;
 
 // Disciplines effectivement inscrites au challenge (colonnes de la grille).
 $disciplines = [];
@@ -59,6 +61,74 @@ while ($curseur <= $limite) {
     $creneaux[] = date('H:i', $curseur);
     $curseur += 600;
 }
+
+// ------------------------------------------------------------------
+// Estimation des hauteurs (en points PDF, 1 cm = 28.35 pt) pour le
+// decoupage en pages. Valeurs deduites de la geometrie A4 paysage et
+// des styles .planning-* / .fiche-planning de fiche-print.css, puis
+// verifiees sur le rendu reel de Paged.js.
+// ------------------------------------------------------------------
+$hauteurDisponible = 490.0; // zone imprimable verticale (21 cm - marges)
+$hauteurEntete     = 61.0;  // en-tete de la fiche (premiere page seulement)
+$hauteurTitreJour  = 21.0;  // titre h3 du jour + sa marge
+$margeSecurite     = 12.0;  // tolerance sur les arrondis d'estimation
+
+// Largeur d'une colonne discipline : grille (29.7 cm - marges) moins la
+// colonne Horaires (2.2 cm), partagee entre les disciplines.
+$largeurColonne = 694.5 / max(1, $nbCols);
+
+// Nombre de caracteres par ligne dans une cellule (noms a 8 pt) et dans
+// l'en-tete de colonnes (libelles a 6.5 pt gras), padding deduit.
+$charsCellule   = max(4, (int) floor(($largeurColonne - 7) / 4.0));
+$charsEnTeteCol = max(4, (int) floor(($largeurColonne - 4.5) / 3.6));
+
+/*
+ * Nombre de lignes occupees par un texte dans une cellule : simulation du
+ * retour a la ligne mot par mot (un mot trop long est coupe, comme avec
+ * overflow-wrap: anywhere).
+ */
+$lignesPourTexte = static function (string $texte, int $maxChars): int {
+    $lignes  = 1;
+    $courant = 0;
+    foreach (preg_split('/\s+/', trim($texte)) as $mot) {
+        $long = mb_strlen($mot);
+        if ($courant > 0 && $courant + 1 + $long > $maxChars) {
+            $lignes++;
+            $courant = $long;
+        } else {
+            $courant += ($courant > 0 ? 1 : 0) + $long;
+        }
+        while ($courant > $maxChars) {
+            $lignes++;
+            $courant -= $maxChars;
+        }
+    }
+    return $lignes;
+};
+
+// Hauteur de l'en-tete de colonnes : dictee par le libelle le plus long.
+$lignesEnTeteCol = 1;
+foreach ($disciplines as $code => $lib) {
+    $libelleCol      = $code . ' — ' . $lib['fr'] . ' / ' . $lib['en'];
+    $lignesEnTeteCol = max($lignesEnTeteCol, $lignesPourTexte($libelleCol, $charsEnTeteCol));
+}
+$hauteurEnTeteCol = $lignesEnTeteCol * 7.8 + 5;
+
+/*
+ * Hauteur estimee d'un creneau : 12.7 pt pour une ligne simple, davantage
+ * si le texte "Nom / Coach" d'une cellule passe sur plusieurs lignes.
+ */
+$hauteurCreneau = static function (string $jour, string $heure) use ($matchsParJour, $disciplines, $charsCellule, $lignesPourTexte): float {
+    $lignes = 1;
+    foreach ($disciplines as $code => $lib) {
+        $match = $matchsParJour[$jour][$code][$heure] ?? null;
+        if ($match) {
+            $coach  = $match['coach'] ?: ($match['tireur_type'] === 'membre' ? 'Javeline' : '???');
+            $lignes = max($lignes, $lignesPourTexte($match['nom'] . ' / ' . $coach, $charsCellule));
+        }
+    }
+    return $lignes === 1 ? 12.7 : $lignes * 9.2 + 3.8;
+};
 ?>
 
 <div class="fiche fiche-planning">
@@ -91,9 +161,54 @@ while ($curseur <= $limite) {
                 }
             }
 
-            // Decoupage des creneaux du jour en blocs de $lignesParBloc lignes.
-            $blocsCreneaux = array_chunk($creneaux, $lignesParBloc);
-            $nbBlocs       = count($blocsCreneaux);
+            // Hauteur estimee de chaque creneau du jour, et budgets de page.
+            // Le premier bloc du document partage la premiere page avec
+            // l'en-tete de la fiche : son budget est reduit d'autant.
+            $hauteurs = [];
+            foreach ($creneaux as $heure) {
+                $hauteurs[$heure] = $hauteurCreneau($jour, $heure);
+            }
+            $budgetPage    = $hauteurDisponible - $hauteurTitreJour - $hauteurEnTeteCol - $margeSecurite;
+            $budgetPremier = $budgetPage - ($premierBloc ? $hauteurEntete : 0);
+
+            // Premiere page du jour : remplie au maximum de son budget.
+            $blocsCreneaux = [[]];
+            $cumul         = 0.0;
+            $indexCreneau  = 0;
+            foreach ($creneaux as $heure) {
+                if ($cumul + $hauteurs[$heure] > $budgetPremier && $blocsCreneaux[0] !== []) {
+                    break;
+                }
+                $blocsCreneaux[0][] = $heure;
+                $cumul += $hauteurs[$heure];
+                $indexCreneau++;
+            }
+
+            // Creneaux restants : repartis a hauteurs egales sur le nombre
+            // minimal de pages, pour ne pas finir par une page presque vide.
+            $restants = array_slice($creneaux, $indexCreneau);
+            if ($restants !== []) {
+                $hauteurRestante = 0.0;
+                foreach ($restants as $heure) {
+                    $hauteurRestante += $hauteurs[$heure];
+                }
+                $nbPagesSuite = (int) ceil($hauteurRestante / $budgetPage);
+                $cible        = $hauteurRestante / $nbPagesSuite;
+
+                $blocCourant = [];
+                $cumul       = 0.0;
+                foreach ($restants as $heure) {
+                    if ($cumul + $hauteurs[$heure] > $cible + 0.01 && $blocCourant !== [] && count($blocsCreneaux) < $nbPagesSuite) {
+                        $blocsCreneaux[] = $blocCourant;
+                        $blocCourant     = [];
+                        $cumul           = 0.0;
+                    }
+                    $blocCourant[] = $heure;
+                    $cumul += $hauteurs[$heure];
+                }
+                $blocsCreneaux[] = $blocCourant;
+            }
+            $nbBlocs = count($blocsCreneaux);
 
             foreach ($blocsCreneaux as $indexBloc => $creneauxBloc):
                 // Chaque jour demarre sur une nouvelle page (sauf le tout
@@ -129,7 +244,8 @@ while ($curseur <= $limite) {
                             </td>
                         <?php elseif ($bloc): ?>
                             <td class="planning-case-grise" colspan="<?= $nbCols ?>">
-                                <?= $heure === $debutBloc ? htmlspecialchars($bloc['libelle']) : '' ?>
+                                <?php // Libelle repete en tete de bloc imprime si le bloc horaire est coupe par un saut de page. ?>
+                                <?= ($heure === $debutBloc || $heure === $creneauxBloc[0]) ? htmlspecialchars($bloc['libelle']) : '' ?>
                             </td>
                         <?php else: ?>
                             <?php foreach ($disciplines as $code => $lib):
