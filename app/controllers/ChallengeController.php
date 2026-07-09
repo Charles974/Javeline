@@ -636,7 +636,9 @@ class ChallengeController extends Controller
             'titrePage' => 'Inscrits — ' . htmlspecialchars($challenge['libelle']),
             'challenge' => $challenge,
             'inscrits'  => $inscrits,
-        ], 'print');
+            // Meme style graphique que la liste des categories (fiche paysage)
+            'ficheCss'  => 'fiche-liste-disciplines',
+        ], 'print_fiche');
     }
 
     // ----------------------------------------------------------------

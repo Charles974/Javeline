@@ -71,7 +71,7 @@
                     <?php $typeFiche = 'externe'; require APP_ROOT . '/app/views/partials/mention_rgpd.php'; ?>
 
                     <div class="form-actions">
-                        <button type="submit" id="btn-ajouter" class="btn btn-primary" aria-label="Ajouter le tireur">
+                        <button type="submit" id="btn-ajouter" class="btn btn-success" aria-label="Ajouter le tireur">
                             Ajouter
                         </button>
                         <button type="button" id="btn-modifier" class="btn btn-warning" disabled aria-label="Modifier le tireur sélectionné">
