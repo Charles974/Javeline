@@ -1,5 +1,8 @@
 Options -Indexes
-DirectoryIndex disabled
+# index.php sert de page par defaut quand l'URL vise le dossier lui-meme
+# (ex. http://localhost/Javeline/) : la regle de reecriture ne s'applique
+# pas aux dossiers existants (condition !-d), mod_dir prend alors le relais.
+DirectoryIndex index.php
 RewriteEngine On
 
 # Pas de RewriteBase code en dur : Apache resout index.php relativement au
