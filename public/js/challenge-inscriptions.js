@@ -2,6 +2,14 @@
 
 $(document).ready(function () {
 
+    // ----------------------------------------------------------------
+    // Impression — disponible aussi sur un challenge archivé (lecture seule),
+    // donc branchée avant la neutralisation du mode archive ci-dessous.
+    // ----------------------------------------------------------------
+    $('#btn-imprimer-inscrits').on('click', function () {
+        window.open(APP_URL + '/challenges/' + CHALLENGE_ID + '/imprimer', '_blank');
+    });
+
     if (CHALLENGE_ARCHIVE) return;
 
     const $ficheVide    = $('#fiche-vide');
@@ -220,13 +228,6 @@ $(document).ready(function () {
         .fail(function () {
             afficherAlerte('Une erreur est survenue.', 'erreur');
         });
-    });
-
-    // ----------------------------------------------------------------
-    // Impression
-    // ----------------------------------------------------------------
-    $('#btn-imprimer-inscrits').on('click', function () {
-        window.open(APP_URL + '/challenges/' + CHALLENGE_ID + '/imprimer', '_blank');
     });
 
     // ----------------------------------------------------------------
