@@ -1,7 +1,9 @@
 Options -Indexes
 DirectoryIndex disabled
 RewriteEngine On
-RewriteBase /Javeline/
 
+# Pas de RewriteBase code en dur : Apache resout index.php relativement au
+# dossier du .htaccess, ce qui fonctionne a la racine comme en sous-dossier.
 RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^ index.php [QSA,END]
