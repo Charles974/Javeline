@@ -71,13 +71,44 @@ Ces valeurs sont propres à chaque poste/serveur et **doivent être vérifiées/
 | `DB_PASS`    | Mot de passe MySQL                                                 | *(vide)*                      | un mot de passe est défini pour l'utilisateur MySQL (le compte `root` de Wamp n'a par défaut pas de mot de passe). |
 | `DB_CHARSET` | Encodage de connexion à la base                                    | `utf8mb4`                     | ne pas modifier, requis pour la gestion correcte des accents.                    |
 
-De plus, dans le fichier **`.htaccess`** à la racine du projet :
+Le fichier **`.htaccess`** à la racine du projet ne nécessite aucune adaptation : l'URL de base est détectée automatiquement, que le projet soit déployé à la racine du site ou dans un sous-dossier, quel que soit le nom de ce dossier.
 
-```apache
-RewriteBase /Javeline/
-```
+## Installation sous Debian/Linux (Apache)
 
-Cette ligne doit correspondre au chemin de l'application dans l'URL (le nom du dossier sous `www`). Si le projet est cloné dans un dossier différemment nommé, ou déployé à la racine d'un site (`RewriteBase /`), il faut adapter cette valeur en conséquence.
+1. **Cloner le dépôt** dans la racine web d'Apache :
+
+   ```bash
+   cd /var/www/html
+   sudo git clone https://github.com/charles974/javeline.git Javeline
+   ```
+
+2. **Activer le module de réécriture d'URL** (désactivé par défaut sur Debian) :
+
+   ```bash
+   sudo a2enmod rewrite
+   ```
+
+3. **Autoriser les fichiers `.htaccess`** : dans `/etc/apache2/apache2.conf`, remplacer `AllowOverride None` par `AllowOverride All` dans le bloc `<Directory /var/www/>` :
+
+   ```apache
+   <Directory /var/www/>
+       Options Indexes FollowSymLinks
+       AllowOverride All
+       Require all granted
+   </Directory>
+   ```
+
+   > Sans cette étape, Apache ignore le `.htaccess` du projet : la page d'accueil s'affiche mais tous les liens renvoient une erreur 404.
+
+4. **Redémarrer Apache** :
+
+   ```bash
+   sudo systemctl restart apache2
+   ```
+
+5. **Créer la base de données et configurer l'application** comme décrit aux étapes 4 et 5 de l'installation WampServer ci-dessus.
+
+L'application est alors accessible sur `http://localhost/Javeline`.
 
 ## Structure du projet
 
