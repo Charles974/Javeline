@@ -102,7 +102,7 @@
                 </span>
                 <a href="<?= APP_URL ?>/externes/imprimer"
                    target="_blank"
-                   class="btn btn-sm btn-outline-primary"
+                   class="btn btn-sm btn-outline-light"
                    aria-label="Imprimer la liste des tireurs non membres">
                     Imprimer la liste
                 </a>

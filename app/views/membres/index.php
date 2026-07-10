@@ -139,7 +139,7 @@
                 </span>
                 <a href="<?= APP_URL ?>/membres/imprimer"
                    target="_blank"
-                   class="btn btn-sm btn-outline-primary"
+                   class="btn btn-sm btn-outline-light"
                    aria-label="Imprimer la liste des tireurs membres">
                     Imprimer la liste
                 </a>
