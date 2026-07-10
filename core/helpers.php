@@ -1,6 +1,65 @@
 <?php
 // Fonctions utilitaires globales de l'application
 
+// ---------------------------------------------------------------------------
+// Fonctions de secours si l'extension PHP "mbstring" n'est pas activée.
+// Elles reproduisent le comportement de mb_strtoupper / mb_strlen / mb_substr
+// pour les chaînes UTF-8 (accents français inclus). Si mbstring est présente,
+// les fonctions natives sont utilisées automatiquement.
+// ---------------------------------------------------------------------------
+
+if (!function_exists('mb_strtoupper')) {
+    /**
+     * Version de secours de mb_strtoupper (UTF-8, accents français gérés).
+     */
+    function mb_strtoupper(string $chaine, ?string $encodage = null): string
+    {
+        $minusculesAccentuees = [
+            'à' => 'À', 'â' => 'Â', 'ä' => 'Ä', 'á' => 'Á', 'ã' => 'Ã',
+            'é' => 'É', 'è' => 'È', 'ê' => 'Ê', 'ë' => 'Ë',
+            'î' => 'Î', 'ï' => 'Ï', 'í' => 'Í',
+            'ô' => 'Ô', 'ö' => 'Ö', 'ó' => 'Ó', 'õ' => 'Õ',
+            'ù' => 'Ù', 'û' => 'Û', 'ü' => 'Ü', 'ú' => 'Ú',
+            'ç' => 'Ç', 'ñ' => 'Ñ', 'ÿ' => 'Ÿ',
+            'æ' => 'Æ', 'œ' => 'Œ',
+        ];
+
+        return strtoupper(strtr($chaine, $minusculesAccentuees));
+    }
+}
+
+if (!function_exists('mb_strlen')) {
+    /**
+     * Version de secours de mb_strlen : compte les caractères UTF-8,
+     * pas les octets (un accent = 1 caractère).
+     */
+    function mb_strlen(string $chaine, ?string $encodage = null): int
+    {
+        $caracteres = preg_split('//u', $chaine, -1, PREG_SPLIT_NO_EMPTY);
+
+        // Si la chaîne n'est pas de l'UTF-8 valide, repli sur strlen.
+        return $caracteres === false ? strlen($chaine) : count($caracteres);
+    }
+}
+
+if (!function_exists('mb_substr')) {
+    /**
+     * Version de secours de mb_substr : extrait une portion de chaîne UTF-8
+     * sans couper un caractère accentué en deux.
+     */
+    function mb_substr(string $chaine, int $debut, ?int $longueur = null, ?string $encodage = null): string
+    {
+        $caracteres = preg_split('//u', $chaine, -1, PREG_SPLIT_NO_EMPTY);
+
+        // Si la chaîne n'est pas de l'UTF-8 valide, repli sur substr.
+        if ($caracteres === false) {
+            return $longueur === null ? substr($chaine, $debut) : substr($chaine, $debut, $longueur);
+        }
+
+        return implode('', array_slice($caracteres, $debut, $longueur));
+    }
+}
+
 /**
  * Formate un numéro de téléphone français (10 chiffres commençant par 0)
  * en groupes de 2 chiffres, ex : 0707808080 -> 07 07 80 80 80.
