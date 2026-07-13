@@ -22,11 +22,13 @@
         </p>
     </div>
     <div class="d-flex gap-2 flex-wrap">
-        <a href="<?= APP_URL ?>/challenges/<?= (int)$challenge['id'] ?>"
-           class="btn btn-outline-secondary btn-sm"
-           aria-label="Aller à la gestion des inscriptions">
-            ← Inscriptions
-        </a>
+        <?php if (Auth::estAdmin()): ?>
+            <a href="<?= APP_URL ?>/challenges/<?= (int)$challenge['id'] ?>"
+               class="btn btn-outline-secondary btn-sm"
+               aria-label="Aller à la gestion des inscriptions">
+                ← Inscriptions
+            </a>
+        <?php endif; ?>
         <a href="<?= APP_URL ?>/"
            class="btn btn-outline-secondary btn-sm"
            aria-label="Retour à l'accueil">
@@ -95,7 +97,9 @@
             <span class="resume-legende-texte">En attente</span>
         </div>
 
-        <!-- Boutons classements -->
+        <!-- Boutons plan de tir et classements : fonctionnalités réservées à
+             l'administrateur, masquées pour le profil Tour -->
+        <?php if (Auth::estAdmin()): ?>
         <div class="d-flex align-items-center gap-2 ms-auto">
             <a href="<?= APP_URL ?>/challenges/<?= (int)$challenge['id'] ?>/plan-de-tir"
                class="btn btn-sm btn-outline-primary"
@@ -118,6 +122,7 @@
                 Classement avec filtre
             </button>
         </div>
+        <?php endif; ?>
 
     </div>
 </div>
