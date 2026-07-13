@@ -230,10 +230,12 @@ class ChallengeController extends Controller
         }
 
         $inscriptionId = (int)($_POST['inscription_id'] ?? 0);
-        $poulets       = min(10, max(0, (int)($_POST['poulets']  ?? 0)));
-        $cochons       = min(10, max(0, (int)($_POST['cochons']  ?? 0)));
-        $dindons       = min(10, max(0, (int)($_POST['dindons']  ?? 0)));
-        $mouflons      = min(10, max(0, (int)($_POST['mouflons'] ?? 0)));
+        $abandon       = !empty($_POST['abandon']) ? 1 : 0;
+        // En cas d'abandon, les scores sont forcés à 0
+        $poulets       = $abandon ? 0 : max(0, (int)($_POST['poulets']  ?? 0));
+        $cochons       = $abandon ? 0 : max(0, (int)($_POST['cochons']  ?? 0));
+        $dindons       = $abandon ? 0 : max(0, (int)($_POST['dindons']  ?? 0));
+        $mouflons      = $abandon ? 0 : max(0, (int)($_POST['mouflons'] ?? 0));
 
         if ($inscriptionId <= 0) {
             $this->json(['success' => false, 'message' => 'Inscription invalide.'], 400);
@@ -243,7 +245,8 @@ class ChallengeController extends Controller
             $res = $this->inscriptions->saisirScore(
                 $inscriptionId,
                 $challenge['date_debut'],
-                $poulets, $cochons, $dindons, $mouflons
+                $poulets, $cochons, $dindons, $mouflons,
+                $abandon
             );
         } catch (Throwable $e) {
             $this->json(['success' => false, 'message' => 'Erreur : ' . $e->getMessage()], 500);
@@ -251,7 +254,7 @@ class ChallengeController extends Controller
 
         $this->json([
             'success'       => true,
-            'message'       => 'Score enregistré.',
+            'message'       => $abandon ? 'Abandon enregistré.' : 'Score enregistré.',
             'inscription_id'=> $inscriptionId,
             'match_id'      => $res['match_id'],
             'score_id'      => $res['score_id'],
@@ -259,6 +262,7 @@ class ChallengeController extends Controller
             'cochons'       => $cochons,
             'dindons'       => $dindons,
             'mouflons'      => $mouflons,
+            'abandon'       => $abandon,
             'total'         => $poulets + $cochons + $dindons + $mouflons,
         ]);
     }
@@ -558,7 +562,8 @@ class ChallengeController extends Controller
                     'defects'    => [],
                 ];
             }
-            if ($row['total'] === null) {
+            // Sans score OU abandon : traite comme DEFECT (non classe).
+            if ($row['total'] === null || (int)$row['abandon'] === 1) {
                 $groupes[$code]['defects'][] = $row;
             } else {
                 $groupes[$code]['tireurs'][] = $row;

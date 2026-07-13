@@ -5,8 +5,9 @@ $(document).ready(function () {
     // ----------------------------------------------------------------
     // Variables d'état
     // ----------------------------------------------------------------
-    let inscriptionCourante = null; // données de la ligne ouverte dans la modale
-    let valeurOriginales    = {};   // valeurs au moment de l'ouverture
+    let inscriptionCourante = null;  // données de la ligne ouverte dans la modale
+    let valeurOriginales    = {};    // valeurs au moment de l'ouverture
+    let abandonCourant      = false; // état d'abandon en cours d'édition dans la modale
     const $modal            = $('#modal-score');
     const modalBS           = new bootstrap.Modal($modal[0]);
 
@@ -115,8 +116,10 @@ $(document).ready(function () {
         const cochons  = $ligne.data('cochons')  !== '' ? parseInt($ligne.data('cochons'),  10) : 0;
         const dindons  = $ligne.data('dindons')  !== '' ? parseInt($ligne.data('dindons'),  10) : 0;
         const mouflons = $ligne.data('mouflons') !== '' ? parseInt($ligne.data('mouflons'), 10) : 0;
+        const abandon  = parseInt($ligne.data('abandon'), 10) === 1;
 
-        valeurOriginales = { poulets, cochons, dindons, mouflons };
+        valeurOriginales = { poulets, cochons, dindons, mouflons, abandon };
+        abandonCourant   = abandon;
 
         // Remplir les informations du tireur
         const estMembre = inscriptionCourante.tireurType === 'membre';
@@ -142,7 +145,7 @@ $(document).ready(function () {
         $('#score-dindons').val(dindons || '');
         $('#score-mouflons').val(mouflons || '');
 
-        cacherAlerteMax();
+        appliquerEtatAbandon();
         mettreAJourTotal();
 
         modalBS.show();
@@ -325,12 +328,32 @@ $(document).ready(function () {
     }
 
     // ----------------------------------------------------------------
-    // Calcul du total et avertissement si > 10
+    // Abandon : bascule l'état, remet les champs à 0, grisés et non
+    // éditables. Un nouveau clic annule l'abandon et rend la saisie.
+    // L'état n'est persisté qu'au clic sur Enregistrer.
     // ----------------------------------------------------------------
-    $modal.on('input', '.score-input', function () {
+    $('#btn-score-abandon').on('click', function () {
+        abandonCourant = !abandonCourant;
+        if (abandonCourant) {
+            $('.score-input').val(0);
+        }
+        appliquerEtatAbandon();
         mettreAJourTotal();
-        verifierDepassement();
     });
+
+    function appliquerEtatAbandon() {
+        $('.score-input').prop('disabled', abandonCourant);
+        $('#btn-score-abandon')
+            .toggleClass('btn-warning',         abandonCourant)
+            .toggleClass('btn-outline-warning', !abandonCourant)
+            .text(abandonCourant ? 'Annuler l\'abandon' : 'Abandon');
+        $('#score-abandon-info').attr('hidden', !abandonCourant || null);
+    }
+
+    // ----------------------------------------------------------------
+    // Calcul du total
+    // ----------------------------------------------------------------
+    $modal.on('input', '.score-input', mettreAJourTotal);
 
     function mettreAJourTotal() {
         let total = 0;
@@ -339,22 +362,6 @@ $(document).ready(function () {
             if (!isNaN(val) && val > 0) total += val;
         });
         $('#score-total').text(total);
-    }
-
-    function verifierDepassement() {
-        let depassement = false;
-        $('.score-input').each(function () {
-            const val = parseInt($(this).val(), 10);
-            const tropElevee = !isNaN(val) && val > 10;
-            $(this).toggleClass('score-input-invalide', tropElevee);
-            if (tropElevee) depassement = true;
-        });
-        $('#score-alerte-max').attr('hidden', !depassement || null);
-    }
-
-    function cacherAlerteMax() {
-        $('.score-input').removeClass('score-input-invalide');
-        $('#score-alerte-max').attr('hidden', true);
     }
 
     // ----------------------------------------------------------------
@@ -374,7 +381,8 @@ $(document).ready(function () {
         return v.poulets  !== valeurOriginales.poulets
             || v.cochons  !== valeurOriginales.cochons
             || v.dindons  !== valeurOriginales.dindons
-            || v.mouflons !== valeurOriginales.mouflons;
+            || v.mouflons !== valeurOriginales.mouflons
+            || abandonCourant !== valeurOriginales.abandon;
     }
 
     // ----------------------------------------------------------------
@@ -388,7 +396,8 @@ $(document).ready(function () {
         $('#score-cochons').val(valeurOriginales.cochons  || '');
         $('#score-dindons').val(valeurOriginales.dindons  || '');
         $('#score-mouflons').val(valeurOriginales.mouflons || '');
-        cacherAlerteMax();
+        abandonCourant = valeurOriginales.abandon;
+        appliquerEtatAbandon();
         mettreAJourTotal();
     });
 
@@ -438,6 +447,7 @@ $(document).ready(function () {
                 cochons        : valeurs.cochons,
                 dindons        : valeurs.dindons,
                 mouflons       : valeurs.mouflons,
+                abandon        : abandonCourant ? 1 : 0,
             },
             dataType: 'json',
         })
@@ -479,16 +489,21 @@ $(document).ready(function () {
             .data('poulets',  rep.poulets).attr('data-poulets',  rep.poulets)
             .data('cochons',  rep.cochons).attr('data-cochons',  rep.cochons)
             .data('dindons',  rep.dindons).attr('data-dindons',  rep.dindons)
-            .data('mouflons', rep.mouflons).attr('data-mouflons', rep.mouflons);
+            .data('mouflons', rep.mouflons).attr('data-mouflons', rep.mouflons)
+            .data('abandon',  rep.abandon).attr('data-abandon',  rep.abandon);
 
         // Met à jour le style de la ligne
         $ligne.removeClass('ligne-attente').addClass('ligne-score');
 
         // Met à jour la cellule score (colonne 5)
-        $ligne.find('td').eq(5).html(
-            '<span class="resume-total fw-bold">' + rep.total + '</span>'
-            + ' <span class="resume-detail text-muted">(' + detScore + ')</span>'
-        );
+        if (rep.abandon) {
+            $ligne.find('td').eq(5).html('<span class="resume-abandon">Abandon</span>');
+        } else {
+            $ligne.find('td').eq(5).html(
+                '<span class="resume-total fw-bold">' + rep.total + '</span>'
+                + ' <span class="resume-detail text-muted">(' + detScore + ')</span>'
+            );
+        }
 
         // Met à jour les compteurs
         const nbScores = $('#table-resume tbody .ligne-participant[data-score="1"]').length;

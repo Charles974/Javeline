@@ -168,15 +168,17 @@ CREATE TABLE blocs_horaires (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ------------------------------------------------------------
--- Scores : résultats par match (0-10 par animal)
+-- Scores : résultats par match (valeur positive par animal, sans plafond)
+-- abandon = 1 : le tireur a abandonné, les scores sont forcés à 0
 -- ------------------------------------------------------------
 CREATE TABLE scores (
     id          INT UNSIGNED    NOT NULL AUTO_INCREMENT,
     match_id    INT UNSIGNED    NOT NULL,
-    poulets     TINYINT         NOT NULL DEFAULT 0 CHECK (poulets  BETWEEN 0 AND 10),
-    cochons     TINYINT         NOT NULL DEFAULT 0 CHECK (cochons  BETWEEN 0 AND 10),
-    dindons     TINYINT         NOT NULL DEFAULT 0 CHECK (dindons  BETWEEN 0 AND 10),
-    mouflons    TINYINT         NOT NULL DEFAULT 0 CHECK (mouflons BETWEEN 0 AND 10),
+    poulets     SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+    cochons     SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+    dindons     SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+    mouflons    SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+    abandon     TINYINT(1)      NOT NULL DEFAULT 0,
     PRIMARY KEY (id),
     UNIQUE KEY uk_score_match (match_id),
     CONSTRAINT fk_score_match FOREIGN KEY (match_id) REFERENCES matchs (id) ON DELETE CASCADE
