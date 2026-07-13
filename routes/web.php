@@ -2,23 +2,40 @@
 /**
  * Définition de toutes les routes de l'application.
  * $router est injecté depuis index.php.
+ *
+ * Contrôle d'accès (4e paramètre) :
+ *   - omis                     → administrateur uniquement
+ *   - ['tour', 'utilisateur']  → administrateur + profils listés
+ *   - Router::ACCES_PUBLIC     → accessible sans connexion
  */
 
-// Page d'accueil
-$router->get('/', 'HomeController', 'index');
+// Authentification
+$router->get('/connexion',     'AuthController', 'formulaire',        Router::ACCES_PUBLIC);
+$router->post('/connexion',    'AuthController', 'connecter',         Router::ACCES_PUBLIC);
+$router->get('/deconnexion',   'AuthController', 'deconnecter',       ['tour', 'utilisateur']);
+$router->post('/mot-de-passe', 'AuthController', 'changerMotDePasse', ['tour', 'utilisateur']);
+
+// Gestion des comptes (administrateur uniquement)
+$router->get('/utilisateurs',            'UtilisateurController', 'index');
+$router->post('/utilisateurs/ajouter',   'UtilisateurController', 'ajouter');
+$router->post('/utilisateurs/modifier',  'UtilisateurController', 'modifier');
+$router->post('/utilisateurs/supprimer', 'UtilisateurController', 'supprimer');
+
+// Page d'accueil (tous les profils connectés)
+$router->get('/', 'HomeController', 'index', ['tour', 'utilisateur']);
 
 // Challenges
-$router->get('/challenges/historique',                          'ChallengeController', 'historique');
+$router->get('/challenges/historique',                          'ChallengeController', 'historique', ['utilisateur']);
 $router->post('/challenges/creer',                              'ChallengeController', 'creer');
 $router->get('/challenges/:id',                                 'ChallengeController', 'detail');
-$router->get('/challenges/:id/resume',                          'ChallengeController', 'resume');
-$router->get('/challenges/:id/classements',                     'ChallengeController', 'classements');
-$router->get('/challenges/:id/classements-combines',            'ChallengeController', 'classementsCombines');
-$router->post('/challenges/:id/saisir-score',                   'ChallengeController', 'saisirScore');
+$router->get('/challenges/:id/resume',                          'ChallengeController', 'resume', ['tour']);
+$router->get('/challenges/:id/classements',                     'ChallengeController', 'classements', ['utilisateur']);
+$router->get('/challenges/:id/classements-combines',            'ChallengeController', 'classementsCombines', ['utilisateur']);
+$router->post('/challenges/:id/saisir-score',                   'ChallengeController', 'saisirScore', ['tour']);
 $router->post('/challenges/:id/modifier-horaire',               'ChallengeController', 'modifierHoraire');
 $router->post('/challenges/:id/retirer-horaire',                'ChallengeController', 'retirerHoraire');
 $router->get('/challenges/:id/plan-de-tir',                     'ChallengeController', 'planDeTir');
-$router->get('/challenges/:id/planning',                        'ChallengeController', 'planning');
+$router->get('/challenges/:id/planning',                        'ChallengeController', 'planning', ['tour']);
 $router->post('/challenges/:id/plan-de-tir/blocs',               'ChallengeController', 'ajouterBlocHoraire');
 $router->post('/challenges/:id/plan-de-tir/blocs/supprimer',     'ChallengeController', 'supprimerBlocHoraire');
 $router->get('/challenges/:id/disciplines-tireur',              'ChallengeController', 'disciplinesTireur');

@@ -15,7 +15,19 @@ Javeline est une application permettant de gérer l'ensemble du cycle de vie d'u
 
 Stack technique : **PHP MVC** (sans framework), **MySQL/MariaDB**, **Bootstrap**, **jQuery**.
 
-L'accès à l'application est libre : il n'y a pas de gestion de compte ni d'authentification.
+## Authentification et profils
+
+L'accès à l'application nécessite d'être connecté (identifiant + mot de passe). Au chargement du site, l'utilisateur non connecté est redirigé vers la page de connexion. Les mots de passe sont stockés hashés en base (bcrypt).
+
+Trois profils de compte existent :
+
+| Profil          | Droits                                                                                   |
+|-----------------|-------------------------------------------------------------------------------------------|
+| Administrateur  | Accès total au site + gestion des comptes (création, suppression, mots de passe, profils) |
+| Tour            | Saisie des scores et consultation du planning uniquement                                   |
+| Utilisateur     | Consultation des résultats des challenges (en cours ou passés) uniquement                  |
+
+Le script `config/database.sql` crée un compte administrateur initial `admin` (mot de passe : `Javeline!2026`), **à changer immédiatement après la première connexion** via le menu du compte (bandeau haut de page). Le script `config/seed_test.sql` ajoute un compte de test par profil (`test.admin` / `Admin@123`, `test.tour` / `Tour@123`, `test.utilisateur` / `User@123`).
 
 ## Prérequis
 

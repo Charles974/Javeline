@@ -10,6 +10,31 @@ CREATE DATABASE IF NOT EXISTS javeline
 USE javeline;
 
 -- ------------------------------------------------------------
+-- Comptes utilisateurs (authentification)
+-- Rien n'est accessible sur le site sans être connecté.
+-- Trois profils :
+--   - administrateur : accès total + gestion des comptes
+--   - tour           : saisie des scores + consultation du planning
+--   - utilisateur    : consultation des résultats des challenges
+-- Les mots de passe sont stockés hashés (password_hash / bcrypt),
+-- jamais en clair.
+-- ------------------------------------------------------------
+CREATE TABLE utilisateurs (
+    id              INT UNSIGNED    NOT NULL AUTO_INCREMENT,
+    identifiant     VARCHAR(50)     NOT NULL UNIQUE,
+    mot_de_passe    VARCHAR(255)    NOT NULL,
+    role            ENUM('administrateur', 'tour', 'utilisateur') NOT NULL DEFAULT 'utilisateur',
+    created_at      DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Compte administrateur initial (sinon impossible de se connecter
+-- sur une base neuve). Mot de passe : Javeline!2026
+-- ⚠ À CHANGER IMMÉDIATEMENT après la première connexion.
+INSERT INTO utilisateurs (identifiant, mot_de_passe, role) VALUES
+    ('admin', '$2y$12$Kj1uxlJBkCTc0z2C.JKAq.EDMy.Bp5gFvnJgAtKOx8SZ4tgqi7Wle', 'administrateur');
+
+-- ------------------------------------------------------------
 -- Tireurs membres du club
 -- ------------------------------------------------------------
 CREATE TABLE membres (

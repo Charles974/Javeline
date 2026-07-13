@@ -27,6 +27,20 @@
 USE javeline;
 
 -- ------------------------------------------------------------
+-- Comptes utilisateurs de test (un par profil)
+-- Mots de passe en clair (pour les tests uniquement) :
+--   - test.admin       : Admin@123    (administrateur, acces total)
+--   - test.tour        : Tour@123     (tour, saisie des scores + planning)
+--   - test.utilisateur : User@123     (utilisateur, consultation des resultats)
+-- Les hash ci-dessous sont générés avec password_hash() / bcrypt.
+-- database.sql cree deja le compte "admin" (mot de passe Javeline!2026).
+-- ------------------------------------------------------------
+INSERT INTO utilisateurs (identifiant, mot_de_passe, role) VALUES
+('test.admin',       '$2y$12$KzarZiKpzlmye5vS4qjL1ee9ffpKpAFNaz5s5Gn5Gu0M1.IjRbrNS', 'administrateur'),
+('test.tour',        '$2y$12$nTDBktWG2LGwF9V/zRTrqOdRKlbOvXhFOCjN/Hxb94wUrOHhmgI/C', 'tour'),
+('test.utilisateur', '$2y$12$3ivQEebWZcJe.Q/Jr7PDtus1qlpTKUih/1uXRvhrN1m0faQwit592', 'utilisateur');
+
+-- ------------------------------------------------------------
 -- Membres
 -- ------------------------------------------------------------
 INSERT INTO membres (id, nom, prenom, date_naissance, lieu_naissance, numero_licence, adresse1, adresse2, code_postal, ville, telephone, email, certificat_medical) VALUES

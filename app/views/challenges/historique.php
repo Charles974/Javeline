@@ -47,10 +47,22 @@
                             <?php endif; ?>
                         </td>
                         <td class="text-end pe-3">
-                            <a href="<?= APP_URL ?>/challenges/<?= (int)$c['id'] ?>/resume"
-                               class="btn btn-sm btn-outline-primary"
-                               aria-label="Voir le résumé de <?= htmlspecialchars($c['libelle']) ?>">
-                                Résumé
+                            <?php if (Auth::estAdmin()): ?>
+                                <a href="<?= APP_URL ?>/challenges/<?= (int)$c['id'] ?>/resume"
+                                   class="btn btn-sm btn-outline-primary"
+                                   aria-label="Voir le résumé de <?= htmlspecialchars($c['libelle']) ?>">
+                                    Résumé
+                                </a>
+                            <?php endif; ?>
+                            <a href="<?= APP_URL ?>/challenges/<?= (int)$c['id'] ?>/classements"
+                               class="btn btn-sm btn-outline-secondary"
+                               aria-label="Voir les classements de <?= htmlspecialchars($c['libelle']) ?>">
+                                Classements
+                            </a>
+                            <a href="<?= APP_URL ?>/challenges/<?= (int)$c['id'] ?>/classements-combines"
+                               class="btn btn-sm btn-outline-secondary"
+                               aria-label="Voir les classements combinés de <?= htmlspecialchars($c['libelle']) ?>">
+                                Combinés
                             </a>
                         </td>
                     </tr>

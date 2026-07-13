@@ -2,6 +2,75 @@
 
 $(document).ready(function () {
 
+    // ----------------------------------------------------------------
+    // Session expirée : toute réponse AJAX en 401 renvoie vers la
+    // page de connexion (le serveur ne peut pas rediriger un appel AJAX).
+    // ----------------------------------------------------------------
+    $(document).ajaxError(function (event, xhr) {
+        if (xhr.status === 401) {
+            window.location.href = APP_URL + '/connexion';
+        }
+    });
+
+    // ----------------------------------------------------------------
+    // Changement de son propre mot de passe (modal du menu compte)
+    // ----------------------------------------------------------------
+    const $formMdp    = $('#form-mot-de-passe');
+    const $erreursMdp = $('#mdp-erreurs');
+    const modalMdpEl  = document.getElementById('modal-mot-de-passe');
+    const modalMdp    = modalMdpEl ? bootstrap.Modal.getOrCreateInstance(modalMdpEl) : null;
+
+    // Réinitialise le formulaire et les messages à l'ouverture de la modal
+    $('#modal-mot-de-passe').on('show.bs.modal', function () {
+        $formMdp[0].reset();
+        $erreursMdp.attr('hidden', true).empty();
+    });
+
+    $formMdp.on('submit', function (e) {
+        e.preventDefault();
+
+        const $btn = $('#btn-valider-mdp');
+        $erreursMdp.attr('hidden', true).empty();
+        $btn.prop('disabled', true).text('Enregistrement…');
+
+        $.ajax({
+            url     : APP_URL + '/mot-de-passe',
+            method  : 'POST',
+            data    : $formMdp.serialize(),
+            dataType: 'json',
+        })
+        .done(function (rep) {
+            if (rep.success) {
+                modalMdp.hide();
+                afficherSucces(rep.message);
+            } else {
+                afficherErreursMdp(rep.erreurs || [rep.message]);
+            }
+        })
+        .fail(function (xhr) {
+            let msg = 'Une erreur est survenue. Veuillez réessayer.';
+            try {
+                const data = JSON.parse(xhr.responseText);
+                if (data.erreurs) {
+                    afficherErreursMdp(data.erreurs);
+                    return;
+                }
+                if (data.message) msg = data.message;
+            } catch (e) { /* réponse non JSON */ }
+            afficherErreursMdp([msg]);
+        })
+        .always(function () {
+            $btn.prop('disabled', false).text('Enregistrer');
+        });
+    });
+
+    function afficherErreursMdp(erreurs) {
+        const liste = erreurs.map(function (e) {
+            return '<li>' + $('<span>').text(e).html() + '</li>';
+        }).join('');
+        $erreursMdp.html('<ul class="mb-0">' + liste + '</ul>').removeAttr('hidden');
+    }
+
     // --- Tooltips Bootstrap ---
     $('[data-bs-toggle="tooltip"]').each(function () {
         new bootstrap.Tooltip(this);
@@ -71,6 +140,14 @@ $(document).ready(function () {
     }
 
     function afficherSucces(message) {
+        // Crée la zone d'alerte si la page ne la fournit pas (le message de
+        // succès du changement de mot de passe peut s'afficher partout).
+        if ($('#alerte-succes').length === 0) {
+            $('#contenu-principal').prepend(
+                '<div id="alerte-succes" class="alerte-succes mx-auto mb-4" role="alert" aria-live="polite" hidden>'
+                + '<span id="alerte-succes-texte"></span></div>'
+            );
+        }
         const $alerte = $('#alerte-succes');
         $('#alerte-succes-texte').text(message);
         $alerte.removeAttr('hidden');
