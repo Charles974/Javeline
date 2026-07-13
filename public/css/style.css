@@ -1233,17 +1233,6 @@ main {
     padding: 0.3rem 0.5rem;
 }
 
-.score-input-invalide {
-    border-color: #fd7e14 !important;
-    background-color: #fff8f0 !important;
-    box-shadow: 0 0 0 0.2rem rgba(253, 126, 20, 0.25) !important;
-}
-
-.score-input-hint {
-    font-size: 0.75rem;
-    color: #aaa;
-}
-
 /* Total */
 .score-total-bloc {
     text-align: center;
@@ -1609,10 +1598,6 @@ main {
 
 .plan-retirer-action:hover {
     filter: brightness(0.96);
-}
-
-.score-total-max {
-    color: #888;
 }
 
 /* ============================================================

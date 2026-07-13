@@ -247,11 +247,6 @@
                     <div class="score-tireur-discipline mt-1" id="score-discipline"></div>
                 </div>
 
-                <!-- Avertissement dépassement de 10 -->
-                <div id="score-alerte-max" class="alert alert-warning py-2 mb-3" role="alert" hidden>
-                    Un score par silhouette ne peut pas dépasser 10. Vérifiez vos saisies.
-                </div>
-
                 <!-- Grille des 4 silhouettes -->
                 <div class="score-saisie-grille mb-4">
                     <?php
@@ -276,7 +271,6 @@
                                step="1"
                                placeholder="0"
                                aria-label="Score <?= $libelle ?>">
-                        <div class="score-input-hint">sur 10</div>
                     </div>
                     <?php endforeach; ?>
                 </div>
@@ -285,7 +279,6 @@
                 <div class="score-total-bloc">
                     <span class="score-total-label">Total :</span>
                     <span class="score-total-valeur" id="score-total">0</span>
-                    <span class="score-total-max">/ 40</span>
                 </div>
 
             </div>

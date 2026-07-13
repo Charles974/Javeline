@@ -142,7 +142,6 @@ $(document).ready(function () {
         $('#score-dindons').val(dindons || '');
         $('#score-mouflons').val(mouflons || '');
 
-        cacherAlerteMax();
         mettreAJourTotal();
 
         modalBS.show();
@@ -325,12 +324,9 @@ $(document).ready(function () {
     }
 
     // ----------------------------------------------------------------
-    // Calcul du total et avertissement si > 10
+    // Calcul du total
     // ----------------------------------------------------------------
-    $modal.on('input', '.score-input', function () {
-        mettreAJourTotal();
-        verifierDepassement();
-    });
+    $modal.on('input', '.score-input', mettreAJourTotal);
 
     function mettreAJourTotal() {
         let total = 0;
@@ -339,22 +335,6 @@ $(document).ready(function () {
             if (!isNaN(val) && val > 0) total += val;
         });
         $('#score-total').text(total);
-    }
-
-    function verifierDepassement() {
-        let depassement = false;
-        $('.score-input').each(function () {
-            const val = parseInt($(this).val(), 10);
-            const tropElevee = !isNaN(val) && val > 10;
-            $(this).toggleClass('score-input-invalide', tropElevee);
-            if (tropElevee) depassement = true;
-        });
-        $('#score-alerte-max').attr('hidden', !depassement || null);
-    }
-
-    function cacherAlerteMax() {
-        $('.score-input').removeClass('score-input-invalide');
-        $('#score-alerte-max').attr('hidden', true);
     }
 
     // ----------------------------------------------------------------
@@ -388,7 +368,6 @@ $(document).ready(function () {
         $('#score-cochons').val(valeurOriginales.cochons  || '');
         $('#score-dindons').val(valeurOriginales.dindons  || '');
         $('#score-mouflons').val(valeurOriginales.mouflons || '');
-        cacherAlerteMax();
         mettreAJourTotal();
     });
 
