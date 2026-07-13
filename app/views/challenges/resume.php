@@ -293,11 +293,11 @@
 
             <div class="modal-footer d-flex justify-content-between">
                 <div class="d-flex gap-2">
-                    <button type="button" class="btn btn-outline-danger" id="btn-score-annuler">
+                    <button type="button" class="btn btn-warning" id="btn-score-annuler">
                         Annuler la saisie
                     </button>
                     <button type="button"
-                            class="btn btn-outline-warning"
+                            class="btn btn-danger"
                             id="btn-score-abandon"
                             aria-label="Déclarer ou annuler l'abandon du tireur">
                         Abandon
@@ -307,7 +307,7 @@
                     <button type="button" class="btn btn-secondary" id="btn-score-fermer">
                         Fermer
                     </button>
-                    <button type="button" class="btn btn-primary" id="btn-score-enregistrer">
+                    <button type="button" class="btn btn-success" id="btn-score-enregistrer">
                         Enregistrer
                     </button>
                 </div>

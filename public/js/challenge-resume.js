@@ -344,8 +344,8 @@ $(document).ready(function () {
     function appliquerEtatAbandon() {
         $('.score-input').prop('disabled', abandonCourant);
         $('#btn-score-abandon')
-            .toggleClass('btn-warning',         abandonCourant)
-            .toggleClass('btn-outline-warning', !abandonCourant)
+            .toggleClass('btn-danger',         !abandonCourant)
+            .toggleClass('btn-outline-danger',  abandonCourant)
             .text(abandonCourant ? 'Annuler l\'abandon' : 'Abandon');
         $('#score-abandon-info').attr('hidden', !abandonCourant || null);
     }
