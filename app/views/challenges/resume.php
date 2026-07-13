@@ -185,6 +185,7 @@
                         data-cochons="<?= $aScore ? (int)$p['cochons'] : '' ?>"
                         data-dindons="<?= $aScore ? (int)$p['dindons'] : '' ?>"
                         data-mouflons="<?= $aScore ? (int)$p['mouflons'] : '' ?>"
+                        data-abandon="<?= $aScore ? (int)$p['abandon'] : 0 ?>"
                         <?= $archive ? '' : 'role="button" tabindex="0"' ?>
                         aria-label="<?= htmlspecialchars($p['nom'] . ' ' . $p['prenom']) ?> — <?= htmlspecialchars($p['discipline_fr']) ?>">
                         <td><?= htmlspecialchars($p['nom']) ?></td>
@@ -198,7 +199,9 @@
                             <span class="resume-horaire-texte"><?= htmlspecialchars($horaire) ?: '<span class="text-muted">—</span>' ?></span>
                         </td>
                         <td class="resume-col-score">
-                            <?php if ($aScore): ?>
+                            <?php if ($aScore && (int)$p['abandon'] === 1): ?>
+                                <span class="resume-abandon">Abandon</span>
+                            <?php elseif ($aScore): ?>
                                 <span class="resume-total fw-bold"><?= $total ?></span>
                                 <span class="resume-detail text-muted">(<?= $detScore ?>)</span>
                             <?php else: ?>
@@ -247,6 +250,11 @@
                     <div class="score-tireur-discipline mt-1" id="score-discipline"></div>
                 </div>
 
+                <!-- État abandon -->
+                <p id="score-abandon-info" class="score-abandon-info mb-3" hidden>
+                    Tireur déclaré en abandon : les scores sont remis à zéro et la saisie est désactivée.
+                </p>
+
                 <!-- Grille des 4 silhouettes -->
                 <div class="score-saisie-grille mb-4">
                     <?php
@@ -284,9 +292,17 @@
             </div>
 
             <div class="modal-footer d-flex justify-content-between">
-                <button type="button" class="btn btn-outline-danger" id="btn-score-annuler">
-                    Annuler la saisie
-                </button>
+                <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-outline-danger" id="btn-score-annuler">
+                        Annuler la saisie
+                    </button>
+                    <button type="button"
+                            class="btn btn-outline-warning"
+                            id="btn-score-abandon"
+                            aria-label="Déclarer ou annuler l'abandon du tireur">
+                        Abandon
+                    </button>
+                </div>
                 <div class="d-flex gap-2">
                     <button type="button" class="btn btn-secondary" id="btn-score-fermer">
                         Fermer

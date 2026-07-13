@@ -181,9 +181,10 @@ class InscriptionModel extends Model
     /**
      * Enregistre (insert ou update) les scores d'une inscription.
      * Crée le match automatiquement si aucun plan de tir n'a encore été assigné.
+     * En cas d'abandon, les scores sont forcés à 0.
      * Retourne un tableau avec match_id et score_id.
      */
-    public function saisirScore(int $inscriptionId, string $dateChallenge, int $poulets, int $cochons, int $dindons, int $mouflons): array
+    public function saisirScore(int $inscriptionId, string $dateChallenge, int $poulets, int $cochons, int $dindons, int $mouflons, int $abandon = 0): array
     {
         // Trouver ou créer le match pour cette inscription
         $stmt = $this->db->prepare('SELECT id FROM matchs WHERE inscription_id = :iid');
@@ -203,20 +204,22 @@ class InscriptionModel extends Model
 
         // Insérer ou mettre à jour le score (UPSERT)
         $stmt = $this->db->prepare(
-            "INSERT INTO scores (match_id, poulets, cochons, dindons, mouflons)
-             VALUES (:mid, :p, :c, :d, :m)
+            "INSERT INTO scores (match_id, poulets, cochons, dindons, mouflons, abandon)
+             VALUES (:mid, :p, :c, :d, :m, :ab)
              ON DUPLICATE KEY UPDATE
                  poulets  = VALUES(poulets),
                  cochons  = VALUES(cochons),
                  dindons  = VALUES(dindons),
-                 mouflons = VALUES(mouflons)"
+                 mouflons = VALUES(mouflons),
+                 abandon  = VALUES(abandon)"
         );
         $stmt->execute([
             ':mid' => $matchId,
-            ':p'   => $poulets,
-            ':c'   => $cochons,
-            ':d'   => $dindons,
-            ':m'   => $mouflons,
+            ':p'   => $abandon ? 0 : $poulets,
+            ':c'   => $abandon ? 0 : $cochons,
+            ':d'   => $abandon ? 0 : $dindons,
+            ':m'   => $abandon ? 0 : $mouflons,
+            ':ab'  => $abandon,
         ]);
 
         $stmt = $this->db->prepare('SELECT id FROM scores WHERE match_id = :mid');
@@ -415,6 +418,7 @@ class InscriptionModel extends Model
                     s.cochons,
                     s.dindons,
                     s.mouflons,
+                    s.abandon,
                     (COALESCE(s.poulets,0) + COALESCE(s.cochons,0)
                      + COALESCE(s.dindons,0) + COALESCE(s.mouflons,0)) AS total
                 FROM inscriptions i

@@ -1233,6 +1233,32 @@ main {
     padding: 0.3rem 0.5rem;
 }
 
+/* Champs grisés lorsque le tireur est en abandon */
+.score-input:disabled {
+    background-color: #e9ecef;
+    color: #6c757d;
+}
+
+/* Note d'état abandon dans la modale */
+.score-abandon-info {
+    font-size: 0.85rem;
+    color: #856404;
+    background-color: #fff3cd;
+    border-radius: 0.375rem;
+    padding: 0.5rem 0.75rem;
+}
+
+/* Badge "Abandon" dans la colonne score du tableau résumé */
+.resume-abandon {
+    display: inline-block;
+    padding: 0.15rem 0.5rem;
+    border-radius: 0.5rem;
+    background-color: #fff3cd;
+    color: #856404;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
 /* Total */
 .score-total-bloc {
     text-align: center;
