@@ -562,7 +562,8 @@ class ChallengeController extends Controller
                     'defects'    => [],
                 ];
             }
-            if ($row['total'] === null) {
+            // Sans score OU abandon : traite comme DEFECT (non classe).
+            if ($row['total'] === null || (int)$row['abandon'] === 1) {
                 $groupes[$code]['defects'][] = $row;
             } else {
                 $groupes[$code]['tireurs'][] = $row;

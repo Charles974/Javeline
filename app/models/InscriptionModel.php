@@ -98,6 +98,7 @@ class InscriptionModel extends Model
                     s.cochons,
                     s.dindons,
                     s.mouflons,
+                    s.abandon,
                     CASE WHEN s.id IS NULL THEN NULL
                          ELSE (s.poulets + s.cochons + s.dindons + s.mouflons) END AS total
                 FROM inscriptions i
