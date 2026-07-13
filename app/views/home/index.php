@@ -25,36 +25,42 @@
     <span id="alerte-succes-texte"></span>
 </div>
 
-<!-- Accès rapide -->
+<!-- Accès rapide (liens filtrés selon le profil connecté) -->
+<?php if (Auth::estAdmin() || Auth::role() === Auth::ROLE_UTILISATEUR): ?>
 <section class="acces-rapide" aria-label="Accès rapide">
     <p class="acces-rapide-titre">Accès rapide</p>
     <div class="acces-rapide-grille">
-        <a href="<?= APP_URL ?>/membres"
-           class="acces-rapide-lien"
-           aria-label="Gérer les tireurs membres">
-            Tireurs membres
-        </a>
-        <a href="<?= APP_URL ?>/externes"
-           class="acces-rapide-lien"
-           aria-label="Gérer les tireurs non membres">
-            Tireurs non membres
-        </a>
-        <a href="<?= APP_URL ?>/disciplines"
-           class="acces-rapide-lien"
-           aria-label="Consulter les disciplines disponibles">
-            Disciplines
-        </a>
+        <?php if (Auth::estAdmin()): ?>
+            <a href="<?= APP_URL ?>/membres"
+               class="acces-rapide-lien"
+               aria-label="Gérer les tireurs membres">
+                Tireurs membres
+            </a>
+            <a href="<?= APP_URL ?>/externes"
+               class="acces-rapide-lien"
+               aria-label="Gérer les tireurs non membres">
+                Tireurs non membres
+            </a>
+            <a href="<?= APP_URL ?>/disciplines"
+               class="acces-rapide-lien"
+               aria-label="Consulter les disciplines disponibles">
+                Disciplines
+            </a>
+        <?php endif; ?>
         <a href="<?= APP_URL ?>/challenges/historique"
            class="acces-rapide-lien"
            aria-label="Voir l'historique des challenges">
             Historique des challenges
         </a>
-        <button type="button"
-                class="acces-rapide-lien acces-rapide-accent"
-                data-bs-toggle="modal"
-                data-bs-target="#modal-challenge"
-                aria-label="Créer un nouveau challenge">
-            + Créer un challenge
-        </button>
+        <?php if (Auth::estAdmin()): ?>
+            <button type="button"
+                    class="acces-rapide-lien acces-rapide-accent"
+                    data-bs-toggle="modal"
+                    data-bs-target="#modal-challenge"
+                    aria-label="Créer un nouveau challenge">
+                + Créer un challenge
+            </button>
+        <?php endif; ?>
     </div>
 </section>
+<?php endif; ?>

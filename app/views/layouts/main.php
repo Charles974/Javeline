@@ -33,6 +33,11 @@
     </main>
 
     <?php require APP_ROOT . '/app/views/partials/footer.php'; ?>
-    <?php require APP_ROOT . '/app/views/partials/modal_challenge.php'; ?>
+    <?php if (Auth::estAdmin()): ?>
+        <?php require APP_ROOT . '/app/views/partials/modal_challenge.php'; ?>
+    <?php endif; ?>
+    <?php if (Auth::estConnecte()): ?>
+        <?php require APP_ROOT . '/app/views/partials/modal_mot_de_passe.php'; ?>
+    <?php endif; ?>
 </body>
 </html>

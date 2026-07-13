@@ -1605,3 +1605,131 @@ main {
 .score-total-max {
     color: #888;
 }
+
+/* ============================================================
+   Authentification et comptes utilisateurs
+   ============================================================ */
+
+/* --- Page de connexion (layout auth, sans navbar) --- */
+.page-auth {
+    background-color: var(--couleur-primaire);
+}
+
+.auth-conteneur {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 400px;
+    border: none;
+    border-radius: 0.75rem;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+}
+
+.auth-card .card-body {
+    padding: 2rem;
+}
+
+.auth-entete {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.auth-logo {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background-color: #ffffff;
+    margin-bottom: 0.75rem;
+}
+
+.auth-titre {
+    font-size: 1.4rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--couleur-primaire);
+    margin-bottom: 0.25rem;
+}
+
+.auth-sous-titre {
+    color: #888;
+    font-size: 0.9rem;
+    margin-bottom: 0;
+}
+
+.auth-erreur {
+    font-size: 0.9rem;
+}
+
+/* --- Menu du compte connecté (navbar) --- */
+.navbar-javeline .nav-compte {
+    font-weight: 600;
+}
+
+.nav-compte-role {
+    font-size: 0.8rem;
+    color: #888;
+}
+
+.dropdown-item-danger {
+    color: var(--couleur-secondaire-fonce);
+}
+
+.dropdown-item-danger:hover,
+.dropdown-item-danger:focus {
+    color: #ffffff;
+    background-color: var(--couleur-secondaire);
+}
+
+/* --- Page de gestion des comptes --- */
+.utilisateurs-row {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.ligne-utilisateur {
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.ligne-utilisateur:hover {
+    background-color: #eef2ff;
+}
+
+tbody .ligne-utilisateur.ligne-selectionnee {
+    background-color: #dbe4ff !important;
+}
+
+.badge-compte-courant {
+    margin-left: 0.4rem;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+}
+
+/* --- Page 403 (accès refusé) --- */
+.acces-refuse {
+    margin: auto;
+    max-width: 480px;
+    text-align: center;
+    padding: 2rem 1rem;
+}
+
+.acces-refuse h1 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--couleur-primaire);
+    margin-bottom: 0.75rem;
+}
+
+.acces-refuse p {
+    color: #666;
+    margin-bottom: 1.25rem;
+}

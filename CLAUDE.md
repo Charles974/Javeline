@@ -142,7 +142,19 @@ Site de gestion des scores pour l'association de tir sportif **Javeline**, disci
 Applicable aussi bien aux classements individuels qu'aux combinés.
 
 ### Accès et authentification
-- **Aucune gestion de login/mot de passe.** L'accès à toutes les fonctionnalités est libre.
+- **Authentification obligatoire** : rien n'est accessible sans être connecté (identifiant + mot de passe).
+- Au chargement du site, redirection automatique vers la page de connexion.
+- Mots de passe stockés **hashés** en base (`password_hash` / bcrypt), jamais en clair.
+- Bandeau haut de page : menu déroulant du compte (se déconnecter, changer son mot de passe).
+- Trois profils :
+
+| Profil          | Droits                                                                 |
+|-----------------|------------------------------------------------------------------------|
+| Administrateur  | Accès total au site + gestion des comptes (créer/supprimer un compte, changer les mots de passe et les profils) |
+| Tour            | Saisie des scores + consultation du planning uniquement                 |
+| Utilisateur     | Consultation des résultats des challenges (en cours ou passés) uniquement |
+
+- Règle de sécurité des routes : par défaut une route est réservée à l'administrateur ; les autres profils doivent être autorisés explicitement (voir `routes/web.php` et `core/Auth.php`).
 
 ### Gestion des tireurs
 - Deux types distincts en base : **membres du club** et **non-membres**.

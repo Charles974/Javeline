@@ -39,16 +39,40 @@
                 </div>
             </div>
             <div class="d-flex gap-2 justify-content-center flex-wrap">
-                <a href="<?= APP_URL ?>/challenges/<?= (int)$challengeActif['id'] ?>"
-                   class="btn btn-primary"
-                   aria-label="Gérer les inscriptions du challenge <?= htmlspecialchars($challengeActif['libelle']) ?>">
-                    Inscriptions
-                </a>
-                <a href="<?= APP_URL ?>/challenges/<?= (int)$challengeActif['id'] ?>/resume"
-                   class="btn btn-outline-primary"
-                   aria-label="Voir le résumé du challenge <?= htmlspecialchars($challengeActif['libelle']) ?>">
-                    Résumé
-                </a>
+                <?php if (Auth::estAdmin()): ?>
+                    <a href="<?= APP_URL ?>/challenges/<?= (int)$challengeActif['id'] ?>"
+                       class="btn btn-primary"
+                       aria-label="Gérer les inscriptions du challenge <?= htmlspecialchars($challengeActif['libelle']) ?>">
+                        Inscriptions
+                    </a>
+                    <a href="<?= APP_URL ?>/challenges/<?= (int)$challengeActif['id'] ?>/resume"
+                       class="btn btn-outline-primary"
+                       aria-label="Voir le résumé du challenge <?= htmlspecialchars($challengeActif['libelle']) ?>">
+                        Résumé
+                    </a>
+                <?php elseif (Auth::role() === Auth::ROLE_TOUR): ?>
+                    <a href="<?= APP_URL ?>/challenges/<?= (int)$challengeActif['id'] ?>/resume"
+                       class="btn btn-primary"
+                       aria-label="Saisir les scores du challenge <?= htmlspecialchars($challengeActif['libelle']) ?>">
+                        Saisie des scores
+                    </a>
+                    <a href="<?= APP_URL ?>/challenges/<?= (int)$challengeActif['id'] ?>/planning"
+                       class="btn btn-outline-primary"
+                       aria-label="Consulter le planning du challenge <?= htmlspecialchars($challengeActif['libelle']) ?>">
+                        Planning
+                    </a>
+                <?php else: ?>
+                    <a href="<?= APP_URL ?>/challenges/<?= (int)$challengeActif['id'] ?>/classements"
+                       class="btn btn-primary"
+                       aria-label="Voir les classements du challenge <?= htmlspecialchars($challengeActif['libelle']) ?>">
+                        Classements
+                    </a>
+                    <a href="<?= APP_URL ?>/challenges/<?= (int)$challengeActif['id'] ?>/classements-combines"
+                       class="btn btn-outline-primary"
+                       aria-label="Voir les classements combinés du challenge <?= htmlspecialchars($challengeActif['libelle']) ?>">
+                        Classements combinés
+                    </a>
+                <?php endif; ?>
             </div>
         </div>
     </div>
