@@ -29,7 +29,7 @@ $router->get('/challenges/historique',                          'ChallengeContro
 $router->post('/challenges/creer',                              'ChallengeController', 'creer');
 $router->get('/challenges/:id',                                 'ChallengeController', 'detail');
 $router->get('/challenges/:id/resume',                          'ChallengeController', 'resume', ['tour']);
-$router->get('/challenges/:id/classements',                     'ChallengeController', 'classements', ['utilisateur']);
+$router->get('/challenges/:id/classements',                     'ChallengeController', 'classements', ['tour', 'utilisateur']);
 $router->get('/challenges/:id/classements-combines',            'ChallengeController', 'classementsCombines', ['utilisateur']);
 $router->post('/challenges/:id/saisir-score',                   'ChallengeController', 'saisirScore', ['tour']);
 $router->post('/challenges/:id/modifier-horaire',               'ChallengeController', 'modifierHoraire');
