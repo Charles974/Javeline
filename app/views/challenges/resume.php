@@ -97,15 +97,16 @@
             <span class="resume-legende-texte">En attente</span>
         </div>
 
-        <!-- Boutons plan de tir et classements : fonctionnalités réservées à
-             l'administrateur, masquées pour le profil Tour -->
-        <?php if (Auth::estAdmin()): ?>
+        <!-- Boutons d'action : le plan de tir reste réservé à l'administrateur,
+             les éditions de classements sont aussi accessibles au profil Tour -->
         <div class="d-flex align-items-center gap-2 ms-auto">
+            <?php if (Auth::estAdmin()): ?>
             <a href="<?= APP_URL ?>/challenges/<?= (int)$challenge['id'] ?>/plan-de-tir"
                class="btn btn-sm btn-outline-primary"
                aria-label="Attribuer les horaires du plan de tir">
                 Attribuer les horaires
             </a>
+            <?php endif; ?>
             <a href="<?= APP_URL ?>/challenges/<?= (int)$challenge['id'] ?>/classements"
                target="_blank"
                class="btn btn-sm btn-outline-primary"
@@ -122,7 +123,6 @@
                 Classement avec filtre
             </button>
         </div>
-        <?php endif; ?>
 
     </div>
 </div>
