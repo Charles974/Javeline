@@ -62,18 +62,18 @@
                        aria-label="Consulter le planning du challenge <?= htmlspecialchars($challengeActif['libelle']) ?>">
                         Planning
                     </a>
+                    <a href="<?= APP_URL ?>/challenges/<?= (int)$challengeActif['id'] ?>/classements"
+                       target="_blank"
+                       class="btn btn-outline-primary"
+                       aria-label="Générer le PDF des classements du challenge <?= htmlspecialchars($challengeActif['libelle']) ?>">
+                        Classements PDF
+                    </a>
                 <?php else: ?>
                     <a href="<?= APP_URL ?>/challenges/<?= (int)$challengeActif['id'] ?>/classements"
                        target="_blank"
                        class="btn btn-primary"
                        aria-label="Voir les classements du challenge <?= htmlspecialchars($challengeActif['libelle']) ?>">
                         Classements
-                    </a>
-                    <a href="<?= APP_URL ?>/challenges/<?= (int)$challengeActif['id'] ?>/classements-combines"
-                       target="_blank"
-                       class="btn btn-outline-primary"
-                       aria-label="Voir les classements combinés du challenge <?= htmlspecialchars($challengeActif['libelle']) ?>">
-                        Classements combinés
                     </a>
                 <?php endif; ?>
             </div>
