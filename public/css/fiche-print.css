@@ -352,10 +352,10 @@ body {
 
 /* Médailles (images Or / Argent / Bronze) */
 .medaille-img {
-    display: inline-block;
+    display: block;
     height: 0.7cm;
     width: auto;
-    vertical-align: middle;
+    margin: 0 auto;
 }
 
 .exaequo-label {
@@ -492,6 +492,15 @@ body {
     font-weight: 700;
 }
 
+/* La colonne rang ne fait que 1cm : on réduit le padding horizontal pour que
+   la médaille (0.7cm de large) tienne dans la boîte de contenu et reste centrée
+   par margin: auto. Sélecteur qualifié (td/th) pour l'emporter sur .cld-table td. */
+.cld-table th.cld-col-classement,
+.cld-table td.cld-col-rang {
+    padding-left: 0.05cm;
+    padding-right: 0.05cm;
+}
+
 .cld-col-nom {
     text-align: left;
     font-weight: 600;
@@ -519,6 +528,32 @@ body {
 .cld-vide {
     color: #666;
     font-style: italic;
+}
+
+/* Section des combinés (aggregates) affichée en fin de classement */
+.cld-combines-section {
+    margin-top: 0.8cm;
+    page-break-before: always;
+}
+
+.cld-combines-titre {
+    margin: 0 0 0.3cm;
+    font-size: 14pt;
+    font-weight: 700;
+    color: #1f4e96;
+    border-bottom: 2px solid #1f4e96;
+    padding-bottom: 0.1cm;
+}
+
+.cld-combine-titre {
+    background-color: #1f4e96;
+    color: #fff;
+}
+
+.cld-code-badge-combine {
+    font-size: 8pt;
+    letter-spacing: -0.02em;
+    white-space: nowrap;
 }
 
 /* ============================================================

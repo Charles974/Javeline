@@ -154,8 +154,8 @@ class InscriptionModel extends Model
                          THEN m.nom   ELSE e.nom   END AS nom,
                     CASE WHEN i.tireur_type = 'membre'
                          THEN m.prenom ELSE e.prenom END AS prenom,
-                    CASE WHEN i.tireur_type = 'externe'
-                         THEN e.club ELSE NULL END AS club,
+                    CASE WHEN i.tireur_type = 'membre'
+                         THEN 'JAV' ELSE e.club END AS club,
                     COUNT(DISTINCT d.id)  AS nb_disciplines,
                     SUM(s.poulets)        AS poulets,
                     SUM(s.cochons)        AS cochons,

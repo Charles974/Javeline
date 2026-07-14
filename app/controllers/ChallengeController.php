@@ -13,10 +13,10 @@ class ChallengeController extends Controller
     private const COMBINES = [
         'gros-calibre'  => ['libelle_fr' => 'Combiné Gros Calibre',             'libelle_en' => 'Aggregate Big Bore',        'codes' => [400, 401, 402, 403]],
         'petit-calibre' => ['libelle_fr' => 'Combiné Petit Calibre',            'libelle_en' => 'Aggregate Small Bore',      'codes' => [404, 405, 406, 407]],
+        'debout'        => ['libelle_fr' => 'Combiné Debout',                  'libelle_en' => 'Aggregate Standing',        'codes' => [403, 407, 408, 409]],
         'field'         => ['libelle_fr' => 'Combiné Field',                   'libelle_en' => 'Aggregate Field',           'codes' => [408, 409]],
         'carabine-pc'   => ['libelle_fr' => 'Combiné Carabine Petit Calibre',   'libelle_en' => 'Aggregate Small Bore Rifle','codes' => [410, 411]],
         'carabine-gc'   => ['libelle_fr' => 'Combiné Carabine Gros Calibre',    'libelle_en' => 'Aggregate Big Bore Rifle',  'codes' => [412, 413]],
-        'debout'        => ['libelle_fr' => 'Combiné Debout',                  'libelle_en' => 'Aggregate Standing',        'codes' => [403, 407, 408, 409]],
     ];
 
     // Durée forfaitaire d'occupation d'un tireur par discipline, utilisée pour
@@ -580,10 +580,15 @@ class ChallengeController extends Controller
         }
         unset($groupe);
 
+        // Classements des combinés (aggregates) affichés en fin de page.
+        // Uniquement sur le classement complet (pas quand on filtre une discipline).
+        $combines = $disciplineCode === null ? $this->calculerCombines($id) : [];
+
         $this->render('challenges/classements', [
             'titrePage'      => 'Classements — ' . htmlspecialchars($challenge['libelle']),
             'challenge'      => $challenge,
             'groupes'        => $groupes,
+            'combines'       => $combines,
             'disciplineCode' => $disciplineCode,
         ], 'print');
     }
@@ -600,6 +605,20 @@ class ChallengeController extends Controller
             return;
         }
 
+        $this->render('challenges/classements_combines', [
+            'titrePage' => 'Classements combinés — ' . htmlspecialchars($challenge['libelle']),
+            'challenge' => $challenge,
+            'groupes'   => $this->calculerCombines($id),
+        ], 'print');
+    }
+
+    // ----------------------------------------------------------------
+    // Calcule les classements des combinés (aggregates) d'un challenge.
+    // Un combiné n'est retourné que s'il compte au moins un tireur noté.
+    // Réutilisé par classements() (fin de page) et classementsCombines().
+    // ----------------------------------------------------------------
+    private function calculerCombines(int $id): array
+    {
         $groupes = [];
         foreach (self::COMBINES as $slug => $combine) {
             $tireurs = $this->inscriptions->findClassementCombine($id, $combine['codes']);
@@ -615,12 +634,7 @@ class ChallengeController extends Controller
                 'tireurs'      => $tireurs,
             ];
         }
-
-        $this->render('challenges/classements_combines', [
-            'titrePage' => 'Classements combinés — ' . htmlspecialchars($challenge['libelle']),
-            'challenge' => $challenge,
-            'groupes'   => $groupes,
-        ], 'print');
+        return $groupes;
     }
 
     // ----------------------------------------------------------------
