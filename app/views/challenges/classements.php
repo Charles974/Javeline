@@ -40,6 +40,40 @@
         $init = $initiales($t['prenom']);
         return trim($nom . ' ' . $init) . ' (' . $t['club'] . ')';
     };
+
+    // Contenu de la cellule rang/medaille (partage disciplines + combines).
+    $celluleRang = function (array $t): string {
+        if ($t['medaille']) {
+            // Correspondance medaille -> image (1 = or, 2 = argent, 3 = bronze).
+            $imgMedaille = match ($t['medaille']) {
+                'or'     => 'medaille-1.png',
+                'argent' => 'medaille-2.png',
+                'bronze' => 'medaille-3.png',
+            };
+            $html = '<img src="' . APP_URL . '/public/img/' . $imgMedaille . '"'
+                  . ' alt="' . ucfirst($t['medaille']) . '"'
+                  . ' title="' . ucfirst($t['medaille']) . '"'
+                  . ' class="medaille-img">';
+        } else {
+            $html = (string)(int)$t['rang'];
+        }
+        if ($t['exaequo']) {
+            $html .= '<span class="exaequo-label">Ex-æquo</span>';
+        }
+        return $html;
+    };
+
+    // Bloc de colonnes animaux réutilisé dans les en-têtes (disciplines + combines).
+    $enteteAnimaux = function () {
+        ?>
+        <th class="cld-col-nom-header">NOM / NAME / CLUB</th>
+        <th class="cld-col-animal"><img src="<?= APP_URL ?>/public/img/poulet.png" alt="Poulet" class="cld-animal-icone">CHICKENS</th>
+        <th class="cld-col-animal"><img src="<?= APP_URL ?>/public/img/cochon.png" alt="Cochon" class="cld-animal-icone">PIGS</th>
+        <th class="cld-col-animal"><img src="<?= APP_URL ?>/public/img/dindon.png" alt="Dindon" class="cld-animal-icone">TURKEYS</th>
+        <th class="cld-col-animal"><img src="<?= APP_URL ?>/public/img/mouflon.png" alt="Mouflon" class="cld-animal-icone">RAMS</th>
+        <th class="cld-col-total-header">TOTAL</th>
+        <?php
+    };
 ?>
 <div class="cld-page">
 
@@ -78,37 +112,13 @@
                     </tr>
                     <tr></tr>
                     <tr>
-                        <th class="cld-col-nom-header">NOM / NAME / CLUB</th>
-                        <th class="cld-col-animal"><img src="<?= APP_URL ?>/public/img/poulet.png" alt="Poulet" class="cld-animal-icone">CHICKENS</th>
-                        <th class="cld-col-animal"><img src="<?= APP_URL ?>/public/img/cochon.png" alt="Cochon" class="cld-animal-icone">PIGS</th>
-                        <th class="cld-col-animal"><img src="<?= APP_URL ?>/public/img/dindon.png" alt="Dindon" class="cld-animal-icone">TURKEYS</th>
-                        <th class="cld-col-animal"><img src="<?= APP_URL ?>/public/img/mouflon.png" alt="Mouflon" class="cld-animal-icone">RAMS</th>
-                        <th class="cld-col-total-header">TOTAL</th>
+                        <?php $enteteAnimaux(); ?>
                     </tr>
                 </thead>
                 <tbody>
                     <?php foreach ($groupe['tireurs'] as $t): ?>
                     <tr class="<?= $t['exaequo'] ? 'cld-ligne-exaequo' : '' ?>">
-                        <td class="cld-col-rang">
-                            <?php if ($t['medaille']):
-                                // Correspondance medaille -> image (1 = or, 2 = argent, 3 = bronze).
-                                $imgMedaille = match ($t['medaille']) {
-                                    'or'     => 'medaille-1.png',
-                                    'argent' => 'medaille-2.png',
-                                    'bronze' => 'medaille-3.png',
-                                };
-                            ?>
-                                <img src="<?= APP_URL ?>/public/img/<?= $imgMedaille ?>"
-                                     alt="<?= ucfirst($t['medaille']) ?>"
-                                     title="<?= ucfirst($t['medaille']) ?>"
-                                     class="medaille-img">
-                            <?php else: ?>
-                                <?= (int)$t['rang'] ?>
-                            <?php endif; ?>
-                            <?php if ($t['exaequo']): ?>
-                                <span class="exaequo-label">Ex-æquo</span>
-                            <?php endif; ?>
-                        </td>
+                        <td class="cld-col-rang"><?= $celluleRang($t) ?></td>
                         <td class="cld-col-nom"><?= htmlspecialchars($nomAffiche($t)) ?></td>
                         <td class="cld-col-animal-val"><?= (int)$t['poulets'] ?></td>
                         <td class="cld-col-animal-val"><?= (int)$t['cochons'] ?></td>
@@ -120,7 +130,8 @@
                     <?php foreach ($groupe['defects'] as $d): ?>
                     <tr class="cld-ligne-defect">
                         <td class="cld-col-rang"><?= (int)$d['rang'] ?></td>
-                        <td colspan="6" class="cld-defect-cell">DEFECT</td>
+                        <td class="cld-col-nom"><?= htmlspecialchars($nomAffiche($d)) ?></td>
+                        <td colspan="5" class="cld-defect-cell">DEFECT</td>
                     </tr>
                     <?php endforeach; ?>
                     <?php if ($nbTireurs === 0 && $nbDefects === 0): ?>
@@ -133,6 +144,49 @@
         </div>
         <?php endforeach; ?>
 
+    <?php endif; ?>
+
+    <?php if (!empty($combines)): ?>
+    <div class="cld-combines-section">
+        <h2 class="cld-combines-titre">Combinés — Aggregates</h2>
+
+        <?php foreach ($combines as $groupe): ?>
+        <div class="cld-groupe">
+            <span class="cld-code-badge cld-code-badge-combine"><?= htmlspecialchars(implode('+', $groupe['codes'])) ?></span>
+            <table class="cld-table">
+                <thead>
+                    <tr>
+                        <th rowspan="3" class="cld-col-classement"><span>CLASSEMENT</span></th>
+                        <th rowspan="2" class="cld-col-club-dates">
+                            <span class="cld-titre-club"><?= htmlspecialchars($challenge['libelle']) ?></span><br>
+                            <span class="cld-titre-dates"><?= htmlspecialchars($label) ?></span>
+                        </th>
+                        <th colspan="5" rowspan="2" class="cld-discipline-titre cld-combine-titre">
+                            <span class="cld-discipline-fr"><?= htmlspecialchars($groupe['libelle_fr']) ?></span><span class="cld-discipline-sep"> / </span><span class="cld-discipline-en"><?= htmlspecialchars($groupe['libelle_en']) ?></span>
+                        </th>
+                    </tr>
+                    <tr></tr>
+                    <tr>
+                        <?php $enteteAnimaux(); ?>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($groupe['tireurs'] as $t): ?>
+                    <tr class="<?= $t['exaequo'] ? 'cld-ligne-exaequo' : '' ?>">
+                        <td class="cld-col-rang"><?= $celluleRang($t) ?></td>
+                        <td class="cld-col-nom"><?= htmlspecialchars($nomAffiche($t)) ?></td>
+                        <td class="cld-col-animal-val"><?= (int)$t['poulets'] ?></td>
+                        <td class="cld-col-animal-val"><?= (int)$t['cochons'] ?></td>
+                        <td class="cld-col-animal-val"><?= (int)$t['dindons'] ?></td>
+                        <td class="cld-col-animal-val"><?= (int)$t['mouflons'] ?></td>
+                        <td class="cld-col-total"><?= (int)$t['total'] ?></td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+        <?php endforeach; ?>
+    </div>
     <?php endif; ?>
 
     <div class="classements-pied">

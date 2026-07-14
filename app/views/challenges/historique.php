@@ -55,14 +55,10 @@
                                 </a>
                             <?php endif; ?>
                             <a href="<?= APP_URL ?>/challenges/<?= (int)$c['id'] ?>/classements"
+                               target="_blank"
                                class="btn btn-sm btn-outline-secondary"
                                aria-label="Voir les classements de <?= htmlspecialchars($c['libelle']) ?>">
                                 Classements
-                            </a>
-                            <a href="<?= APP_URL ?>/challenges/<?= (int)$c['id'] ?>/classements-combines"
-                               class="btn btn-sm btn-outline-secondary"
-                               aria-label="Voir les classements combinés de <?= htmlspecialchars($c['libelle']) ?>">
-                                Combinés
                             </a>
                         </td>
                     </tr>

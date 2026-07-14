@@ -53,7 +53,7 @@
                     </li>
                     <li class="nav-item">
                         <?php if ($challengeNavbar): ?>
-                            <a class="nav-link" href="<?= APP_URL ?>/challenges/<?= (int)$challengeNavbar['id'] ?>/planning" aria-label="Consulter le planning du challenge en cours">Planning</a>
+                            <a class="nav-link" href="<?= APP_URL ?>/challenges/<?= (int)$challengeNavbar['id'] ?>/planning" target="_blank" aria-label="Consulter le planning du challenge en cours">Planning</a>
                         <?php else: ?>
                             <a class="nav-link disabled" href="#" aria-disabled="true" aria-label="Aucun challenge en cours">Planning</a>
                         <?php endif; ?>
