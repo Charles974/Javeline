@@ -13,6 +13,52 @@ $(document).ready(function () {
     });
 
     // ----------------------------------------------------------------
+    // Barre de progression AJAX : indicateur de chargement fin en haut
+    // de page, non bloquant. Pilotee par les evenements AJAX globaux de
+    // jQuery (ajaxStart/ajaxStop), elle couvre automatiquement tous les
+    // appels ($.ajax, $.getJSON...) sans modification des autres scripts.
+    // ----------------------------------------------------------------
+    const $barreChargement = $('<div class="chargement-barre" aria-hidden="true"></div>').appendTo('body');
+    let chargementTimer      = null;
+    let chargementProgression = 0;
+
+    $(document).ajaxStart(demarrerChargement);
+    $(document).ajaxStop(terminerChargement);
+
+    function demarrerChargement() {
+        // Petit delai avant affichage : evite un clignotement sur les
+        // requetes tres rapides (donnees servies quasi instantanement).
+        clearTimeout(chargementTimer);
+        chargementTimer = setTimeout(function () {
+            chargementProgression = 0;
+            $barreChargement.addClass('actif').css('width', '0%');
+            avancerChargement();
+        }, 150);
+    }
+
+    function avancerChargement() {
+        // Progression simulee qui ralentit en approchant de 90 % ;
+        // les 100 % restants sont atteints a la reponse du serveur.
+        if (chargementProgression < 90) {
+            chargementProgression += (90 - chargementProgression) * 0.25;
+            $barreChargement.css('width', chargementProgression + '%');
+            chargementTimer = setTimeout(avancerChargement, 200);
+        }
+    }
+
+    function terminerChargement() {
+        clearTimeout(chargementTimer);
+        $barreChargement.css('width', '100%');
+        // Laisse la barre atteindre 100 % avant de la faire disparaitre.
+        setTimeout(function () {
+            $barreChargement.removeClass('actif');
+            setTimeout(function () {
+                $barreChargement.css('width', '0%');
+            }, 300);
+        }, 200);
+    }
+
+    // ----------------------------------------------------------------
     // Changement de son propre mot de passe (modal du menu compte)
     // ----------------------------------------------------------------
     const $formMdp    = $('#form-mot-de-passe');

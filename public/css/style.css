@@ -1753,3 +1753,163 @@ tbody .ligne-utilisateur.ligne-selectionnee {
     color: #666;
     margin-bottom: 1.25rem;
 }
+
+/* ============================================================
+   Animations et effets visuels
+   Tout en CSS (aucun style inline). Les animations sont
+   desactivees pour les utilisateurs qui preferent moins de
+   mouvement (prefers-reduced-motion) et a l'impression.
+   ============================================================ */
+
+/* --- Apparition douce : fondu + leger glissement vers le haut --- */
+@keyframes javeline-apparition {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Elements qui apparaissent en fondu au chargement de la page */
+.hero-accueil,
+.challenge-card,
+.challenge-vide,
+.form-card,
+.liste-card,
+.auth-card {
+    animation: javeline-apparition 0.5s ease both;
+}
+
+/* Effet cascade sur les liens d'acces rapide */
+.acces-rapide-lien {
+    animation: javeline-apparition 0.45s ease both;
+}
+
+.acces-rapide-grille .acces-rapide-lien:nth-child(1) { animation-delay: 0.04s; }
+.acces-rapide-grille .acces-rapide-lien:nth-child(2) { animation-delay: 0.10s; }
+.acces-rapide-grille .acces-rapide-lien:nth-child(3) { animation-delay: 0.16s; }
+.acces-rapide-grille .acces-rapide-lien:nth-child(4) { animation-delay: 0.22s; }
+.acces-rapide-grille .acces-rapide-lien:nth-child(5) { animation-delay: 0.28s; }
+
+/* --- Barre de progression AJAX (indicateur de chargement non bloquant) ---
+   Injectee dans le <body> par main.js, pilotee via les evenements AJAX
+   globaux de jQuery. Fine, en haut de page, ne bloque pas l'interface. */
+.chargement-barre {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    width: 0;
+    z-index: 2000;
+    background: linear-gradient(90deg, var(--couleur-secondaire), #f39c12);
+    box-shadow: 0 0 8px rgba(231, 76, 60, 0.55);
+    opacity: 0;
+    pointer-events: none;
+    transition: width 0.2s ease, opacity 0.3s ease;
+}
+
+.chargement-barre.actif {
+    opacity: 1;
+}
+
+/* --- Fond anime de la page de connexion --- */
+@keyframes javeline-fond-degrade {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Derive tres lente des silhouettes en filigrane */
+@keyframes javeline-derive {
+    from { transform: translateY(0); }
+    to   { transform: translateY(-20px); }
+}
+
+/* Degrade navy anime (remplace le fond uni de .page-auth) */
+.page-auth {
+    background: linear-gradient(135deg, #1f2d3a, #2c3e50, #34495e, #223141);
+    background-size: 400% 400%;
+    animation: javeline-fond-degrade 20s ease infinite;
+}
+
+/* Halos de couleur doux, en filigrane, qui derivent lentement.
+   Decor 100 % CSS (aucune image) : deux nappes radiales floues aux
+   couleurs de la charte, tres discretes sur le fond navy. */
+.page-auth::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+        radial-gradient(circle at 15% 25%, rgba(231, 76, 60, 0.18), transparent 40%),
+        radial-gradient(circle at 85% 78%, rgba(52, 152, 219, 0.16), transparent 42%);
+    animation: javeline-derive 26s ease-in-out infinite alternate;
+}
+
+/* Le contenu de connexion passe au-dessus du filigrane */
+.page-auth .auth-conteneur {
+    position: relative;
+    z-index: 1;
+}
+
+/* --- Filigrane anime discret derriere le hero de l'accueil --- */
+.hero-accueil {
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-accueil::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+        radial-gradient(circle at 92% 18%, rgba(231, 76, 60, 0.07), transparent 45%),
+        radial-gradient(circle at 72% 100%, rgba(44, 62, 80, 0.06), transparent 42%);
+    animation: javeline-derive 24s ease-in-out infinite alternate;
+}
+
+/* Le contenu du hero reste au-dessus du filigrane */
+.hero-presentation,
+.hero-challenge {
+    position: relative;
+    z-index: 1;
+}
+
+/* --- Accessibilite : desactive les animations si l'utilisateur
+   prefere moins de mouvement, et a l'impression --- */
+@media (prefers-reduced-motion: reduce) {
+    .hero-accueil,
+    .challenge-card,
+    .challenge-vide,
+    .form-card,
+    .liste-card,
+    .auth-card,
+    .acces-rapide-lien,
+    .page-auth,
+    .page-auth::before,
+    .hero-accueil::after {
+        animation: none;
+    }
+}
+
+@media print {
+    .hero-accueil,
+    .challenge-card,
+    .challenge-vide,
+    .form-card,
+    .liste-card,
+    .auth-card,
+    .acces-rapide-lien,
+    .page-auth,
+    .page-auth::before,
+    .hero-accueil::after,
+    .chargement-barre {
+        animation: none;
+    }
+}
